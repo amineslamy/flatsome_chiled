@@ -1,0 +1,12 @@
+@font-face {
+    font-family: Dirooz;
+    src: url('../fonts/dirooz/Dirooz.eot');
+    src: url('../fonts/dirooz/Dirooz.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/dirooz/Dirooz.woff2') format('woff2'),
+    url('../fonts/dirooz/Dirooz.woff') format('woff'),
+    url('../fonts/dirooz/Dirooz.ttf') format('truetype');
+    font-weight: normal;
+}
+body{font-family:  "Dirooz",  sans-serif !important}
+.nav > li > a {font-family:  "Dirooz", sans-serif !important;}
+h1,h2,h3,h4,h5,h6, .heading-font{font-family: "Dirooz", sans-serif !important;}

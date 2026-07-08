@@ -1,0 +1,68 @@
+/**
+*
+*	Name:			IRANYekan Font
+*	Version:		1.0
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		Dec 20, 2016
+*	Updated on:		Dec 20, 2016
+*	Website:		http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت ایران یکان یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+IRANYekan fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com 
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (CDBL3)
+--------------------------------------------------------------------------------------
+*	
+**/
+
+@font-face {
+    font-family: iranyekan;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/iranyekan-farsi-numbers/eot/iranyekanwebbold(fanum).eot');
+    src: url('../fonts/iranyekan-farsi-numbers/eot/iranyekanwebbold(fanum).eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/iranyekan-farsi-numbers/woff2/iranyekanwebbold(fanum).woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/iranyekan-farsi-numbers/woff/iranyekanwebbold(fanum).woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/iranyekan-farsi-numbers/ttf/iranyekanwebbold(fanum).ttf') format('truetype');
+}
+
+@font-face {
+    font-family: iranyekan;
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/iranyekan-farsi-numbers/eot/iranyekanweblight(fanum).eot');
+    src: url('../fonts/iranyekan-farsi-numbers/eot/iranyekanweblight(fanum).eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/iranyekan-farsi-numbers/woff2/iranyekanweblight(fanum).woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/iranyekan-farsi-numbers/woff/iranyekanweblight(fanum).woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/iranyekan-farsi-numbers/ttf/iranyekanweblight(fanum).ttf') format('truetype');
+}
+
+@font-face {
+    font-family: iranyekan;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/iranyekan-farsi-numbers/eot/iranyekanwebregular(fanum).eot');
+    src: url('../fonts/iranyekan-farsi-numbers/eot/iranyekanwebregular(fanum).eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/iranyekan-farsi-numbers/woff2/iranyekanwebregular(fanum).woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/iranyekan-farsi-numbers/woff/iranyekanwebregular(fanum).woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/iranyekan-farsi-numbers/ttf/iranyekanwebregular(fanum).ttf') format('truetype');
+}
+
+
+body {
+    font-family: iranyekan, roboto, Arial !important
+}
+
+.nav > li > a {
+    font-family: iranyekan, roboto, Arial !important;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+    font-family: iranyekan, roboto, Arial !important;
+}
+
+.alt-font {
+    font-family: iranyekan, roboto, Arial !important;
+}

@@ -1,0 +1,68 @@
+/**
+*
+*	Name:			Iransansx Font
+*	Version:		1.0
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		Dec 20, 2016
+*	Updated on:		Dec 20, 2016
+*	Website:		http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت ایران یکان یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+IRANYekan fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com 
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (A6M6PH)
+--------------------------------------------------------------------------------------
+*	
+**/
+
+@font-face {
+    font-family: iransansx;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/iransansx/eot/IRANSansXFaNum-bold.eot');
+    src: url('../fonts/iransansx/eot/IRANSansXFaNum-bold?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/iransansx/woff2/IRANSansXFaNum-bold.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/iransansx/woff/IRANSansXFaNum-bold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/iransansx/ttf/IRANSansXFaNum-bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: iransansx;
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/iransansx/eot/IRANSansXFaNum-light.eot');
+    src: url('../fonts/iransansx/eot/IRANSansXFaNum-light.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/iransansx/woff2/IRANSansXFaNum-light.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/iransansx/woff/IRANSansXFaNum-light.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/iransansx/ttf/IRANSansXFaNum-light.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: iransansx;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/iransansx/eot/IRANSansXFaNum-regular.eot');
+    src: url('../fonts/iransansx/eot/IRANSansXFaNum-regular.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/iransansx/woff2/IRANSansXFaNum-regular.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/iransansx/woff/IRANSansXFaNum-regular.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/iransansx/ttf/IRANSansXFaNum-regular.ttf') format('truetype');
+}
+
+
+body {
+    font-family: iransansx, roboto, Arial !important
+}
+
+.nav > li > a {
+    font-family: iransansx, roboto, Arial !important;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+    font-family: iransansx, roboto, Arial !important;
+}
+
+.alt-font {
+    font-family: iransansx, roboto, Arial !important;
+}

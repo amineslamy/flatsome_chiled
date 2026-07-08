@@ -1,0 +1,702 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2019-04-24 21:25+0430\n"
+"PO-Revision-Date: 2019-11-12 17:56+0330\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"X-Poedit-Basepath: ../..\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: flatsome-child\n"
+"X-Poedit-SearchPath-1: flatsome/inc/admin/kirki/includes/class-kirki-validator.php\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SearchPathExcluded-1: *.css\n"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:33
+msgid "Iran sans"
+msgstr "ایران‌سنس"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:34
+msgid "Iran sans (Persian number)"
+msgstr "ایران سنس (اعداد فارسی)"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:35
+msgid "Iran sans Hand writing"
+msgstr "ایران سنس دست‌نویس"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:36
+msgid "Iran Yekan"
+msgstr "ایران یکان"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:37
+msgid "Iran Yekan (Persian number)"
+msgstr "ایران یکان (اعداد فارسی)"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:38
+msgid "Iran Sharp"
+msgstr "ایران شارپ"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:39
+msgid "Vazir"
+msgstr "وزیر"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:40
+msgid "Sahel"
+msgstr "ساحل"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:41
+msgid "Shabnam"
+msgstr "شبنم"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:42
+msgid "Samim"
+msgstr "صمیم"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:43
+msgid "Gandom"
+msgstr "گندم"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:44
+msgid "Tanha"
+msgstr "تنها"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:45
+msgid "Parastoo"
+msgstr "پرستو"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:46
+msgid "Dirooz"
+msgstr "دیروز"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:47
+msgid "Anjoman"
+msgstr "انجمن"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:54
+#: flatsome-child/includes/Flatsome_Child_Options.php:55
+#: flatsome-child/includes/Flatsome_Child_Options.php:65
+msgid "Persian settings"
+msgstr "تنظیمات فونت"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:68
+msgid "General"
+msgstr "همگانی"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:97
+msgid "Typography"
+msgstr "تایپوگرافی"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:105
+msgid "Font"
+msgstr "فونت (بهینه سازی و ارائه فونت ها توسط flatsomee.ir)"
+
+#: flatsome-child/includes/Flatsome_Child_Options.php:115
+msgid "Theme default"
+msgstr "پیش‌فرض پوسته"
+
+#: flatsome-child/includes/override_functions.php:9
+msgid "Select a category:"
+msgstr "دسته‌ای انتخاب کنید:"
+
+#: flatsome-child/includes/override_functions.php:14
+msgid "Select a page:"
+msgstr "برگه‌ای انتخاب کنید:"
+
+#: flatsome-child/includes/override_functions.php:20
+msgid "-- None --"
+msgstr "-- هیچ کدام --"
+
+#: flatsome-child/includes/override_functions.php:35
+msgid "Global Settings"
+msgstr "تنظیمات سراسری"
+
+#: flatsome-child/includes/override_functions.php:41
+msgid "Header Scripts"
+msgstr "اسکریپت‌های هدر"
+
+#: flatsome-child/includes/override_functions.php:42
+msgid "Add custom scripts inside HEAD tag. You need to have SCRIPT tag around the scripts."
+msgstr "افزودن اسکریپت‌های دلخواه داخل تگ HEAD پوسته.لازم است اسکریپت‌ها را داخل تگ SCRIPT قرار دهید."
+
+#: flatsome-child/includes/override_functions.php:49
+msgid "Footer Scripts"
+msgstr "اسکریپت‌های فوتر"
+
+#: flatsome-child/includes/override_functions.php:50
+msgid ""
+"Here is the place to paste your Google Analytics code or any other JS code you might want to add to "
+"be loaded in the footer of your website."
+msgstr ""
+"این‌جا محل قرار دادن کد گوگل آنالیتیکز یا هر کد جاوا اسکریپتی دیگری که مایل هستید در فوتر سایت لود "
+"شود است."
+
+#: flatsome-child/includes/override_functions.php:73
+msgid "Flatsome 2.0 Content Support"
+msgstr "پشتیبانی از محتوای فلت‌سام ۲.۰"
+
+#: flatsome-child/includes/override_functions.php:75
+msgid "Support content made in Flatsome 2.0. Disable to speed up site."
+msgstr "پشتیبانی از محتوای فلت‌سام ۲.۰ برای افزایش سرعت سایت غیرفعال شود."
+
+#: flatsome-child/includes/override_functions.php:81
+msgid "Custom CSS"
+msgstr "CSS دلخواه"
+
+#: flatsome-child/includes/override_functions.php:87
+msgid "All screens"
+msgstr "همه صفحات نمایش"
+
+#: flatsome-child/includes/override_functions.php:88
+msgid "Add custom CSS here"
+msgstr "کدهای CSS سفارشی خود را اینجا وارد کنید"
+
+#: flatsome-child/includes/override_functions.php:95
+msgid "Tablets and down"
+msgstr "تبلت به پایین"
+
+#: flatsome-child/includes/override_functions.php:96
+msgid "Add custom CSS here for tablets and mobile"
+msgstr "کدهای CSS سفارشی خود برای تبلت و موبایل را اینجا وارد کنید"
+
+#: flatsome-child/includes/override_functions.php:103
+msgid "Mobile only"
+msgstr "فقط موبایل"
+
+#: flatsome-child/includes/override_functions.php:104
+msgid "Add custom CSS here for mobile view"
+msgstr "کدهای CSS سفارشی خود برای موبایل را اینجا وارد کنید"
+
+#: flatsome-child/includes/override_functions.php:111
+#: flatsome-child/includes/override_functions.php:117
+msgid "Site Loader"
+msgstr "Site Loader - لودر سایت"
+
+#: flatsome-child/includes/override_functions.php:119
+msgid "Enable Site Loader overlay when loading the site."
+msgstr "فعال‌سازی لودر هنگام بارگزاری سایت."
+
+#: flatsome-child/includes/override_functions.php:123
+msgid "Disabled"
+msgstr "غیرفعال"
+
+#: flatsome-child/includes/override_functions.php:124
+msgid "Enable on homepage"
+msgstr "فعال در صفحه اصلی"
+
+#: flatsome-child/includes/override_functions.php:125
+msgid "Enable on all pages"
+msgstr "فعال در همه صفحات"
+
+#: flatsome-child/includes/override_functions.php:130
+msgid "Color"
+msgstr "رنگ"
+
+#: flatsome-child/includes/override_functions.php:135
+msgid "Light"
+msgstr "روشن"
+
+#: flatsome-child/includes/override_functions.php:136
+msgid "Dark"
+msgstr "تیره"
+
+#: flatsome-child/includes/override_functions.php:141
+msgid "Background Color"
+msgstr "رنگ پس‌زمینه"
+
+#: flatsome-child/includes/override_functions.php:148
+msgid "Site Search"
+msgstr "Site Search - جستجوگر"
+
+#: flatsome-child/includes/override_functions.php:154
+msgid "Live Search"
+msgstr "جستجوی زنده (ای‌جکس)"
+
+#: flatsome-child/includes/override_functions.php:156
+msgid "Enable live search for products and pages."
+msgstr "فعال‌سازی جستجوی زنده برای محصولات و برگه‌ها."
+
+#: flatsome-child/includes/override_functions.php:162
+msgid "Search placeholder"
+msgstr "متن Placeholder جستجو"
+
+#: flatsome-child/includes/override_functions.php:163
+msgid "Change the search field placeholder"
+msgstr "تغییر متن Placeholder جستجو"
+
+#: flatsome-child/includes/override_functions.php:171
+msgid "Show Blog and pages in search results."
+msgstr "نمایش مطالب بلاگ و برگه‌ها در نتایج جستجو."
+
+#: flatsome-child/includes/override_functions.php:173
+msgid "Enable blog and pages in search results"
+msgstr "فعال‌سازی نمایش مطالب بلاگ و برگه‌ها در نتایج جستجو"
+
+#: flatsome-child/includes/override_functions.php:192
+msgid "Search Product SKU"
+msgstr "جستجوی شناسه محصول"
+
+#: flatsome-child/includes/override_functions.php:193
+msgid "Allow searching by SKU in live search."
+msgstr "اجازه برای جستجوی زنده در شناسه محصول."
+
+#: flatsome-child/includes/override_functions.php:211
+msgid "UX Builder"
+msgstr "UX Builder - صفحه ساز"
+
+#: flatsome-child/includes/override_functions.php:217
+msgid "Flatsome Studio"
+msgstr "فلت‌سام استودیو"
+
+#: flatsome-child/includes/override_functions.php:219
+msgid "Enable access to Flatsome Studio"
+msgstr "فعال‌سازی دسترسی به فلت‌سام استودیو"
+
+#: flatsome-child/includes/override_functions.php:226
+msgid "Lazy Loading"
+msgstr "Lazy Loading - بارگذاری آهسته"
+
+#: flatsome-child/includes/override_functions.php:232
+msgid "Lazy Load Google Fonts"
+msgstr "بارگزاری تنبل فونت‌های گوگل"
+
+#: flatsome-child/includes/override_functions.php:234
+msgid "Enable lazy loading of Google Fonts"
+msgstr "بارگزاری تنبل فونت‌های گوگل"
+
+#: flatsome-child/includes/override_functions.php:240
+msgid "Lazy Load Icons"
+msgstr "بارگزاری تنبل آیکن‌ها"
+
+#: flatsome-child/includes/override_functions.php:242
+msgid "Enable lazy loading of Flatsome interface icons"
+msgstr "بارگزاری تنبل آیکن‌های فلت‌سام"
+
+#: flatsome-child/includes/override_functions.php:248
+msgid "Lazy Load Banner and Section backgrounds"
+msgstr "بارگزاری تنبل بنرها و تصویر پس‌زمینه بخش‌های مختلف"
+
+#: flatsome-child/includes/override_functions.php:250
+msgid "Enable lazy loading of banner and section backgrounds."
+msgstr "بارگزاری تنبل بنرها و تصویر پس‌زمینه بخش‌های مختلف."
+
+#: flatsome-child/includes/override_functions.php:256
+msgid "Lazy Load Images"
+msgstr "بارگزاری تنبل تصاویر"
+
+#: flatsome-child/includes/override_functions.php:258
+msgid ""
+"Enable lazy loading for images. <strong>Use with caution! Disable if you have plugin compability "
+"problems.</strong>"
+msgstr ""
+"بارگزاری تنبل تصاویر<strong> با احتیاط استفاده کنید! اگر مشکل تداخل با افزونه‌ها را دارید این گزینه "
+"را غیرفعال کنید.</strong>"
+
+#: flatsome-child/includes/override_functions.php:264
+msgid "Google APIs"
+msgstr "Google APIs - نقشه گوگل"
+
+#: flatsome-child/includes/override_functions.php:270
+msgid "Google Maps API"
+msgstr "وب‌سرویس‌ نقشه گوگل"
+
+#: flatsome-child/includes/override_functions.php:271
+msgid ""
+"Enter Google Maps API key here to enable Maps. You can generate one here: <a target='_blank' "
+"href='https://developers.google.com/maps/documentation/javascript/'>Google Maps API</a>"
+msgstr ""
+"برای فعال‌سازی نقشه‌ها کلید وب‌سرویس نقشه گوگل را اینجا وارد کنید. از اینجا می‌توانید یکی بسازید: <a "
+"target='_blank' href='https://developers.google.com/maps/documentation/javascript/'>وب‌سرویس نقشه "
+"گوگل</a>"
+
+#: flatsome-child/includes/override_functions.php:278
+#: flatsome-child/includes/override_functions.php:284
+msgid "Maintenance Mode"
+msgstr "Maintenance Mode - حالت تعمیرات"
+
+#: flatsome-child/includes/override_functions.php:286
+msgid "Enable Maintenance Mode for all users except admins."
+msgstr "فعال‌سازی حالت تعمیر و نگه‌داری برای همه کاربران به جز مدیر‌ها."
+
+#: flatsome-child/includes/override_functions.php:292
+msgid "Admin Notice"
+msgstr "پیام مدیر"
+
+#: flatsome-child/includes/override_functions.php:294
+msgid "Show admin notice when Maintenance Mode is enabled."
+msgstr "نمایش پیام مدیر هنگام فعال بودن حالت تعمیر و نگه‌داری."
+
+#: flatsome-child/includes/override_functions.php:300
+msgid "Custom Maintenance Page"
+msgstr "صفحه حالت تعمیر و نگه‌داری دلخواه"
+
+#: flatsome-child/includes/override_functions.php:302
+msgid "Set a custom page as maintenance page. Only this page will be visible for visitors."
+msgstr ""
+"برگه‌ای را برای نمایش به عنوان صفحه حالت تعمیر و نگه‌داری تعیین کنید. تنها این برگه برای کاربران قابل "
+"دسترس خواهد بود."
+
+#: flatsome-child/includes/override_functions.php:309
+msgid "Maintenance Mode Text"
+msgstr "متن حالت تعمیر و نگه‌داری"
+
+#: flatsome-child/includes/override_functions.php:310
+msgid "The text that will be visible to your customers when accessing maintenance screen."
+msgstr "متنی که کاربران هنگام فعال بودن حالت تعمیر و نگه‌داری مشاهده خواهند کرد."
+
+#: flatsome-child/includes/override_functions.php:317
+msgid "404 Page"
+msgstr "404 Page - صفحه 404"
+
+#: flatsome-child/includes/override_functions.php:323
+msgid "Custom 404 Block"
+msgstr "بلاک دلخواه ۴۰۴"
+
+#: flatsome-child/includes/override_functions.php:325
+msgid "Replace 404 page content with a Custom Block that you can edit in the Page Builder."
+msgstr "جایگزینی محتوای صفحه ۴۰۴ با یک بلاک دلخواه که قابل ویرایش با یوایکس بیلدر است."
+
+#: flatsome-child/includes/override_functions.php:332
+msgid "Custom Fonts"
+msgstr "Custom Fonts - فونت سفارشی"
+
+#: flatsome-child/includes/override_functions.php:338
+msgid "Add custom fonts"
+msgstr "افزودن فونت دلخواه"
+
+#: flatsome-child/includes/override_functions.php:340
+msgid ""
+"<p style=\"font-size:16px\">We are working on a new solution for adding custom fonts to Flatsome. "
+"Meanwhile follow this guide: <a href=\"//uxthemes.helpscoutdocs.com/article/224-add-custom-fonts-to-"
+"flatsome\" target=\"_blank\">Add Custom fonts to Flatsome</p></a>"
+msgstr ""
+"<p style=\"font-size:16px\">جهت تغییر فونت در فلتسام می توانید از این آموزش استفاده کنید : <a href="
+"\"https://flatsomee.ir/%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d8%ba%db%8c%db%8c%d8%b1-"
+"%d9%81%d9%88%d9%86%d8%aa-%d9%82%d8%a7%d9%84%d8%a8-%d9%81%d9%84%d8%aa%d8%b3%d8%a7%d9%85/\" target="
+"\"_blank\">افزودن فونت فارسی به فلت‌سام</p></a>\n"
+"<br >بهینه سازی و ترجمه قالب توسط وب سایت flatsomee.ir"
+
+#: flatsome-child/includes/override_functions.php:346
+msgid "WooCommerce"
+msgstr "WooCommerce - ووکامرس"
+
+#: flatsome-child/includes/override_functions.php:352
+msgid "Disable Reviews Global"
+msgstr "غیرفعال کردن نقد و بررسی سراسری"
+
+#: flatsome-child/includes/override_functions.php:354
+msgid "Disable reviews globally."
+msgstr "غیرفعال کردن نقد و بررسی به صورت سراسری."
+
+#: flatsome-child/includes/override_functions.php:368
+msgid "Shop header"
+msgstr "سربرگ فروشگاه"
+
+#: flatsome-child/includes/override_functions.php:369
+msgid "Enter HTML that should be placed on top of main shop page. Shortcodes are allowed."
+msgstr ""
+"کدهای اچ تی ام الی که می‌خواهید در بالای صفحه اصلی فروشگاه نمایش داده شوند را وارد کنید. استفاده از "
+"شورت‌کدها مجاز است."
+
+#: flatsome-child/includes/override_functions.php:376
+msgid "Additional Global tab/section title"
+msgstr "عنوان تب\\بخش سراسری دلخواه"
+
+#: flatsome-child/includes/override_functions.php:383
+msgid "Additional Global tab/section content"
+msgstr "متن تب\\بخش سراسری دلخواه"
+
+#: flatsome-child/includes/override_functions.php:387
+msgid "Add additional tab content here... Like Size Charts etc."
+msgstr "محتوای تب اضافی دلخواه را اینجا وارد کنید ... شبیه به اندازه نمودارها و غیره."
+
+#: flatsome-child/includes/override_functions.php:391
+msgid "HTML before Add To Cart button (Global)"
+msgstr "کد HTML قبل از دکمه افزودن به سبد خرید (سراسری)"
+
+#: flatsome-child/includes/override_functions.php:392
+msgid "Enter HTML and shortcodes that will show before Add to cart selections."
+msgstr ""
+"کدهای اچ تی ام ال و شورت‌کدهایی که می‌خواهید قبل از بخش افزودن به سبد خرید نمایش داده شود را وارد "
+"کنید. ."
+
+#: flatsome-child/includes/override_functions.php:399
+msgid "HTML after Add To Cart button (Global)"
+msgstr "کد HTML بعد از دکمه افزودن به سبد خرید (سراسری)"
+
+#: flatsome-child/includes/override_functions.php:400
+msgid "Enter HTML and shortcodes that will show after Add to cart button."
+msgstr ""
+"کدهای اچ تی ام ال و شورت‌کدهایی که می‌خواهید بعد از بخش افزودن به سبد خرید نمایش داده شود را وارد کنید."
+
+#: flatsome-child/includes/override_functions.php:407
+msgid "Thank You Page Content / Scripts"
+msgstr "محتوا \\ اسکریپت صفحه تشکر"
+
+#: flatsome-child/includes/override_functions.php:408
+msgid "Enter scripts or custom HTML content for the thank you page here"
+msgstr "اسکریپت یا محتوای اچ تی ام ال دلخواه برای صفحه تشکر را اینجا وارد کنید"
+
+#: flatsome-child/includes/override_functions.php:415
+msgid "Catalog Mode"
+msgstr "Catalog Mode - حالت کاتالوگ"
+
+#: flatsome-child/includes/override_functions.php:421
+msgid "Enable catalog mode"
+msgstr "فعال سازی حالت کاتالوگ"
+
+#: flatsome-child/includes/override_functions.php:423
+msgid "Enable catalog mode. This will disable Add To Cart buttons / Checkout and Shopping cart."
+msgstr ""
+"فعال سازی حالت کاتالوگ. این دکمه‌های افزودن به سبد خرید \\ تسویه حساب و سبد خرید را غیرفعال خواهد کرد."
+
+#: flatsome-child/includes/override_functions.php:429
+msgid "Disable prices"
+msgstr "غیرفعال سازی قیمت‌ها"
+
+#: flatsome-child/includes/override_functions.php:431
+msgid "Select to disable prices on category pages and product page."
+msgstr "برای غیرفعال‌سازی قیمت‌ها در صفحات دسته‌بندی و محصول این گزینه را انتخاب کنید."
+
+#: flatsome-child/includes/override_functions.php:437
+msgid "Cart / Account replacement (header)"
+msgstr "جایگزین سبد خرید \\ حساب کاربری (سربرگ)"
+
+#: flatsome-child/includes/override_functions.php:441
+msgid ""
+"Enter content you want to display instead of Account / Cart. Shortcodes are allowed. For search box "
+"enter <b>[search]</b>. For social icons enter: <b>[follow twitter='http://' facebook='http://' "
+"email='post@email.com' pinterest='http://']</b>"
+msgstr ""
+"محتوایی که مایل هستید به جای حساب کاربری \\ سبد خرید نمایش داده شود را وارد کنید. استفاده از "
+"شورت‌کدها مجاز است. برای باکس جستجو از <b>[search]</b> استفاده کنید. برای آیکن‌های شبکه‌های اجتماعی از "
+"<b>[follow twitter='http://' facebook='http://' email='post@email.com' pinterest='http://']</b> "
+"استفاده کنید"
+
+#: flatsome-child/includes/override_functions.php:445
+msgid "Add to cart replacement - Product page"
+msgstr "جایگزین افزودن به سبد خرید در صفحه محصول"
+
+#: flatsome-child/includes/override_functions.php:449
+msgid "Enter contact information or enquery form shortcode here."
+msgstr "اطلاعات تماس با فرم استعلام را اینجا قرار دهید."
+
+#: flatsome-child/includes/override_functions.php:453
+msgid "Add to cart replacement - Product Quick View"
+msgstr "جایگزین افزودن به سبد خرید - نمایش سریع محصول"
+
+#: flatsome-child/includes/override_functions.php:457
+msgid "Enter text that will show in product quick view"
+msgstr "متنی که در مشاهده سریع محصول نمایش داده می‌شود را وارد کنید"
+
+#: flatsome-child/includes/override_functions.php:461
+msgid "Infinite Scroll"
+msgstr "Infinite Scroll - اسکرول بی نهایت"
+
+#: flatsome-child/includes/override_functions.php:467
+msgid "Infinite scroll category/products"
+msgstr "اسکرول بی‌نهایت دسته‌بندی\\محصولات"
+
+#: flatsome-child/includes/override_functions.php:469
+msgid "Enable infinite scroll for WooCommerce category/product archive."
+msgstr "فعال‌سازی اسکرول بی‌نهایت برای بایگانی محصول\\دسته‌بندی ووکامرس."
+
+#: flatsome-child/includes/override_functions.php:475
+msgid "Loading type"
+msgstr "نوع لودینگ"
+
+#: flatsome-child/includes/override_functions.php:477
+msgid "Select loading type animation or on button click."
+msgstr "نوع انیمیشن لودینگ را انتخاب کنید."
+
+#: flatsome-child/includes/override_functions.php:481
+msgid "Button (On click)"
+msgstr "دکمه (با کلیک)"
+
+#: flatsome-child/includes/override_functions.php:482
+msgid "Spinner"
+msgstr "چرخنده"
+
+#: flatsome-child/includes/override_functions.php:483
+msgid "Custom Image"
+msgstr "تصویر دلخواه"
+
+#: flatsome-child/includes/override_functions.php:488
+msgid "Custom loader image"
+msgstr "تصویر دلخواه لودینگ"
+
+#: flatsome-child/includes/override_functions.php:489
+msgid "Upload or choose a custom loader image (for loading type 'Custom Image')."
+msgstr "بارگذاری یا انتخاب تصویر لودینگ دلخواه (برای نوع لودینگ 'تصویر دلخواه')."
+
+#: flatsome-child/includes/override_functions.php:498
+msgid "Portfolio"
+msgstr "Portfolio - نمونه کارها"
+
+#: flatsome-child/includes/override_functions.php:504
+msgid "Enable Portfolio"
+msgstr "فعال‌سازی نمونه کارها"
+
+#: flatsome-child/includes/override_functions.php:506
+msgid "Enable portfolio"
+msgstr "فعال‌سازی نمونه کارها"
+
+#: flatsome-child/includes/override_functions.php:513
+msgid "Integrations"
+msgstr "Integrations - همگام سازی"
+
+#: flatsome-child/includes/override_functions.php:521
+msgid ""
+"<p style=\"font-size:14px\">Additional options for integrated plugins will be shown here if they are "
+"activated.</p>"
+msgstr ""
+"<p style=\"font-size:14px\">گزینه‌های اضافی برای همگام سازی با سایر افزونه‌ها در صورت فعال شدن آن‌ها "
+"اینجا نمایش داده خواهد شد.</p>"
+
+#: flatsome-child/includes/override_functions.php:526
+msgid "Ubermenu"
+msgstr "اوبرمنو"
+
+#: flatsome-child/includes/override_functions.php:528
+msgid "Enable full width UberMenu. You can also insert this elsewhere by using the UberMenu options."
+msgstr "فعال‌سازی اوبرمنوی تمام عرض. همچنین می‌توانید با استفاده از گزینه‌های اوبرمنو این را قرار دهید."
+
+#: flatsome-child/includes/override_functions.php:537
+msgid "Yoast Primary Category"
+msgstr "دسته اصلی یواست"
+
+#: flatsome-child/includes/override_functions.php:539
+msgid "Use Yoast primary category on product category pages and elements."
+msgstr "استفاده از دسته اصلی یواست در صفحات محصول و عناصر."
+
+#: flatsome-child/includes/override_functions.php:545
+msgid "Yoast Breadcrumbs"
+msgstr "بردکرامب یواست"
+
+#: flatsome-child/includes/override_functions.php:547
+msgid "Use Yoast breadcrumbs on product category pages, single product pages and elements."
+msgstr "استفاده از برد کرامب یواست در صفحات دسته محصول، صفحات محصول و سایر عناصر."
+
+#: flatsome-child/includes/override_functions.php:556
+msgid "Remove the last static crumb on single product pages (product title)."
+msgstr "حذف آخرین گزینه ثابت در صفحه تکی محصول (عنوان محصول)."
+
+#: flatsome-child/includes/override_functions.php:565
+msgid "Backup and Import"
+msgstr "Backup and Import - بکاپ و درون ریزی"
+
+#: flatsome-child/includes/override_functions.php:571
+msgid "Backup and Restore Options"
+msgstr "گزینه‌های درون‌ریزی و برون‌بری"
+
+#: flatsome-child/includes/override_functions.php:575
+msgid ""
+"You can use the two buttons below to backup your current options, and then restore it back at a "
+"later time. This is useful if you want to experiment on the options but would like to keep the old "
+"settings in case you need it back."
+msgstr ""
+"می‌توانید از دو گزینه زیر برای ساختن فایل پشتیبان از گزینه‌های خود و سپس بازگردانی آن‌ها در آینده "
+"استفاده کنید. این برای زمانی که می‌خواهید گزینه‌ای را تست کنید اما مایل به نگه‌داری تنظیمات قبلی خود "
+"هستید کاربردی خواهد بود."
+
+#: flatsome-child/includes/override_functions.php:579
+msgid "Transfer Theme Options Data"
+msgstr "انتقال داده‌های تنظیمات پوسته"
+
+#: flatsome-child/includes/override_functions.php:583
+msgid ""
+"You can transfer the saved options data between different installs by copying the text inside the "
+"text box. To import data from another install, replace the data in the text box with the one from "
+"another install and click \"Import Options\"."
+msgstr ""
+"با استفاده از کپی کردن متن داخل باکس متنی زیر می‌توانید داده‌های ذخیره شده تنظیمات را بین دو نصب مختلف "
+"از پوسته جا‌به‌جا کنید. برای درون‌ریزی داده‌ها از یک نصب دیگر، داده‌های کپی شده را داخل باکس متنی قرار "
+"داده و بر روی گزینه \"درون‌ریزی تنظیمات\" کلیک کنید."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:95
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:96
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:251
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:273
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:290
+msgid "Register version"
+msgstr "پشتیبانی فلت سام"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:253
+msgid "You already register your license key. to re validate it, you can use this form."
+msgstr "شما در حال حاضر لایسنس خود را ثبت کرده‌اید. برای بررسی مجدد لایسنس خود از این فرم استفاده کنید."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:255
+msgid "Your current license:"
+msgstr "لایسنس ثبت شده:"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:267
+msgid "Revalidate"
+msgstr "بررسی مجدد"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:268
+msgid "Delete and submit another license"
+msgstr "حذف لایسنس فعلی و ثبت لایسنسی جدید"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:272
+msgid "New license key"
+msgstr "کلید لایسنس جدید"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:275
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:281
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:292
+msgid "Please wait..."
+msgstr "لطفا صبر کنید..."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:287
+msgid "Please activate plugin with your license key to all features work."
+msgstr "برای اینکه تمام ویژگی‌های افزونه به درستی کار کنند لطفا کلید لایسنس خود را وارد کنید."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:289
+msgid "License key"
+msgstr "کلید لایسنس"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:321
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:353
+msgid "Something goes wrong please try again."
+msgstr "خطایی رخ داد! لطفا دوباره تلاش کنید."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:382
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:450
+msgid "Please insert your license code"
+msgstr "لطفا کد لایسنس خود را وارد کنید"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:398
+msgid "License code is valid."
+msgstr "لایسنس معتبر می‌باشد."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:402
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:464
+msgid "Thanks! Your license activated successfully."
+msgstr "متشکریم! لایسنس شما با موفقیت فعال شد."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:429
+#, php-format
+msgid "To activating your %s please insert you license key"
+msgstr "برای فعال‌سازی %s خود لطفا کد لایسنس خود را وارد کنید"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:430
+msgid "Register Now"
+msgstr "هم اینک ثبت کنید"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:436
+#, php-format
+msgid "There is something wrong with your %s license. please check it."
+msgstr "ظاهرا لایسنس %s شما مشکلی دارد. لطفا آن را بررسی کنید."
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:437
+msgid "Check Now"
+msgstr "هم اینک بررسی می‌کنم"
+
+#: flatsome/inc/admin/kirki/includes/class-kirki-validator.php:652
+msgid "Activate Flatsome"
+msgstr "فعال‌سازی فلت‌سام"

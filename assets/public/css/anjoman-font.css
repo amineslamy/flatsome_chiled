@@ -1,0 +1,68 @@
+/**
+*
+*	Name:			Anjoman Font
+*	Version:		1.0
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		Dec 20, 2016
+*	Updated on:		Dec 20, 2016
+*	Website:		http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت ایران یکان یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+IRANYekan fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com 
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (A6M6PH)
+--------------------------------------------------------------------------------------
+*	
+**/
+
+@font-face {
+    font-family: anjoman;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/anjoman/eot/Anjoman-Bold.eot');
+    src: url('../fonts/anjoman/eot/Anjoman-Bold.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/anjoman/woff2/Anjoman-Bold.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/anjoman/woff/Anjoman-Bold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/anjoman/ttf/Anjoman-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: anjoman;
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/anjoman/eot/Anjoman-Light.eot');
+    src: url('../fonts/anjoman/eot/Anjoman-Light.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/anjoman/woff2/Anjoman-Light.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/anjoman/woff/Anjoman-Light.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/anjoman/ttf/Anjoman-Light.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: anjoman;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/anjoman/eot/Anjoman-Regular.eot');
+    src: url('../fonts/anjoman/eot/Anjoman-Regular.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/anjoman/woff2/Anjoman-Regular.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/anjoman/woff/Anjoman-Regular.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/anjoman/ttf/Anjoman-Regular.ttf') format('truetype');
+}
+
+
+body {
+    font-family: anjoman, roboto, Arial !important
+}
+
+.nav > li > a {
+    font-family: anjoman, roboto, Arial !important;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+    font-family: anjoman, roboto, Arial !important;
+}
+
+.alt-font {
+    font-family: anjoman, roboto, Arial !important;
+}

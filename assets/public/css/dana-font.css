@@ -1,0 +1,123 @@
+﻿/**
+*
+*	Name:			DANA Fonts
+*	Version:			1.0
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		May 22, 2019
+*	Updated on:		May 22, 2019
+*	Website:			http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت دانا یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+DANA fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (FBVKEA)
+------------------------------------------------------------------------------------- ../fonts/dana/-
+*
+**/
+
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: bold;
+	src: url('../fonts/dana/eot/dana-bold.eot');
+	src: url('../fonts/dana/eot/dana-bold.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+	url('../fonts/dana/woff2/dana-bold.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+	url('../fonts/dana/woff/dana-bold.woff') format('woff');  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: normal;
+	src: url('../fonts/dana/eot/dana-regular.eot');
+	src: url('../fonts/dana/eot/dana-regular.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+	url('../fonts/dana/woff2/dana-regular.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+	url('../fonts/dana/woff/dana-regular.woff') format('woff');  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+
+
+/**
+Iranic fonts
+**/
+
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: bold;
+	src: url('../fonts/dana/eot/dana-bolditalic.eot');
+	src: url('../fonts/dana/eot/dana-bolditalic.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+	url('../fonts/dana/woff2/dana-bolditalic.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+	url('../fonts/dana/woff/dana-bolditalic.woff') format('woff');  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: normal;
+	src: url('../fonts/dana/eot/dana-regularitalic.eot');
+	src: url('../fonts/dana/eot/dana-regularitalic.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+	url('../fonts/dana/woff2/dana-regularitalic.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+	url('../fonts/dana/woff/dana-regularitalic.woff') format('woff');  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+
+body {
+	font-family: dana, roboto, Arial !important
+}
+
+.nav > li > a {
+	font-family: dana, roboto, Arial !important;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+	font-family: dana, roboto, Arial !important;
+}
+
+.alt-font {
+	font-family: dana, roboto, Arial !important;
+}
+
+.post-title {direction: rtl;}
+.from_the_blog_excerpt {direction: rtl;}
+.mfp-ready .mfp-arrow-right, .mfp-ready .mfp-arrow-left {
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+body.rtl .uppercase,
+body.rtl h6,
+body.rtl th,
+body.rtl span.widget-title {
+	letter-spacing: 0;
+}
+input[type='email'], input[type='date'], input[type='search'], input[type='number'], input[type='text'], input[type='tel'], input[type='url'], input[type='password'], textarea, select, .select2-container .select2-choice, .select2-container .select2-selection {
+	direction: rtl;
+}
+body.rtl .stars a+a {
+	padding-right: .6em;
+}
+body.rtl .ux-timer {
+	direction: ltr;
+}
+
+.post-title {direction: rtl;}
+.from_the_blog_excerpt {direction: rtl;}
+.mfp-ready .mfp-arrow-right, .mfp-ready .mfp-arrow-left {
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+body.rtl .box-list-view .box .box-image,
+body.rtl .box-list-view .box .box-text,
+body.rtl .box-vertical .box-image,
+body.rtl  .box-vertical .box-text {direction: rtl}
+.nav-dropdown {
+	top: 100%;
+}

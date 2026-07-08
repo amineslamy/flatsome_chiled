@@ -1,0 +1,68 @@
+/**
+*
+*	Name:			Aria Font
+*	Version:		1.0
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		Dec 20, 2016
+*	Updated on:		Dec 20, 2016
+*	Website:		http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت ایران یکان یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+IRANYekan fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com 
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (A6M6PH)
+--------------------------------------------------------------------------------------
+*	
+**/
+
+@font-face {
+    font-family: aria;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/aria/eot/AriaWebFaNum-Bold.eot');
+    src: url('../fonts/aria/eot/AriaWebFaNum-Bold.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/aria/woff2/AriaWebFaNum-Bold.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/aria/woff/AriaWebFaNum-Bold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/aria/ttf/AriaWebFaNum-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: aria;
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/aria/eot/AriaWebFaNum-Light.eot');
+    src: url('../fonts/aria/eot/AriaWebFaNum-Light.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/aria/woff2/AriaWebFaNum-Light.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/aria/woff/AriaWebFaNum-Light.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/aria/ttf/AriaWebFaNum-Light.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: aria;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/aria/eot/AriaWebFaNum-Regular.eot');
+    src: url('../fonts/aria/eot/AriaWebFaNum-Regular.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/aria/woff2/AriaWebFaNum-Regular.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/aria/woff/AriaWebFaNum-Regular.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/aria/ttf/AriaWebFaNum-Regular.ttf') format('truetype');
+}
+
+
+body {
+    font-family: aria, roboto, Arial !important
+}
+
+.nav > li > a {
+    font-family: aria, roboto, Arial !important;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+    font-family: aria, roboto, Arial !important;
+}
+
+.alt-font {
+    font-family: aria, roboto, Arial !important;
+}
