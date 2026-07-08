@@ -84,18 +84,20 @@ if ( ! function_exists( 'flatsome_child_save_event_meta_box' ) ) {
 
 			// Ensure jQuery is a dependency so scripts load after it.
 			wp_enqueue_script( 'persian-date', $base . '/js/persian-date.min.js', array( 'jquery' ), '0.1.8', true );
-			wp_enqueue_script( 'persian-datepicker', $base . '/js/persian-datepicker.min.js', array( 'jquery' ), '1.2.0', true );
+			wp_enqueue_script( 'persian-datepicker', $base . '/js/persian-datepicker.min.js', array( 'jquery', 'persian-date' ), '1.2.0', true );
 			wp_enqueue_style( 'persian-datepicker-css', $base . '/css/persian-datepicker.min.css', array(), '1.2.0' );
 
 			// Initialize the picker on the event_date input after the page loads.
 			$init_js = <<<'JS'
 	jQuery(document).ready(function($) {
-	    $('#flatsome_child_event_date').persianDatepicker({
-	        format: 'YYYY/MM/DD',
-	        autoClose: true,
-	        initialValue: false,
-	        observer: true
-	    });
+	    if ( typeof $.fn.persianDatepicker !== 'undefined' ) {
+	        $('#flatsome_child_event_date').persianDatepicker({
+	            format: 'YYYY/MM/DD',
+	            autoClose: true,
+	            initialValue: false,
+	            observer: true
+	        });
+	    }
 	});
 JS;
 
