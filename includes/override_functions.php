@@ -20,12 +20,28 @@ if ( ! function_exists( 'flatsome_child_add_event_meta_box' ) ) {
 
 if ( ! function_exists( 'flatsome_child_render_event_metabox' ) ) {
 	function flatsome_child_render_event_metabox( $post ) {
-		wp_nonce_field( 'flatsome_child_event_meta_box_nonce', 'flatsome_child_event_meta_box_nonce_field' );
+		wp_nonce_field( 'sahab_save_event_date', 'sahab_event_date_nonce' );
 
 		$value = get_post_meta( $post->ID, 'event_date', true );
 
-		echo '<p><label for="flatsome_child_event_date">تاریخ وقوع</label></p>';
-		echo '<p><input type="text" id="flatsome_child_event_date" name="event_date" value="' . esc_attr( $value ) . '" class="widefat" /></p>';
+		echo '<link rel="stylesheet" href="' . get_stylesheet_directory_uri() . '/assets/admin/css/jalali-datepicker.min.css.css">';
+		echo '<label for="flatsome_child_event_date">تاریخ وقوع پرونده:</label>';
+		echo '<input type="text" id="flatsome_child_event_date" name="event_date" value="' . esc_attr( $value ) . '" style="width:100%;" placeholder="۱۴۰۵/۰۴/۱۸" data-jdp />';
+
+		$js_url = get_stylesheet_directory_uri() . '/assets/admin/js/jalali-datepicker.min.js';
+		?>
+		<script src="<?php echo esc_url( $js_url ); ?>"></script>
+		<script>
+		document.addEventListener("DOMContentLoaded", function() {
+		    // بررسی وجود کتابخانه نسخه 0.6.0
+		    if (typeof jalaliDatepicker !== 'undefined') {
+		        jalaliDatepicker.startWatch();
+		    } else {
+		        console.error("سحاب: کتابخانه jalaliDatepicker یافت نشد.");
+		    }
+		});
+		</script>
+		<?php
 	}
 }
 
@@ -79,29 +95,11 @@ if ( ! function_exists( 'flatsome_child_save_event_meta_box' ) ) {
 				return;
 			}
 
-			// Use local assets (offline-ready). Place these files under the child theme assets folder (see instructions below).
+			// Only enqueue the CSS for the datepicker in admin. JavaScript files are loaded inline in the metabox render callback.
 			$base = get_stylesheet_directory_uri() . '/assets/admin';
 
-			// Ensure jQuery is a dependency so scripts load after it.
-			wp_enqueue_script( 'persian-date', $base . '/js/persian-date.min.js', array( 'jquery' ), '0.1.8', true );
-			wp_enqueue_script( 'persian-datepicker', $base . '/js/persian-datepicker.min.js', array( 'jquery', 'persian-date' ), '1.2.0', true );
 			wp_enqueue_style( 'persian-datepicker-css', $base . '/css/persian-datepicker.min.css', array(), '1.2.0' );
 
-			// Initialize the picker on the event_date input after the page loads.
-			$init_js = <<<'JS'
-	jQuery(document).ready(function($) {
-	    if ( typeof $.fn.persianDatepicker !== 'undefined' ) {
-	        $('#flatsome_child_event_date').persianDatepicker({
-	            format: 'YYYY/MM/DD',
-	            autoClose: true,
-	            initialValue: false,
-	            observer: true
-	        });
-	    }
-	});
-JS;
-
-			wp_add_inline_script( 'persian-datepicker', $init_js );
 		}
 		add_action( 'admin_enqueue_scripts', 'flatsome_child_admin_enqueue_datepicker' );
 	}
