@@ -79,25 +79,24 @@ if ( ! function_exists( 'flatsome_child_save_event_meta_box' ) ) {
 				return;
 			}
 
-			// Enqueue dependencies from CDN (persian-date + persian-datepicker)
-			wp_enqueue_script( 'persian-date', 'https://cdn.jsdelivr.net/npm/persian-date@0.1.8/dist/persian-date.min.js', array( 'jquery' ), null, true );
-			wp_enqueue_script( 'persian-datepicker', 'https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js', array( 'jquery', 'persian-date' ), null, true );
-			wp_enqueue_style( 'persian-datepicker-css', 'https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css', array(), null );
+			// Use local assets (offline-ready). Place these files under the child theme assets folder (see instructions below).
+			$base = get_stylesheet_directory_uri() . '/assets/admin';
 
-			// Initialize the picker on the event_date input - allow typing and calendar selection
+			// Ensure jQuery is a dependency so scripts load after it.
+			wp_enqueue_script( 'persian-date', $base . '/js/persian-date.min.js', array( 'jquery' ), '0.1.8', true );
+			wp_enqueue_script( 'persian-datepicker', $base . '/js/persian-datepicker.min.js', array( 'jquery' ), '1.2.0', true );
+			wp_enqueue_style( 'persian-datepicker-css', $base . '/css/persian-datepicker.min.css', array(), '1.2.0' );
+
+			// Initialize the picker on the event_date input after the page loads.
 			$init_js = <<<'JS'
-jQuery(function($){
-	var $input = $('#flatsome_child_event_date');
-	if ( ! $input.length ) { $input = $('[name=event_date]'); }
-	if ( $input.length && typeof $.fn.persianDatepicker === 'function' ) {
-		$input.persianDatepicker({
-			format: 'YYYY/MM/DD',
-			observer: true,
-			initialValue: false,
-			altField: null
-		});
-	}
-});
+	jQuery(document).ready(function($) {
+	    $('#flatsome_child_event_date').persianDatepicker({
+	        format: 'YYYY/MM/DD',
+	        autoClose: true,
+	        initialValue: false,
+	        observer: true
+	    });
+	});
 JS;
 
 			wp_add_inline_script( 'persian-datepicker', $init_js );
