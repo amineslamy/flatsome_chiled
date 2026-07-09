@@ -61,7 +61,8 @@ get_header(); ?>
                             <div class="row">
                                 <div class="large-4 col" style="margin-bottom: 15px;">
                                     <label style="font-weight: bold; display: block; margin-bottom: 5px;">📁 انتخاب دسته‌بندی:</label>
-                                    <div style="max-height: 120px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                                    <input type="text" id="cat-search" placeholder="🔍 سرچ سریع دسته‌ها..." style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #ccc; height: 30px;">
+                                    <div class="sahab-cat-box" style="max-height: 120px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
                                         <?php
                                         $categories = get_categories(array('hide_empty' => 0));
                                         $selected_cats = isset($_GET['as_cats']) ? (array)$_GET['as_cats'] : array();
@@ -74,7 +75,8 @@ get_header(); ?>
 
                                 <div class="large-4 col" style="margin-bottom: 15px;">
                                     <label style="font-weight: bold; display: block; margin-bottom: 5px;">🏷️ انتخاب برچسب (Tag):</label>
-                                    <div style="max-height: 120px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                                    <input type="text" id="tag-search" placeholder="🔍 سرچ سریع برچسب‌ها..." style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #ccc; height: 30px;">
+                                    <div class="sahab-tag-box" style="max-height: 120px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
                                         <?php
                                         $tags = get_tags(array('hide_empty' => 0));
                                         $selected_tags = isset($_GET['as_tags']) ? (array)$_GET['as_tags'] : array();
@@ -248,6 +250,40 @@ document.addEventListener("DOMContentLoaded", function() {
             dateFormat: "yyyy/mm/dd",
             autoShow: true,
             autoHide: true
+        });
+    }
+
+    // فیلتر زنده دسته‌بندی‌ها
+    var catSearch = document.getElementById('cat-search');
+    if (catSearch) {
+        catSearch.addEventListener('input', function(e) {
+            var filter = e.target.value.trim().toLowerCase();
+            var labels = document.querySelectorAll('.sahab-cat-box label');
+            labels.forEach(function(label) {
+                var text = label.textContent || label.innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    label.style.display = 'block';
+                } else {
+                    label.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // فیلتر زنده برچسب‌ها
+    var tagSearch = document.getElementById('tag-search');
+    if (tagSearch) {
+        tagSearch.addEventListener('input', function(e) {
+            var filter = e.target.value.trim().toLowerCase();
+            var labels = document.querySelectorAll('.sahab-tag-box label');
+            labels.forEach(function(label) {
+                var text = label.textContent || label.innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    label.style.display = 'block';
+                } else {
+                    label.style.display = 'none';
+                }
+            });
         });
     }
 });
