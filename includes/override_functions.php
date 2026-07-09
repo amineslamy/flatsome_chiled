@@ -131,7 +131,7 @@ function sahab_inject_event_date_styles_and_script() {
                 if (eventDates[postId]) {
                     // ابتدا مطمئن می‌شویم که این کارت قبلاً تاریخ وقوع را دریافت نکرده است
                     if (!$card.find('.sahab-final-ev').length) {
-                        var $meta = $card.find('.post-meta, .entry-meta, .entry-meta-bar').first();
+                        var $meta = $card.find('header .entry-meta, .post-meta, .entry-meta-bar').first();
                         if ($meta.length) {
                             $meta.append('<span class="sahab-final-ev" style="color: #d9534f; font-weight: bold; margin-right: 5px; margin-left: 5px;"> | ⏱️ وقوع: ' + eventDates[postId] + '</span>');
                         }
