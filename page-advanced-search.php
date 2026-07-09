@@ -24,9 +24,13 @@ get_header(); ?>
                         <div class="large-4 col" style="margin-bottom: 15px;">
                             <label style="font-weight: bold; display: block; margin-bottom: 5px;">🔀 مرتب‌سازی بر اساس:</label>
                             <select name="as_order" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; height:43px;">
-                                <option value="date_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'date_desc'); ?>>جدیدترین تاریخ انتشار</option>
-                                <option value="date_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'date_asc'); ?>>قدیمی‌ترین تاریخ انتشار</option>
-                                <option value="relevance" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'relevance'); ?>>میزان ارتباط متنی</option>
+                                <option value="date_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'date_desc'); ?>>📅 جدیدترین تاریخ انتشار (ثبت)</option>
+                                <option value="date_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'date_asc'); ?>>📅 قدیمی‌ترین تاریخ انتشار (ثبت)</option>
+                                <option value="event_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'event_desc'); ?>>⏱️ جدیدترین تاریخ وقوع رویداد</option>
+                                <option value="event_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'event_asc'); ?>>⏱️ قدیمی‌ترین تاریخ وقوع رویداد</option>
+                                <option value="title_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'title_asc'); ?>>📝 عنوان گزارش (الفبا: الف تا ی)</option>
+                                <option value="title_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'title_desc'); ?>>📝 عنوان گزارش (الفبا: ی تا الف)</option>
+                                <option value="author_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'author_asc'); ?>>👤 ثبت‌کننده (الفبای نام نویسنده)</option>
                             </select>
                         </div>
                     </div>
@@ -137,16 +141,40 @@ get_header(); ?>
                         'paged'          => $paged,
                     );
 
-                    $order = isset($_GET['as_order']) ? $_GET['as_order'] : 'date_desc';
-                    if ($order == 'date_asc') {
-                        $args['orderby'] = 'date';
-                        $args['order'] = 'ASC';
-                    } elseif ($order == 'relevance') {
-                        $args['orderby'] = 'relevance';
-                        $args['order'] = 'DESC';
-                    } else {
-                        $args['orderby'] = 'date';
-                        $args['order'] = 'DESC';
+                    // پردازش منطق مرتب‌سازی پیشرفته و داینامیک دیتابیس
+                    $order_param = isset($_GET['as_order']) ? $_GET['as_order'] : 'date_desc';
+                    switch ($order_param) {
+                        case 'date_asc':
+                            $args['orderby'] = 'date';
+                            $args['order']   = 'ASC';
+                            break;
+                        case 'title_asc':
+                            $args['orderby'] = 'title';
+                            $args['order']   = 'ASC';
+                            break;
+                        case 'title_desc':
+                            $args['orderby'] = 'title';
+                            $args['order']   = 'DESC';
+                            break;
+                        case 'author_asc':
+                            $args['orderby'] = 'author';
+                            $args['order']   = 'ASC';
+                            break;
+                        case 'event_desc':
+                            $args['meta_key'] = 'event_date';
+                            $args['orderby']  = 'meta_value';
+                            $args['order']    = 'DESC';
+                            break;
+                        case 'event_asc':
+                            $args['meta_key'] = 'event_date';
+                            $args['orderby']  = 'meta_value';
+                            $args['order']    = 'ASC';
+                            break;
+                        case 'date_desc':
+                        default:
+                            $args['orderby'] = 'date';
+                            $args['order']   = 'DESC';
+                            break;
                     }
 
                     if (!empty($_GET['as_s']))       $args['s'] = sanitize_text_field($_GET['as_s']);

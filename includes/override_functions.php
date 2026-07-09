@@ -24,7 +24,7 @@ if ( ! function_exists( 'flatsome_child_render_event_metabox' ) ) {
 
 		$value = get_post_meta( $post->ID, 'event_date', true );
 
-		echo '<link rel="stylesheet" href="' . get_stylesheet_directory_uri() . '/assets/admin/css/jalali-datepicker.min.css.css">';
+		echo '<link rel="stylesheet" href="' . get_stylesheet_directory_uri() . '/assets/admin/css/jalali-datepicker.min.css">';
 		echo '<label for="flatsome_child_event_date">تاریخ وقوع پرونده:</label>';
 		echo '<input type="text" id="flatsome_child_event_date" name="event_date" value="' . esc_attr( $value ) . '" style="width:100%;" placeholder="۱۴۰۵/۰۴/۱۸" data-jdp />';
 
