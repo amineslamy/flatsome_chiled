@@ -14,24 +14,14 @@ get_header(); ?>
             </header>
     
             <div class="entry-content">
-                <form method="get" action="" class="sahab-adv-search-form" style="background: #f9f9f9; padding: 25px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 40px; direction: rtl; text-align: right;">
-            
+                <form method="get" action="" class="sahab-adv-search-form" style="background: #f9f9f9; padding: 25px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 30px; direction: rtl; text-align: right;">
+                    
+                    <input type="hidden" name="load_all" id="sahab-load-all" value="<?php echo isset($_GET['load_all']) ? esc_attr($_GET['load_all']) : '0'; ?>">
+
                     <div class="row">
-                        <div class="large-8 col" style="margin-bottom: 15px;">
+                        <div class="large-12 col" style="margin-bottom: 15px;">
                             <label style="font-weight: bold; display: block; margin-bottom: 5px;">🔎 کلمه کلیدی جستجو (شامل متن، عنوان و کامنت‌ها):</label>
                             <input type="text" name="as_s" value="<?php echo isset($_GET['as_s']) ? esc_attr($_GET['as_s']) : ''; ?>" placeholder="عبارت مورد نظر را وارد کنید..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
-                        </div>
-                        <div class="large-4 col" style="margin-bottom: 15px;">
-                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">🔀 مرتب‌سازی بر اساس:</label>
-                            <select name="as_order" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; height:43px;">
-                                <option value="date_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'date_desc'); ?>>📅 جدیدترین تاریخ انتشار (ثبت)</option>
-                                <option value="date_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'date_asc'); ?>>📅 قدیمی‌ترین تاریخ انتشار (ثبت)</option>
-                                <option value="event_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'event_desc'); ?>>⏱️ جدیدترین تاریخ وقوع رویداد</option>
-                                <option value="event_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'event_asc'); ?>>⏱️ قدیمی‌ترین تاریخ وقوع رویداد</option>
-                                <option value="title_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'title_asc'); ?>>📝 عنوان گزارش (الفبا: الف تا ی)</option>
-                                <option value="title_desc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'title_desc'); ?>>📝 عنوان گزارش (الفبا: ی تا الف)</option>
-                                <option value="author_asc" <?php selected(isset($_GET['as_order']) && $_GET['as_order'] == 'author_asc'); ?>>👤 ثبت‌کننده (الفبای نام نویسنده)</option>
-                            </select>
                         </div>
                     </div>
 
@@ -60,7 +50,7 @@ get_header(); ?>
                             <div class="sahab-cat-box" style="max-height: 120px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
                                 <?php
                                 $categories = get_categories(array('hide_empty' => 0));
-                                $selected_cats = isset($_GET['as_cats']) ? (array) $_GET['as_cats'] : array();
+                                $selected_cats = isset($_GET['as_cats']) ? (array)$_GET['as_cats'] : array();
                                 foreach ($categories as $cat) {
                                     echo '<label style="display:block; font-weight:normal; margin-bottom:3px;"><input type="checkbox" name="as_cats[]" value="' . $cat->term_id . '" ' . checked(in_array($cat->term_id, $selected_cats), true, false) . '> ' . esc_html($cat->name) . '</label>';
                                 }
@@ -74,7 +64,7 @@ get_header(); ?>
                             <div class="sahab-tag-box" style="max-height: 120px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
                                 <?php
                                 $tags = get_tags(array('hide_empty' => 0));
-                                $selected_tags = isset($_GET['as_tags']) ? (array) $_GET['as_tags'] : array();
+                                $selected_tags = isset($_GET['as_tags']) ? (array)$_GET['as_tags'] : array();
                                 foreach ($tags as $tag) {
                                     echo '<label style="display:block; font-weight:normal; margin-bottom:3px;"><input type="checkbox" name="as_tags[]" value="' . $tag->term_id . '" ' . checked(in_array($tag->term_id, $selected_tags), true, false) . '> ' . esc_html($tag->name) . '</label>';
                                 }
@@ -96,13 +86,13 @@ get_header(); ?>
                         </div>
                     </div>
 
-                    <div style="text-align: left; margin-top: 15px;">
-                        <button type="submit" class="button primary" style="font-weight: bold; padding: 10px 30px; border-radius: 4px; background-color: #d9534f;">🎯 شروع فیلتر و جستجو</button>
-                        <a href="<?php echo home_url('/advanced-search/'); ?>" class="button secondary text-dark" style="padding: 10px 20px; border-radius: 4px; margin-right: 10px;">🔄 پاکسازی فرم</a>
+                    <div style="text-align: left; margin-top: 5px;">
+                        <button type="submit" class="button primary" style="font-weight: bold; padding: 10px 30px; border-radius: 4px; background-color: #d9534f; margin: 0;">🎯 شروع فیلتر و جستجو</button>
+                        <a href="<?php echo home_url('/advanced-search/'); ?>" class="button secondary text-dark" style="padding: 10px 20px; border-radius: 4px; margin-right: 10px; margin: 0;">🔄 پاکسازی فرم</a>
                     </div>
-                </form>
 
                 <?php
+                // ۱. بخش پردازش و دانلود خروجی استاندارد XML وردپرس
                 if (isset($_GET['export_xml']) && $_GET['export_xml'] === '1') {
                     $args = array('post_type' => 'post', 'posts_per_page' => -1, 'post_status' => 'publish');
                     if (!empty($_GET['as_s'])) $args['s'] = sanitize_text_field($_GET['as_s']);
@@ -111,20 +101,16 @@ get_header(); ?>
                     if (!empty($_GET['as_tags'])) $args['tag__in'] = array_map('intval', $_GET['as_tags']);
                     if (!empty($_GET['start_event']) || !empty($_GET['end_event'])) {
                         $args['meta_query'] = array('relation' => 'AND');
-                        if (!empty($_GET['start_event'])) {
-                            $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['start_event']), 'compare' => '>=', 'type' => 'CHAR');
-                        }
-                        if (!empty($_GET['end_event'])) {
-                            $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['end_event']), 'compare' => '<=', 'type' => 'CHAR');
-                        }
+                        if (!empty($_GET['start_event'])) { $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['start_event']), 'compare' => '>=', 'type' => 'CHAR'); }
+                        if (!empty($_GET['end_event'])) { $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['end_event']), 'compare' => '<=', 'type' => 'CHAR'); }
                     }
-
+                    
                     $export_query = new WP_Query($args);
                     if (function_exists('relevanssi_do_query') && !empty($args['s'])) {
                         relevanssi_do_query($export_query);
                     }
                     $post_ids = wp_list_pluck($export_query->posts, 'ID');
-
+                    
                     if (!empty($post_ids)) {
                         require_once ABSPATH . 'wp-admin/includes/export.php';
                         if (ob_get_length()) { ob_end_clean(); }
@@ -133,66 +119,34 @@ get_header(); ?>
                     }
                 }
 
-                if (!empty($_GET['as_s']) || !empty($_GET['start_reg']) || !empty($_GET['start_event']) || !empty($_GET['as_cats']) || !empty($_GET['as_tags']) || !empty($_GET['as_author'])) {
+                // ۲. بخش اجرای کوئری نمایش نتایج روی صفحه (اصلاح شرط برای پشتیبانی از سیگنال نمایش همه)
+                $should_load_all = (isset($_GET['load_all']) && $_GET['load_all'] === '1');
+                
+                if ($should_load_all || !empty($_GET['as_s']) || !empty($_GET['start_reg']) || !empty($_GET['start_event']) || !empty($_GET['as_cats']) || !empty($_GET['as_tags']) || !empty($_GET['as_author'])) {
+                    $posts_per_page = isset($_GET['as_per_page']) ? intval($_GET['as_per_page']) : 12;
                     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
                     $args = array(
                         'post_type'      => 'post',
-                        'posts_per_page' => 12,
+                        'posts_per_page' => $posts_per_page,
                         'paged'          => $paged,
+                        'post_status'    => 'publish'
                     );
 
-                    // پردازش منطق مرتب‌سازی پیشرفته و داینامیک دیتابیس
+                    // پردازش منطق مرتب‌سازی پیشرفته دیتابیس
                     $order_param = isset($_GET['as_order']) ? $_GET['as_order'] : 'date_desc';
                     switch ($order_param) {
-                        case 'date_asc':
-                            $args['orderby'] = 'date';
-                            $args['order']   = 'ASC';
-                            break;
-                        case 'title_asc':
-                            $args['orderby'] = 'title';
-                            $args['order']   = 'ASC';
-                            break;
-                        case 'title_desc':
-                            $args['orderby'] = 'title';
-                            $args['order']   = 'DESC';
-                            break;
-                        case 'author_asc':
-                            $args['orderby'] = 'author';
-                            $args['order']   = 'ASC';
-                            break;
-                        case 'event_desc':
-                            $args['meta_key'] = 'event_date';
-                            $args['orderby']  = 'meta_value';
-                            $args['order']    = 'DESC';
-                            break;
-                        case 'event_asc':
-                            $args['meta_key'] = 'event_date';
-                            $args['orderby']  = 'meta_value';
-                            $args['order']    = 'ASC';
-                            break;
+                        case 'date_asc':   $args['orderby'] = 'date'; $args['order'] = 'ASC'; break;
+                        case 'title_asc':  $args['orderby'] = 'title'; $args['order'] = 'ASC'; break;
+                        case 'title_desc': $args['orderby'] = 'title'; $args['order'] = 'DESC'; break;
+                        case 'author_asc': $args['orderby'] = 'author'; $args['order'] = 'ASC'; break;
+                        case 'event_desc': $args['meta_key'] = 'event_date'; $args['orderby'] = 'meta_value'; $args['order'] = 'DESC'; break;
+                        case 'event_asc':  $args['meta_key'] = 'event_date'; $args['orderby'] = 'meta_value'; $args['order'] = 'ASC'; break;
                         case 'date_desc':
-                        default:
-                            $args['orderby'] = 'date';
-                            $args['order']   = 'DESC';
-                            break;
-                    }
-
-                    if (!empty($_GET['as_s']))       $args['s'] = sanitize_text_field($_GET['as_s']);
-                    if (!empty($_GET['as_author']))  $args['author'] = intval($_GET['as_author']);
-                    if (!empty($_GET['as_cats']))    $args['category__in'] = array_map('intval', $_GET['as_cats']);
-                    if (!empty($_GET['as_tags']))    $args['tag__in'] = array_map('intval', $_GET['as_tags']);
-
-                    if (!empty($_GET['start_event']) || !empty($_GET['end_event'])) {
-                        $args['meta_query'] = array('relation' => 'AND');
-                        if (!empty($_GET['start_event'])) {
-                            $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['start_event']), 'compare' => '>=', 'type' => 'CHAR');
-                        }
-                        if (!empty($_GET['end_event'])) {
-                            $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['end_event']), 'compare' => '<=', 'type' => 'CHAR');
-                        }
+                        default:           $args['orderby'] = 'date'; $args['order'] = 'DESC'; break;
                     }
 
                     $query = new WP_Query($args);
+                    
                     if (function_exists('relevanssi_do_query') && !empty($args['s'])) {
                         relevanssi_do_query($query);
                     }
@@ -200,29 +154,68 @@ get_header(); ?>
                     if ($query->have_posts()) {
                         $current_url = $_SERVER['REQUEST_URI'];
                         $export_url = add_query_arg('export_xml', '1', $current_url);
-
-                        echo '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:10px;">';
-                        echo '<h3 style="margin:0; color:#222;">📚 نتایج فیلتر پیشرفته (' . $query->found_posts . ' گزارش):</h3>';
-                        echo '<a href="' . esc_url($export_url) . '" class="button success" style="background-color:#28a745; color:#fff; font-weight:bold; border-radius:4px; padding:8px 16px; margin:0; white-space:nowrap;">📥 خروجی XML این نتایج</a>';
+                        
+                        // ردیف سه ستونه ابزارهای جدول
+                        echo '<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 15px; flex-wrap: wrap; gap: 15px; direction: rtl;">';
+                        
+                        echo '<div style="flex: 1; min-width: 200px; text-align: right;">';
+                        echo '<h3 style="margin: 0; color: #222; font-size: 18px;">📚 نتایج فیلتر پیشرفته (' . $query->found_posts . ' گزارش):</h3>';
+                        echo '<div style="font-size:11px; color:#666; margin-top:3px;">' . ($should_load_all ? '💡 در حال نمایش کل پایگاه داده بدون فیلتر متنی' : '💡 فیلترهای هوشمند فعال هستند') . '</div>';
+                        echo '</div>';
+                        
+                        echo '<div style="display: flex; gap: 10px; align-items: flex-end; justify-content: center;">';
+                        
+                        echo '<div>';
+                        echo '<label style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 3px;">🔀 مرتب‌سازی بر اساس:</label>';
+                        echo '<select name="as_order" onchange="this.form.submit();" style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ccc; height: 34px; font-size: 12px; background: #fff; margin:0; width:170px;">';
+                        echo '<option value="date_desc"' . selected($order_param, 'date_desc', false) . '>📅 جدیدترین ثبت</option>';
+                        echo '<option value="date_asc"' . selected($order_param, 'date_asc', false) . '>📅 قدیمی‌ترین ثبت</option>';
+                        echo '<option value="event_desc"' . selected($order_param, 'event_desc', false) . '>⏱️ جدیدترین وقوع</option>';
+                        echo '<option value="event_asc"' . selected($order_param, 'event_asc', false) . '>⏱️ قدیمی‌ترین وقوع</option>';
+                        echo '<option value="title_asc"' . selected($order_param, 'title_asc', false) . '>📝 عنوان (الف-ی)</option>';
+                        echo '<option value="title_desc"' . selected($order_param, 'title_desc', false) . '>📝 عنوان (ی-الف)</option>';
+                        echo '<option value="author_asc"' . selected($order_param, 'author_asc', false) . '>👤 ثبت‌کننده</option>';
+                        echo '</select>';
+                        echo '</div>';
+                        
+                        echo '<div>';
+                        echo '<label style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 3px;">📄 تعداد نمایش:</label>';
+                        echo '<select name="as_per_page" onchange="this.form.submit();" style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ccc; height: 34px; font-size: 12px; background: #fff; margin:0; width:100px;">';
+                        echo '<option value="12"' . selected($posts_per_page, 12, false) . '>۱۲ گزارش</option>';
+                        echo '<option value="25"' . selected($posts_per_page, 25, false) . '>۲۵ گزارش</option>';
+                        echo '<option value="50"' . selected($posts_per_page, 50, false) . '>۵۰ گزارش</option>';
+                        echo '<option value="100"' . selected($posts_per_page, 100, false) . '>۱۰۰ گزارش</option>';
+                        echo '<option value="-1"' . selected($posts_per_page, -1, false) . '>🚀 نمایش همه</option>';
+                        echo '</select>';
+                        echo '</div>';
+                        
+                        echo '</div>';
+                        
+                        echo '<div style="text-align: left;">';
+                        echo '<a href="' . esc_url($export_url) . '" class="button success" style="background-color: #28a745; color: #fff; font-weight: bold; border-radius: 4px; padding: 7px 15px; margin: 0; font-size: 12px; white-space: nowrap; height: 34px; line-height: 20px; display: inline-block;">📥 خروجی XML این نتایج</a>';
+                        echo '</div>';
+                        
                         echo '</div>';
 
+                        // تابع کمکی بولد کردن کلمه کلیدی
                         $search_keyword = !empty($_GET['as_s']) ? sanitize_text_field($_GET['as_s']) : '';
                         function sahab_highlight_keyword($text, $keyword) {
                             if (empty($keyword)) return $text;
                             return preg_replace('/(' . preg_quote($keyword, '/') . ')/iu', '<strong style="background-color: #fff3cd; color: #d9534f; padding: 0 2px; border-radius: 2px;">$1</strong>', $text);
                         }
 
-                        echo '<div class="sahab-table-wrapper" style="overflow-x: auto; margin-top: 20px; direction: rtl; text-align: right;">';
-                        echo '<table id="sahabResultTable" style="width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e5e5e5; font-size: 14px;">';
-                        echo '<thead style="background: #f1f1f1; border-bottom: 2px solid #ccc;">';
+                        // ساختار جدول پیشرفته سحاب
+                        echo '<div class="sahab-table-wrapper" style="overflow-x: auto; direction: rtl; text-align: right;">';
+                        echo '<table id="sahabResultTable" style="width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e5e5e5; font-size: 13px;">';
+                        echo '<thead style="background: #f1f1f1; border-bottom: 2px solid #ccc; user-select: none;">';
                         echo '<tr>';
                         echo '<th style="padding: 12px; text-align: center; width: 40px;"><input type="checkbox" id="selectAllPosts" style="margin:0;"></th>';
-                        echo '<th onclick="sortTable(1)" style="padding: 12px; cursor: pointer; user-select: none;">📝 عنوان گزارش ↕️</th>';
-                        echo '<th onclick="sortTable(2)" style="padding: 12px; text-align: center; width: 120px; cursor: pointer; user-select: none;">👤 ثبت‌کننده ↕️</th>';
-                        echo '<th onclick="sortTable(3)" style="padding: 12px; text-align: center; width: 130px; cursor: pointer; user-select: none;">📁 دسته‌بندی ↕️</th>';
-                        echo '<th onclick="sortTable(4)" style="padding: 12px; text-align: center; width: 130px; cursor: pointer; user-select: none;">🏷️ برچسب‌ها ↕️</th>';
-                        echo '<th onclick="sortTable(5)" style="padding: 12px; text-align: center; width: 110px; cursor: pointer; user-select: none;">📅 ثبت ↕️</th>';
-                        echo '<th onclick="sortTable(6)" style="padding: 12px; text-align: center; width: 110px; cursor: pointer; user-select: none;">⏱️ وقوع ↕️</th>';
+                        echo '<th onclick="sortTable(1)" style="padding: 12px; cursor: pointer;">📝 عنوان گزارش ↕️</th>';
+                        echo '<th onclick="sortTable(2)" style="padding: 12px; text-align: center; width: 120px; cursor: pointer;">👤 ثبت‌کننده ↕️</th>';
+                        echo '<th onclick="sortTable(3)" style="padding: 12px; text-align: center; width: 130px; cursor: pointer;">📁 دسته‌بندی ↕️</th>';
+                        echo '<th onclick="sortTable(4)" style="padding: 12px; text-align: center; width: 120px; cursor: pointer;">🏷️ برچسب‌ها ↕️</th>';
+                        echo '<th onclick="sortTable(5)" style="padding: 12px; text-align: center; width: 110px; cursor: pointer;">📅 ثبت ↕️</th>';
+                        echo '<th onclick="sortTable(6)" style="padding: 12px; text-align: center; width: 110px; cursor: pointer;">⏱️ وقوع ↕️</th>';
                         echo '<th style="padding: 12px; text-align: center; width: 70px;">عملیات</th>';
                         echo '</tr>';
                         echo '</thead>';
@@ -232,13 +225,17 @@ get_header(); ?>
                             $query->the_post();
                             $post_id = get_the_ID();
                             $event_date = get_post_meta($post_id, 'event_date', true);
+                            
                             $author_name = get_the_author();
                             $cats_list = wp_get_post_categories($post_id, array('fields' => 'names'));
                             $cats_str = !empty($cats_list) ? implode('، ', $cats_list) : '---';
+                            
                             $tags_list = wp_get_post_tags($post_id, array('fields' => 'names'));
                             $tags_str = !empty($tags_list) ? implode('، ', $tags_list) : '---';
+
                             $raw_title = get_the_title();
                             $raw_excerpt = wp_trim_words(get_the_excerpt(), 15, '...');
+                            
                             $highlighted_title = sahab_highlight_keyword($raw_title, $search_keyword);
                             $highlighted_excerpt = sahab_highlight_keyword($raw_excerpt, $search_keyword);
 
@@ -246,7 +243,7 @@ get_header(); ?>
                             echo '<td style="padding: 12px; text-align: center;"><input type="checkbox" class="post-bulletin-select" value="' . $post_id . '" style="margin:0;"></td>';
                             echo '<td style="padding: 12px;">';
                             echo '<a href="' . get_permalink() . '" style="font-weight: bold; color: #333; text-decoration: none; display: block; margin-bottom: 4px;">' . $highlighted_title . '</a>';
-                            echo '<div style="font-size: 12px; color: #666; line-height: 1.5;">' . $highlighted_excerpt . '</div>';
+                            echo '<div style="font-size: 11px; color: #777; line-height: 1.4;">' . $highlighted_excerpt . '</div>';
                             echo '</td>';
                             echo '<td style="padding: 12px; text-align: center; color: #444;">' . esc_html($author_name) . '</td>';
                             echo '<td style="padding: 12px; text-align: center; color: #0066cc; font-size:12px;">' . esc_html($cats_str) . '</td>';
@@ -261,6 +258,7 @@ get_header(); ?>
                         echo '</table>';
                         echo '</div>';
 
+                        // سیستم صفحه‌بندی فلتسام
                         $paginated_links = paginate_links(array(
                             'base'      => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
                             'format'    => '?paged=%#%',
@@ -282,12 +280,14 @@ get_header(); ?>
                             echo '</ul>';
                             echo '</div>';
                         }
+                        
                     } else {
-                        echo '<div class="notice-box style-warning" style="text-align:center; padding:20px; background:#fff3cd; border-radius:4px; color:#856404;">⚠️ هیچ گزارشی متناسب با فیلترهای انتخابی شما یافت نشد.</div>';
+                        echo '<div class="notice-box style-warning" style="text-align:center; padding:20px; background:#fff3cd; border-radius:4px; color:#856404; margin-top:20px;">⚠️ هیچ گزارشی متناسب با فیلترهای انتخابی شما یافت نشد.</div>';
                     }
                     wp_reset_postdata();
                 }
                 ?>
+                </form>
             </div>
         </div>
     </div>
@@ -304,6 +304,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // فیلتر زنده دسته‌بندی‌ها
     var catSearch = document.getElementById('cat-search');
     if (catSearch) {
         catSearch.addEventListener('input', function(e) {
@@ -311,11 +312,16 @@ document.addEventListener("DOMContentLoaded", function() {
             var labels = document.querySelectorAll('.sahab-cat-box label');
             labels.forEach(function(label) {
                 var text = label.textContent || label.innerText;
-                label.style.display = text.toLowerCase().indexOf(filter) > -1 ? 'block' : 'none';
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    label.style.display = 'block';
+                } else {
+                    label.style.display = 'none';
+                }
             });
         });
     }
 
+    // فیلتر زنده برچسب‌ها
     var tagSearch = document.getElementById('tag-search');
     if (tagSearch) {
         tagSearch.addEventListener('input', function(e) {
@@ -323,11 +329,16 @@ document.addEventListener("DOMContentLoaded", function() {
             var labels = document.querySelectorAll('.sahab-tag-box label');
             labels.forEach(function(label) {
                 var text = label.textContent || label.innerText;
-                label.style.display = text.toLowerCase().indexOf(filter) > -1 ? 'block' : 'none';
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    label.style.display = 'block';
+                } else {
+                    label.style.display = 'none';
+                }
             });
         });
     }
 
+    // انتخاب همگانی چک‌باکس‌ها
     var selectAllPosts = document.getElementById('selectAllPosts');
     if (selectAllPosts) {
         selectAllPosts.addEventListener('change', function(e) {
@@ -338,8 +349,41 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
+
+    // منطق گیت امنیتی و تزریق سیگنال نمایش کل دیتابیس
+    var form = document.querySelector('.sahab-adv-search-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            var keyword = form.querySelector('input[name="as_s"]').value.trim();
+            var startReg = form.querySelector('input[name="start_reg"]').value.trim();
+            var endReg = form.querySelector('input[name="end_reg"]').value.trim();
+            var startEvent = form.querySelector('input[name="start_event"]').value.trim();
+            var endEvent = form.querySelector('input[name="end_event"]').value.trim();
+            var author = form.querySelector('select[name="as_author"]').value;
+            
+            var hasCats = form.querySelectorAll('input[name="as_cats[]"]:checked').length > 0;
+            var hasTags = form.querySelectorAll('input[name="as_tags[]"]:checked').length > 0;
+
+            // اگر تمام فیلترها کاملاً خالی باشند
+            if (!keyword && !startReg && !endReg && !startEvent && !endEvent && !author && !hasCats && !hasTags) {
+                var confirmLoadAll = confirm("⚠️ هشدار امنیتی سحاب:\n\nشما هیچ فیلتری را برای جستجو تنظیم نکرده‌اید!\nدر صورت تایید، تمام محتویات پایگاه داده به صورت یک‌جا رندر خواهد شد که ممکن است فشار شدیدی به سرور وارد کند.\n\nآیا مایلید کل پایگاه داده را در قالب جدول مشاهده کنید؟");
+                
+                if (confirmLoadAll) {
+                    // مقدار فیلد پنهان را روی ۱ می‌گذاریم تا بک‌آند شرط را دور بزند
+                    document.getElementById('sahab-load-all').value = '1';
+                } else {
+                    // اگر لغو کرد، فرم ارسال نمی‌شود و هیچ اتفاقی نمی‌افتد
+                    e.preventDefault();
+                }
+            } else {
+                // اگر فیلتری پر بود، سیگنال نمایش همه را ریست می‌کنیم
+                document.getElementById('sahab-load-all').value = '0';
+            }
+        });
+    }
 });
 
+// تابع مرتب‌سازی هوشمند فرانت‌آند سحاب
 function sortTable(columnIndex) {
     var table = document.getElementById('sahabResultTable');
     if (!table) return;
@@ -351,6 +395,7 @@ function sortTable(columnIndex) {
     rowsArray.sort(function(a, b) {
         var aText = a.children[columnIndex].textContent.trim();
         var bText = b.children[columnIndex].textContent.trim();
+
         var aNumber = parseFloat(aText.replace(/[^0-9\-\.]/g, ''));
         var bNumber = parseFloat(bText.replace(/[^0-9\-\.]/g, ''));
 
