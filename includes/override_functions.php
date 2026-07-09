@@ -143,3 +143,27 @@ function sahab_inject_event_date_styles_and_script() {
     </script>
     <?php
 }
+
+add_filter('get_search_form', 'sahab_add_advanced_search_link_to_form', 99);
+function sahab_add_advanced_search_link_to_form($form) {
+    // ساخت لینک به برگه جستجوی پیشرفته (آدرس برگه را بعدا با نامک advanced-search خواهیم ساخت)
+    $advanced_search_url = home_url('/advanced-search/');
+    
+    $link_html = '<div class="advanced-search-link-wrapper" style="margin-top: 8px; text-align: right; direction: rtl;">';
+    $link_html .= '<a href="' . esc_url($advanced_search_url) . '" style="font-size: 13px; color: #d9534f; font-weight: bold; text-decoration: underline;">⚙️ ورود به صفحه جستجوی پیشرفته</a>';
+    $link_html .= '</div>';
+    
+    // تزریق لینک درست قبل از بسته شدن تگ فرم
+    return str_replace('</form>', $link_html . '</form>', $form);
+}
+ 
+add_action('wp_enqueue_scripts', 'sahab_enqueue_datepicker_in_frontend');
+function sahab_enqueue_datepicker_in_frontend() {
+    if (is_page_template('page-advanced-search.php') || is_page('advanced-search')) {
+        // لود فایل استایل اصلاح شده
+        wp_enqueue_style('jalali-datepicker-css', get_stylesheet_directory_uri() . '/assets/admin/css/jalali-datepicker.min.css');
+        
+        // لود فایل جاوااسکریپت دیت‌پیکر کمالی
+        wp_enqueue_script('jalali-datepicker-js', get_stylesheet_directory_uri() . '/assets/admin/js/jalali-datepicker.min.js', array(), null, true);
+    }
+}
