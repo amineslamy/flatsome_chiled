@@ -149,55 +149,63 @@ function flatsome_child_generate_automation_id( $post_id ) {
 
 add_action( 'acf/save_post', 'flatsome_child_generate_automation_id', 5 );
 
-function flatsome_child_enqueue_jalali_datepicker_assets() {
-	wp_enqueue_style(
-		'flatsome-child-jalali-datepicker-css',
-		get_stylesheet_directory_uri() . '/assets/admin/css/jalali-datepicker.min.css',
-		array(),
-		'1.0.0'
-	);
+/**
+ * Unified Jalali datepicker integration: enqueue assets and initialize safely.
+ */
+function flatsome_child_jalali_datepicker_setup() {
+	$base = get_stylesheet_directory_uri() . '/assets/admin';
 
-	wp_enqueue_script(
-		'flatsome-child-jalali-datepicker-js',
-		get_stylesheet_directory_uri() . '/assets/admin/js/jalali-datepicker.min.js',
-		array(),
-		'1.0.0',
-		true
-	);
+	wp_enqueue_style( 'flatsome-child-jalali-datepicker-css', $base . '/css/jalali-datepicker.min.css', array(), null );
+	wp_enqueue_script( 'flatsome-child-jalali-datepicker-js', $base . '/js/jalali-datepicker.min.js', array(), null, true );
 }
 
-add_action( 'admin_enqueue_scripts', 'flatsome_child_enqueue_jalali_datepicker_assets' );
-add_action( 'wp_enqueue_scripts', 'flatsome_child_enqueue_jalali_datepicker_assets' );
+add_action( 'admin_enqueue_scripts', 'flatsome_child_jalali_datepicker_setup' );
+add_action( 'wp_enqueue_scripts', 'flatsome_child_jalali_datepicker_setup' );
 
-function flatsome_child_configure_event_date_field( $field ) {
-	// Inject data-jdp and autocomplete="off" directly into the HTML input tag attributes
-	if ( ! isset( $field['custom_attributes'] ) || ! is_array( $field['custom_attributes'] ) ) {
-		$field['custom_attributes'] = array();
-	}
-	$field['custom_attributes']['data-jdp'] = 'true';
-	$field['custom_attributes']['autocomplete'] = 'off';
+function flatsome_child_jalali_datepicker_footer_init() {
+	?>
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		try {
+			// Find inputs by ACF wrapper data-name or input name/id containing "event_date"
+			var selectors = [
+				'[data-name="event_date"] input',
+				'input[name*="event_date"]',
+				'input[id*="event_date"]'
+			];
 
-	return $field;
-}
+			var nodes = [];
+			selectors.forEach(function(sel) {
+				document.querySelectorAll(sel).forEach(function(n) {
+					if (nodes.indexOf(n) === -1) nodes.push(n);
+				});
+			});
 
-add_filter( 'acf/load_field/name=event_date', 'flatsome_child_configure_event_date_field' );
+			if (nodes.length) {
+				nodes.forEach(function(input) {
+					try {
+						input.setAttribute('data-jdp', 'true');
+						input.setAttribute('autocomplete', 'off');
+					} catch (e) {
+						// ignore individual failures
+					}
+				});
+			}
 
-function flatsome_child_initialize_jalali_datepicker() {
-	echo '<script>
-	document.addEventListener("DOMContentLoaded", function() {
-		if (typeof jalaliDatepicker !== "undefined") {
-			var acfEventDateInput = document.querySelector("input[name=\"event_date\"], input[data-jdp]");
-			if (acfEventDateInput) {
+			if (typeof jalaliDatepicker !== 'undefined') {
 				jalaliDatepicker.startWatch({
-					minDate: "attr",
-					maxDate: "attr",
+					minDate: 'attr',
+					maxDate: 'attr',
 					autoReadOnlyInput: true
 				});
 			}
+		} catch (e) {
+			if (window.console && console.error) console.error('JDP init error', e);
 		}
 	});
-	</script>';
+	</script>
+	<?php
 }
 
-add_action( 'admin_footer', 'flatsome_child_initialize_jalali_datepicker' );
-add_action( 'wp_footer', 'flatsome_child_initialize_jalali_datepicker' );
+add_action( 'admin_footer', 'flatsome_child_jalali_datepicker_footer_init' );
+add_action( 'wp_footer', 'flatsome_child_jalali_datepicker_footer_init' );
