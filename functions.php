@@ -328,8 +328,8 @@ function flatsome_child_reorder_and_enrich_comment_fields( $fields ) {
 		wp_enqueue_editor();
 	}
 
-	// ۱. رندر فیلد نوع پی‌نوشت به‌صورت یک سلکت HTML نیتیو (برای جلوگیری از مشکلات عدم ذخیره ACF در فرم کامنت)
-	$acf_html = '<p class="comment-form-comment_type"><label style="display:block;font-weight:bold;margin-bottom:5px;" for="comment_type">نوع پی‌نوشت <span class="required">*</span></label><select name="comment_type" id="comment_type" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;"><option value="rewrite">بازنویسی خبر</option><option value="note">ملاحظه</option><option value="theory">نظریه</option></select></p>';
+	// ۱. رندر فیلد نوع پی‌نوشت به‌صورت رادیوهای این‌لاین و کم‌حجم
+	$acf_html = '<p class="comment-form-comment_type"><label style="display:block;font-weight:bold;margin-bottom:5px;">نوع پی‌نوشت</label><span style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;"><label style="font-weight:normal;"><input type="radio" name="comment_type" value="" checked style="margin-left:5px;">هیچ‌کدام</label><label style="font-weight:normal;"><input type="radio" name="comment_type" value="rewrite" style="margin-left:5px;">بازنویسی خبر</label><label style="font-weight:normal;"><input type="radio" name="comment_type" value="note" style="margin-left:5px;">ملاحظه</label><label style="font-weight:normal;"><input type="radio" name="comment_type" value="theory" style="margin-left:5px;">نظریه</label></span></p>';
 
 	// ۲. ساخت کادر متنی مجهز به ویرایشگر حرفه‌ای و حداقلی وردپرس (TinyMCE)
 	ob_start();
@@ -352,74 +352,6 @@ function flatsome_child_reorder_and_enrich_comment_fields( $fields ) {
 	$custom_fields['comment_field'] = '<div class="sahab-comment-fields-wrapper">' . $acf_html . '<p class="comment-form-comment"><label for="sahab_comment_editor">متن پی‌نوشت <span class="required">*</span></label>' . $editor_html . '</p></div>';
 
 	return $custom_fields;
-}
-
-/**
- * ۸. اسکریپت کنترل شرطی وجوب فیلد نوع پی‌نوشت بر اساس پر بودن ادیتور
- */
-add_action( 'wp_footer', 'flatsome_child_comment_validation_script' );
-add_action( 'admin_footer', 'flatsome_child_comment_validation_script' );
-function flatsome_child_comment_validation_script() {
-	?>
-	<script>
-	(function(){
-		var editorId = 'sahab_comment_editor';
-
-		function getEditorText() {
-			try {
-				if (window.tinymce && tinymce.get(editorId) && !tinymce.get(editorId).isHidden()) {
-					return tinymce.get(editorId).getContent({format:'text'}).trim();
-				}
-			} catch (e) {}
-			var ta = document.getElementById(editorId);
-			if (ta) return ta.value.trim();
-			return '';
-		}
-
-		function setRequiredState() {
-			var el = document.querySelector('#comment_type');
-			if (!el) return;
-			var txt = getEditorText();
-			if (txt.length) {
-				el.setAttribute('required', 'required');
-			} else {
-				el.removeAttribute('required');
-			}
-		}
-
-		function attachEditorListeners() {
-			if (window.tinymce && tinymce.get(editorId)) {
-				try {
-					var inst = tinyMCE.get(editorId);
-					inst.on('keyup change NodeChange', function(){ setRequiredState(); });
-				} catch (e) {}
-			}
-			var ta = document.getElementById(editorId);
-			if (ta) {
-				ta.addEventListener('input', setRequiredState);
-			}
-			
-			var form = document.querySelector('form.comment-form, form#commentform, form[name="commentform"]');
-			if (form) {
-				form.addEventListener('submit', function(e){
-					var txt = getEditorText();
-					var el = document.querySelector('#comment_type');
-					if (el && !txt.length) {
-						el.removeAttribute('required');
-					}
-				});
-			}
-		}
-
-		document.addEventListener('DOMContentLoaded', function(){
-			setTimeout(function(){
-				attachEditorListeners();
-				setRequiredState();
-			}, 400);
-		});
-	})();
-	</script>
-	<?php
 }
 
 add_action( 'add_meta_boxes', 'flatsome_child_remove_core_comments_meta_box', 99 );
@@ -481,7 +413,7 @@ function flatsome_child_render_sahab_custom_comments_meta_box( $post ) {
 
     echo '<div id="sahab-backend-comment-form" class="sahab-backend-comment-entry" style="border:1px solid #ddd; padding:15px; border-radius:8px; background:#fbfbfb;">';
     echo '<input type="hidden" id="sahab_backend_comment_post_id" value="' . esc_attr( $post->ID ) . '">';
-    echo '<p style="margin:0 0 10px;"><label for="sahab_backend_comment_type" style="display:block;font-weight:bold;margin-bottom:5px;">نوع پی‌نوشت جدید</label><select name="sahab_backend_comment_type" id="sahab_backend_comment_type" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;"><option value="rewrite">بازنویسی خبر</option><option value="note">ملاحظه</option><option value="theory">نظریه</option></select></p>';
+    echo '<p style="margin:0 0 10px;"><label style="display:block;font-weight:bold;margin-bottom:5px;">نوع پی‌نوشت جدید</label><span style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;"><label style="font-weight:normal;"><input type="radio" name="sahab_backend_comment_type" value="" checked style="margin-left:5px;">هیچ‌کدام</label><label style="font-weight:normal;"><input type="radio" name="sahab_backend_comment_type" value="rewrite" style="margin-left:5px;">بازنویسی خبر</label><label style="font-weight:normal;"><input type="radio" name="sahab_backend_comment_type" value="note" style="margin-left:5px;">ملاحظه</label><label style="font-weight:normal;"><input type="radio" name="sahab_backend_comment_type" value="theory" style="margin-left:5px;">نظریه</label></span></p>';
     ob_start();
     $editor_settings = array(
         'textarea_name' => 'sahab_backend_comment',
@@ -514,12 +446,12 @@ function flatsome_child_save_backend_comment_from_meta_box( $post_id, $post, $up
         return;
     }
 
-    if ( isset( $_POST['sahab_backend_comment'] ) && isset( $_POST['sahab_backend_comment_type'] ) ) {
+    if ( isset( $_POST['sahab_backend_comment'] ) ) {
         $comment_content = wp_kses_post( wp_unslash( $_POST['sahab_backend_comment'] ) );
-        $comment_type    = sanitize_text_field( wp_unslash( $_POST['sahab_backend_comment_type'] ) );
+        $comment_type    = isset( $_POST['sahab_backend_comment_type'] ) ? sanitize_text_field( wp_unslash( $_POST['sahab_backend_comment_type'] ) ) : '';
         $valid_types     = array( 'rewrite', 'note', 'theory' );
 
-        if ( ! empty( $comment_content ) && in_array( $comment_type, $valid_types, true ) ) {
+        if ( ! empty( $comment_content ) ) {
             $comment_id = wp_insert_comment( array(
                 'comment_post_ID'      => $post_id,
                 'comment_author'       => wp_get_current_user()->display_name,
@@ -532,7 +464,7 @@ function flatsome_child_save_backend_comment_from_meta_box( $post_id, $post, $up
                 'comment_approved'     => 1,
             ) );
 
-            if ( $comment_id && ! is_wp_error( $comment_id ) ) {
+            if ( $comment_id && ! is_wp_error( $comment_id ) && ! empty( $comment_type ) && in_array( $comment_type, $valid_types, true ) ) {
                 update_comment_meta( $comment_id, 'comment_type', $comment_type );
                 update_comment_meta( $comment_id, '_comment_type', 'field_6a50f060ebcfb' );
             }
@@ -551,11 +483,11 @@ function flatsome_child_ajax_submit_backend_comment() {
     }
 
     $post_id        = absint( $_POST['post_id'] );
-    $comment_type   = sanitize_text_field( wp_unslash( $_POST['comment_type'] ) );
+    $comment_type   = isset( $_POST['comment_type'] ) ? sanitize_text_field( wp_unslash( $_POST['comment_type'] ) ) : '';
     $comment_content = wp_kses_post( wp_unslash( $_POST['comment_content'] ) );
     $valid_types    = array( 'rewrite', 'note', 'theory' );
 
-    if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) || ! in_array( $comment_type, $valid_types, true ) || empty( $comment_content ) ) {
+    if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) || empty( $comment_content ) ) {
         wp_send_json_error( 'invalid_data' );
     }
 
@@ -576,8 +508,10 @@ function flatsome_child_ajax_submit_backend_comment() {
         wp_send_json_error( 'insert_failed' );
     }
 
-    update_comment_meta( $comment_id, 'comment_type', $comment_type );
-    update_comment_meta( $comment_id, '_comment_type', 'field_6a50f060ebcfb' );
+    if ( ! empty( $comment_type ) && in_array( $comment_type, $valid_types, true ) ) {
+        update_comment_meta( $comment_id, 'comment_type', $comment_type );
+        update_comment_meta( $comment_id, '_comment_type', 'field_6a50f060ebcfb' );
+    }
 
     $comment = get_comment( $comment_id );
     if ( ! $comment ) {
@@ -611,19 +545,17 @@ function flatsome_child_backend_comment_ajax_script() {
         $('#sahab-submit-backend-comment').on('click', function() {
             var button = $(this);
             var postId = $('#sahab_backend_comment_post_id').val();
-            var commentType = $('#sahab_backend_comment_type').val();
-            var editor = tinymce.get('sahab_backend_comment_editor');
-            var commentContent = '';
+            var commentType = $('input[name="sahab_backend_comment_type"]:checked').val() || '';
+            var content = '';
 
-            if ( editor && ! editor.isHidden() ) {
-                commentContent = editor.getContent();
+            if (window.tinymce && tinymce.get('sahab_backend_comment_editor')) {
+                content = tinymce.get('sahab_backend_comment_editor').getContent().trim();
             } else {
-                commentContent = $('#sahab_backend_comment_editor').val() || '';
+                content = $('#sahab_backend_comment_editor').val().trim();
             }
 
-            commentContent = $.trim(commentContent);
-            if ( ! commentContent ) {
-                $('#sahab-backend-comment-feedback').html('<div style="color:red;">لطفاً متن پی‌نوشت را وارد کنید.</div>');
+            if ( ! content ) {
+                alert('لطفاً متن پی‌نوشت را وارد کنید.');
                 return;
             }
 
@@ -634,7 +566,7 @@ function flatsome_child_backend_comment_ajax_script() {
                 action: 'sahab_submit_backend_comment',
                 post_id: postId,
                 comment_type: commentType,
-                comment_content: commentContent,
+                comment_content: content,
                 sahab_custom_comments_meta_box_nonce: $('#sahab_custom_comments_meta_box_nonce').val()
             }, function(response) {
                 if ( response.success ) {
@@ -644,12 +576,13 @@ function flatsome_child_backend_comment_ajax_script() {
                     } else {
                         $('#sahab-backend-comments-list').html('<ul style="list-style:none; margin:0; padding:0;">' + html + '</ul>');
                     }
-                    if ( editor && ! editor.isHidden() ) {
-                        editor.setContent('');
+                    if (window.tinymce && tinymce.get('sahab_backend_comment_editor')) {
+                        tinymce.get('sahab_backend_comment_editor').setContent('');
                     } else {
                         $('#sahab_backend_comment_editor').val('');
                     }
-                    $('#sahab_backend_comment_type').val('rewrite');
+                    $('input[name="sahab_backend_comment_type"]').prop('checked', false);
+                    $('input[name="sahab_backend_comment_type"][value=""]').prop('checked', true);
                     $('#sahab-backend-comment-feedback').html('<div style="color:green;">پی‌نوشت با موفقیت ثبت شد.</div>');
                 } else {
                     $('#sahab-backend-comment-feedback').html('<div style="color:red;">خطا در ارسال پی‌نوشت. لطفاً دوباره تلاش کنید.</div>');
