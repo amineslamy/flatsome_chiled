@@ -450,6 +450,7 @@ function flatsome_child_render_sahab_custom_comments_meta_box( $post ) {
 
     echo '<div class="sahab-backend-comments-box" style="margin-bottom:20px;">';
     echo '<h4 style="margin:0 0 10px; font-size:14px; font-weight:bold;">پی‌نوشت‌های ثبت‌شده</h4>';
+    echo '<div id="sahab-backend-comments-list">';
     if ( empty( $comments ) ) {
         echo '<p style="color:#666;">هنوز پی‌نوشتی ثبت نشده است.</p>';
     } else {
@@ -476,8 +477,10 @@ function flatsome_child_render_sahab_custom_comments_meta_box( $post ) {
         echo '</ul>';
     }
     echo '</div>';
+    echo '</div>';
 
-    echo '<div class="sahab-backend-comment-entry" style="border:1px solid #ddd; padding:15px; border-radius:8px; background:#fbfbfb;">';
+    echo '<div id="sahab-backend-comment-form" class="sahab-backend-comment-entry" style="border:1px solid #ddd; padding:15px; border-radius:8px; background:#fbfbfb;">';
+    echo '<input type="hidden" id="sahab_backend_comment_post_id" value="' . esc_attr( $post->ID ) . '">';
     echo '<p style="margin:0 0 10px;"><label for="sahab_backend_comment_type" style="display:block;font-weight:bold;margin-bottom:5px;">نوع پی‌نوشت جدید</label><select name="sahab_backend_comment_type" id="sahab_backend_comment_type" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;"><option value="rewrite">بازنویسی خبر</option><option value="note">ملاحظه</option><option value="theory">نظریه</option></select></p>';
     ob_start();
     $editor_settings = array(
@@ -494,6 +497,8 @@ function flatsome_child_render_sahab_custom_comments_meta_box( $post ) {
     wp_editor( '', 'sahab_backend_comment_editor', $editor_settings );
     $backend_editor_html = ob_get_clean();
     echo '<p style="margin:20px 0 0; font-weight:bold;">متن پی‌نوشت جدید</p>' . $backend_editor_html;
+    echo '<button type="button" id="sahab-submit-backend-comment" class="button button-primary" style="margin-top:10px;">ثبت و ارسال پی‌نوشت</button>';
+    echo '<div id="sahab-backend-comment-feedback" style="margin-top:10px; min-height:20px;"></div>';
     echo '</div>';
 }
 
@@ -534,3 +539,129 @@ function flatsome_child_save_backend_comment_from_meta_box( $post_id, $post, $up
         }
     }
 }
+
+add_action( 'wp_ajax_sahab_submit_backend_comment', 'flatsome_child_ajax_submit_backend_comment' );
+function flatsome_child_ajax_submit_backend_comment() {
+    if ( ! isset( $_POST['post_id'], $_POST['comment_type'], $_POST['comment_content'], $_POST['sahab_custom_comments_meta_box_nonce'] ) ) {
+        wp_send_json_error( 'missing_fields' );
+    }
+
+    if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['sahab_custom_comments_meta_box_nonce'] ) ), 'sahab_custom_comments_meta_box' ) ) {
+        wp_send_json_error( 'invalid_nonce' );
+    }
+
+    $post_id        = absint( $_POST['post_id'] );
+    $comment_type   = sanitize_text_field( wp_unslash( $_POST['comment_type'] ) );
+    $comment_content = wp_kses_post( wp_unslash( $_POST['comment_content'] ) );
+    $valid_types    = array( 'rewrite', 'note', 'theory' );
+
+    if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) || ! in_array( $comment_type, $valid_types, true ) || empty( $comment_content ) ) {
+        wp_send_json_error( 'invalid_data' );
+    }
+
+    $current_user = wp_get_current_user();
+    $comment_id = wp_insert_comment( array(
+        'comment_post_ID'      => $post_id,
+        'comment_author'       => $current_user->display_name,
+        'comment_author_email' => $current_user->user_email,
+        'comment_author_url'   => '',
+        'comment_content'      => $comment_content,
+        'comment_type'         => '',
+        'comment_parent'       => 0,
+        'user_id'              => $current_user->ID,
+        'comment_approved'     => 1,
+    ) );
+
+    if ( ! $comment_id || is_wp_error( $comment_id ) ) {
+        wp_send_json_error( 'insert_failed' );
+    }
+
+    update_comment_meta( $comment_id, 'comment_type', $comment_type );
+    update_comment_meta( $comment_id, '_comment_type', 'field_6a50f060ebcfb' );
+
+    $comment = get_comment( $comment_id );
+    if ( ! $comment ) {
+        wp_send_json_error( 'comment_not_found' );
+    }
+
+    $map = array(
+        'rewrite' => array( 'label' => 'بازنویسی خبر', 'color' => '#2196F3' ),
+        'note'    => array( 'label' => 'ملاحظه',       'color' => '#FF9800' ),
+        'theory'  => array( 'label' => 'نظریه',        'color' => '#9C27B0' ),
+    );
+    $badge = '';
+    if ( isset( $map[ $comment_type ] ) ) {
+        $badge = '<span style="background:' . esc_attr( $map[ $comment_type ]['color'] ) . '; color:#fff; padding:2px 8px; border-radius:3px; font-size:11px; display:inline-block; font-weight:bold; margin-left:8px;">' . esc_html( $map[ $comment_type ]['label'] ) . '</span>';
+    }
+
+    $html  = '<li style="border-bottom:1px solid #eee; padding:10px 0;">';
+    $html .= '<div style="font-size:13px; margin-bottom:4px;"><strong>' . esc_html( $current_user->display_name ) . '</strong> ' . $badge . '</div>';
+    $html .= '<div style="font-size:12px; color:#555; margin-bottom:6px;">' . esc_html( get_comment_date( 'Y/m/d H:i', $comment ) ) . '</div>';
+    $html .= '<div style="font-size:13px; color:#333;">' . wp_kses_post( wpautop( $comment->comment_content ) ) . '</div>';
+    $html .= '</li>';
+
+    wp_send_json_success( $html );
+}
+
+add_action( 'admin_footer', 'flatsome_child_backend_comment_ajax_script' );
+function flatsome_child_backend_comment_ajax_script() {
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('#sahab-submit-backend-comment').on('click', function() {
+            var button = $(this);
+            var postId = $('#sahab_backend_comment_post_id').val();
+            var commentType = $('#sahab_backend_comment_type').val();
+            var editor = tinymce.get('sahab_backend_comment_editor');
+            var commentContent = '';
+
+            if ( editor && ! editor.isHidden() ) {
+                commentContent = editor.getContent();
+            } else {
+                commentContent = $('#sahab_backend_comment_editor').val() || '';
+            }
+
+            commentContent = $.trim(commentContent);
+            if ( ! commentContent ) {
+                $('#sahab-backend-comment-feedback').html('<div style="color:red;">لطفاً متن پی‌نوشت را وارد کنید.</div>');
+                return;
+            }
+
+            button.prop('disabled', true).text('در حال ارسال...');
+            $('#sahab-backend-comment-feedback').html('');
+
+            $.post(ajaxurl, {
+                action: 'sahab_submit_backend_comment',
+                post_id: postId,
+                comment_type: commentType,
+                comment_content: commentContent,
+                sahab_custom_comments_meta_box_nonce: $('#sahab_custom_comments_meta_box_nonce').val()
+            }, function(response) {
+                if ( response.success ) {
+                    var html = response.data;
+                    if ( $('#sahab-backend-comments-list ul').length ) {
+                        $('#sahab-backend-comments-list ul').prepend(html);
+                    } else {
+                        $('#sahab-backend-comments-list').html('<ul style="list-style:none; margin:0; padding:0;">' + html + '</ul>');
+                    }
+                    if ( editor && ! editor.isHidden() ) {
+                        editor.setContent('');
+                    } else {
+                        $('#sahab_backend_comment_editor').val('');
+                    }
+                    $('#sahab_backend_comment_type').val('rewrite');
+                    $('#sahab-backend-comment-feedback').html('<div style="color:green;">پی‌نوشت با موفقیت ثبت شد.</div>');
+                } else {
+                    $('#sahab-backend-comment-feedback').html('<div style="color:red;">خطا در ارسال پی‌نوشت. لطفاً دوباره تلاش کنید.</div>');
+                }
+            }).fail(function() {
+                $('#sahab-backend-comment-feedback').html('<div style="color:red;">خطای شبکه رخ داد.</div>');
+            }).always(function() {
+                button.prop('disabled', false).text('ثبت و ارسال پی‌نوشت');
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
