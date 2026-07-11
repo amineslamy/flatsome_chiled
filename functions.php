@@ -313,6 +313,84 @@ add_action( 'init', 'flatsome_child_rename_post_labels' );
 /**
  * ۷. مهندسی مجدد و جراحی فرم پی‌نوشت‌های سحاب (حذف زواید، تغییر ترتیب، افزودن ادیتور پیشرفته)
  */
+function flatsome_child_render_comment_type_dashboard( $post_id = 0 ) {
+	if ( ! $post_id ) {
+		$post = get_post();
+		$post_id = $post && isset( $post->ID ) ? (int) $post->ID : 0;
+	}
+
+	if ( ! $post_id ) {
+		return '';
+	}
+
+	$comments = get_comments( array(
+		'post_id' => $post_id,
+		'status'  => 'approve',
+		'order'   => 'ASC',
+	) );
+
+	$counts = array(
+		'note'    => 0,
+		'theory'  => 0,
+		'rewrite' => 0,
+		'plain'   => 0,
+	);
+
+	foreach ( $comments as $comment ) {
+		$type = get_comment_meta( $comment->comment_ID, 'comment_type', true );
+		if ( $type === 'note' ) {
+			$counts['note']++;
+		} elseif ( $type === 'theory' ) {
+			$counts['theory']++;
+		} elseif ( $type === 'rewrite' ) {
+			$counts['rewrite']++;
+		} else {
+			$counts['plain']++;
+		}
+	}
+
+	$items = array(
+		array( 'key' => 'note', 'label' => 'ملاحظه', 'color' => '#ff9800' ),
+		array( 'key' => 'theory', 'label' => 'نظریه', 'color' => '#9c27b0' ),
+		array( 'key' => 'rewrite', 'label' => 'بازنویسی', 'color' => '#2196f3' ),
+		array( 'key' => 'plain', 'label' => 'متفرقه', 'color' => '#757575' ),
+	);
+
+	ob_start();
+	?>
+	<div style="margin:12px 0 16px; padding:12px 14px; border:1px solid #e0e0e0; border-radius:6px; background:#f9f9f9; display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+		<span style="font-weight:600; color:#333;">📊 خلاصه وضعیت پی‌نوشت‌ها:</span>
+		<?php foreach ( $items as $item ) : $value = isset( $counts[ $item['key'] ] ) ? (int) $counts[ $item['key'] ] : 0; ?>
+		<span style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; color:#fff; background:<?php echo esc_attr( $item['color'] ); ?>; font-size:12px; font-weight:600; white-space:nowrap;">
+			<span><?php echo esc_html( '[' . $value . '] ' . $item['label'] ); ?></span>
+		</span>
+		<?php endforeach; ?>
+	</div>
+	<?php
+	return ob_get_clean();
+}
+
+add_filter( 'comments_number', 'flatsome_child_override_comments_number_title', 20, 5 );
+function flatsome_child_override_comments_number_title( $output, $number = 0, $zero = '', $one = '', $more = '' ) {
+	$post_id = get_the_ID();
+	if ( ! $post_id ) {
+		return '';
+	}
+	return flatsome_child_render_comment_type_dashboard( $post_id );
+}
+
+add_action( 'comment_form_before', 'flatsome_child_inject_frontend_dashboard' );
+function flatsome_child_inject_frontend_dashboard() {
+	if ( is_admin() ) {
+		return;
+	}
+	$post_id = get_the_ID();
+	if ( ! $post_id || ! comments_open( $post_id ) ) {
+		return;
+	}
+	echo flatsome_child_render_comment_type_dashboard( $post_id );
+}
+
 add_filter( 'comment_form_defaults', 'flatsome_child_force_comment_form_strings' );
 function flatsome_child_force_comment_form_strings( $defaults ) {
 	$defaults['logged_in_as'] = '';
@@ -381,6 +459,8 @@ function flatsome_child_render_sahab_custom_comments_meta_box( $post ) {
     ) );
 
     echo '<div class="sahab-backend-comments-box" style="margin-bottom:20px;">';
+
+    echo flatsome_child_render_comment_type_dashboard( $post->ID );
 
     echo '<div id="sahab-backend-comment-form" class="sahab-backend-comment-entry" style="border:1px solid #ddd; padding:15px; border-radius:8px; background:#fbfbfb; margin-bottom:20px;">';
     echo '<input type="hidden" id="sahab_backend_comment_post_id" value="' . esc_attr( $post->ID ) . '">';
