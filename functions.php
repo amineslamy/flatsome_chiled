@@ -201,6 +201,38 @@ add_action( 'acf/save_post', 'flatsome_child_generate_automation_id', 5 );
 
 
 /**
+ * ۲.۵ ثبت شناسه کاربر ثبت‌کننده (ملک‌الامور) برای پیگیری حسابدهی
+ */
+add_action( 'wp_insert_post', 'flatsome_child_track_post_creator', 20, 3 );
+function flatsome_child_track_post_creator( $post_id, $post, $update ) {
+	// Skip if this is an update (not initial creation)
+	if ( $update ) {
+		return;
+	}
+
+	// Skip autosaves and revisions
+	if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+		return;
+	}
+
+	// Only track for post type 'post'
+	if ( get_post_type( $post_id ) !== 'post' ) {
+		return;
+	}
+
+	// Check if meta already exists (extra safety check)
+	if ( metadata_exists( 'post', $post_id, 'news_creator_id' ) ) {
+		return;
+	}
+
+	$current_user_id = get_current_user_id();
+	if ( $current_user_id ) {
+		add_post_meta( $post_id, 'news_creator_id', $current_user_id, true );
+	}
+}
+
+
+/**
  * ۳. بارگذاری سراسری دارایی‌های دیت‌پیکر شمسی (Jalali Datepicker)
  */
 function flatsome_child_jalali_datepicker_setup() {
@@ -468,6 +500,17 @@ function flatsome_child_add_sahab_custom_comments_meta_box() {
 
 function flatsome_child_render_sahab_custom_comments_meta_box( $post ) {
     wp_nonce_field( 'sahab_custom_comments_meta_box', 'sahab_custom_comments_meta_box_nonce' );
+
+    // Display creator info for audit tracking
+    $creator_id = get_post_meta( $post->ID, 'news_creator_id', true );
+    if ( $creator_id ) {
+        $creator = get_userdata( $creator_id );
+        if ( $creator ) {
+            echo '<div style="margin-bottom:12px; padding:8px 12px; background:#e8f5e9; border-left:4px solid #4caf50; font-size:12px; color:#2e7d32;">';
+            echo '<strong>✓ ثبت‌کننده:</strong> ' . esc_html( $creator->display_name ) . ' (ID: ' . esc_html( $creator_id ) . ')';
+            echo '</div>';
+        }
+    }
 
     $comments = get_comments( array(
         'post_id' => $post->ID,
