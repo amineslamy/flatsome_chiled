@@ -1,0 +1,114 @@
+/* کانتینر اصلی میز کار */
+.sahab-dashboard-wrapper {
+    padding: 1rem 0;
+    direction: rtl;
+}
+
+/* استایل بدنه اصلی جدول - فونت بزرگتر و خوانا با سطر قابل شکستن */
+#sahab-main-dashboard {
+    table-layout: fixed !important;
+    width: 100% !important;
+    text-align: center;
+    direction: rtl;
+    font-size: 13px !important;
+    border-collapse: collapse;
+    color: #334155;
+}
+
+#sahab-main-dashboard th,
+#sahab-main-dashboard td {
+    padding: 10px 5px !important;
+    text-align: center !important;
+    vertical-align: middle;
+    white-space: normal !important; /* مجاز بودن شکستن متن برای لود راحت تر ستون‌ها */
+    word-wrap: break-word;
+}
+
+/* هدر اصلی جدول */
+#sahab-main-dashboard thead th {
+    background: #f1f5f9;
+    font-size: 12px;
+    font-weight: bold;
+    color: #0f172a;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* تنظیم دقیق تر سهم عرض ستون‌ها برای دسکتاپ به منظور مهار هر گونه تداخل */
+#sahab-main-dashboard th:nth-child(1) { width: 6% !important; }  /* شماره */
+#sahab-main-dashboard th:nth-child(2) { width: 22% !important; text-align: right !important; } /* عنوان خبر */
+#sahab-main-dashboard th:nth-child(3) { width: 9% !important; }  /* کیس */
+#sahab-main-dashboard th:nth-child(4) { width: 10% !important; } /* موضوع */
+#sahab-main-dashboard th:nth-child(5) { width: 11% !important; } /* ارزیابی / ارجحیت */
+#sahab-main-dashboard th:nth-child(6) { width: 7% !important; }  /* کارشناس */
+#sahab-main-dashboard th:nth-child(7) { width: 7% !important; }  /* ثبت کننده */
+#sahab-main-dashboard th:nth-child(8) { width: 8% !important; }  /* تاریخ وقوع */
+#sahab-main-dashboard th:nth-child(9) { width: 8% !important; }  /* تاریخ ثبت */
+#sahab-main-dashboard th:nth-child(10) { width: 7% !important; } /* پی نوشت ها */
+#sahab-main-dashboard th:nth-child(11) { width: 5% !important; } /* عملیات */
+
+/* استایل لینک کارشناسان */
+.sahab-user-link {
+    color: #2563eb !important;
+    text-decoration: none;
+}
+.sahab-user-link:hover {
+    text-decoration: underline;
+}
+
+/* دایره‌های پی‌نوشت‌ها */
+.sahab-comment-link-badge {
+    text-decoration: none !important;
+    display: inline-flex;
+}
+.sahab-comment-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin: 0 1px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    color: #fff;
+    transition: transform 0.1s;
+}
+.sahab-comment-badge:hover {
+    transform: scale(1.15);
+}
+.sahab-comment-badge.note { background: #3b82f6; }
+.sahab-comment-badge.theory { background: #10b981; }
+.sahab-comment-badge.rewrite { background: #f59e0b; }
+.sahab-comment-badge.misc { background: #64748b; }
+
+/* دکمه‌های آیکونیک فرانت‌آند در ستون عملیات (کاملاً بومی و ایزوله) */
+.sahab-dashboard-actions {
+    display: inline-flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.sahab-btn-svg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.1s;
+    padding: 0;
+}
+.sahab-btn-svg:hover {
+    transform: scale(1.08);
+}
+.sahab-btn-view { background-color: #0284c7 !important; }   /* آبی */
+.sahab-btn-edit { background-color: #0f766e !important; }   /* سبز */
+.sahab-btn-delete { background-color: #dc2626 !important; } /* ضربدر قرمز */
+
+.sahab-btn-svg svg {
+    display: block;
+}
