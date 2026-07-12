@@ -58,6 +58,11 @@ if ( ! function_exists( 'sahab_global_auth_redirect' ) ) {
 	 * هدایت هوشمند بر اساس وضعیت احراز هویت برای داشبورد و صفحه اصلی
 	 */
 	function sahab_global_auth_redirect() {
+		// If the user is filtering by subject, allow them to view the front page archive
+		if ( isset( $_GET['subject'] ) ) {
+			return;
+		}
+
 		if ( is_front_page() || is_home() ) {
 			if ( is_user_logged_in() ) {
 				wp_safe_redirect( home_url( '/dashboard/' ) );
@@ -262,6 +267,27 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 					$subject_val = get_field( 'subject', $post_id ); 
 				}
 				$subject_label = sahab_dashboard_translate_value( $subject_val, 'subject', $post_id );
+				$subject_links = array();
+				if ( is_array( $subject_val ) ) {
+					foreach ( $subject_val as $subject_item ) {
+						$subject_item_raw = (string) $subject_item;
+						$subject_item_label = sahab_dashboard_translate_value( $subject_item_raw, 'subject', $post_id );
+						$subject_links[] = sprintf(
+							'<a href="%s" class="sahab-table-link">%s</a>',
+							esc_url( home_url( '/?subject=' . urlencode( $subject_item_raw ) ) ),
+							esc_html( $subject_item_label )
+						);
+					}
+				} elseif ( ! empty( $subject_val ) ) {
+					$subject_item_raw = (string) $subject_val;
+					$subject_item_label = sahab_dashboard_translate_value( $subject_item_raw, 'subject', $post_id );
+					$subject_links[] = sprintf(
+						'<a href="%s" class="sahab-table-link">%s</a>',
+						esc_url( home_url( '/?subject=' . urlencode( $subject_item_raw ) ) ),
+						esc_html( $subject_item_label )
+					);
+				}
+				$subject_label = ! empty( $subject_links ) ? implode( ' | ', $subject_links ) : $subject_label;
 
 				// ۴. ارزیابی و ارجحیت (بدون بج، تفکیک متنی ساده با |)
 				$eval_val = get_post_meta( $post_id, 'evaluation', true );
