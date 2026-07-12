@@ -348,3 +348,14 @@ if ( ! function_exists( 'flatsome_child_delete_dashboard_post' ) ) {
 	    }
 	}
 }
+
+function sahab_register_custom_die_handler( $handler ) {
+	return function( $message, $title, $args ) {
+		if ( is_admin() && strpos( $message, 'اجازهٔ ویرایش' ) !== false ) {
+			include get_stylesheet_directory() . '/templates/permission-denied.php';
+			exit;
+		}
+		return _default_wp_die_handler( $message, $title, $args );
+	};
+}
+add_filter( 'wp_die_handler', 'sahab_register_custom_die_handler', 10 );
