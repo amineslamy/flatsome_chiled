@@ -294,17 +294,30 @@ if ( ! function_exists( 'flatsome_child_delete_dashboard_post' ) ) {
 	 * حذف امن خبر از دیتابیس از طریق AJAX و حذف از دیتاتیبلز
 	 */
 	function flatsome_child_delete_dashboard_post() {
-		if ( ! is_user_logged_in() || ! current_user_can( 'delete_posts' ) ) {
-			wp_send_json_error( array( 'message' => 'سطح دسترسی غیرمجاز.' ), 403 );
-		}
-
-		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-		if ( $post_id && 'post' === get_post_type( $post_id ) ) {
-			$deleted = wp_delete_post( $post_id, true );
-			if ( $deleted ) {
-				wp_send_json_success( array( 'message' => 'خبر با موفقیت حذف شد.' ) );
-			}
-		}
-		wp_send_json_error( array( 'message' => 'خطا در حذف خبر.' ) );
+	    // Basic login check
+	    if (!is_user_logged_in()) {
+	        wp_send_json_error(array('message' => 'ابتدا باید وارد سیستم شوید.'), 403);
+	    }
+	    
+	    $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+	    
+	    // Verify post exists and is indeed a post type
+	    if (!$post_id || get_post_type($post_id) !== 'post') {
+	        wp_send_json_error(array('message' => 'خبر مورد نظر یافت نشد.'));
+	    }
+	    
+	    // STRICT CAPABILITY CHECK: Checks if the logged-in user can delete THIS specific post ID
+	    // This allows Admins to delete everything, Editors to delete authorized posts, and Authors ONLY their own posts.
+	    if (!current_user_can('delete_post', $post_id)) {
+	        wp_send_json_error(array('message' => 'خطای امنیتی: شما سطح دسترسی لازم برای حذف این خبر را ندارید.'), 403);
+	    }
+	    
+	    // Proceed with secure permanent deletion if the check passes
+	    $deleted = wp_delete_post($post_id, true);
+	    if ($deleted) {
+	        wp_send_json_success(array('message' => 'خبر با موفقیت و به صورت قطعی حذف شد.'));
+	    } else {
+	        wp_send_json_error(array('message' => 'خطا در فرآیند حذف محلی دیتابیس.'));
+	    }
 	}
 }

@@ -30,5 +30,9 @@ function flatsome_child_generate_automation_id( $post_id ) {
 
 	$next_id = empty( $max_value ) ? 1234567 : (int) $max_value + 1;
 	update_post_meta( $post_id, $meta_key, $next_id );
+
+	if ( isset( $_POST['acf']['field_automation_id'] ) && empty( $_POST['acf']['field_automation_id'] ) ) {
+		unset( $_POST['acf']['field_automation_id'] );
+	}
 }
-add_action( 'acf/save_post', 'flatsome_child_generate_automation_id', 5 );
+add_action( 'acf/save_post', 'flatsome_child_generate_automation_id', 20 );
