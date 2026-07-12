@@ -290,28 +290,6 @@ function flatsome_child_jalali_datepicker_footer_init() {
 }
 add_action( 'admin_footer', 'flatsome_child_jalali_datepicker_footer_init' );
 add_action( 'wp_footer', 'flatsome_child_jalali_datepicker_footer_init' );
-add_action( 'wp_footer', 'flatsome_child_rewrite_comments_title_frontend' );
-function flatsome_child_rewrite_comments_title_frontend() {
-	if ( is_admin() || ! is_singular( 'post' ) || ! comments_open() ) {
-		return;
-	}
-	?>
-	<script>
-	jQuery(document).ready(function($) {
-		setTimeout(function() {
-			var titleEl = jQuery('h3.comments-title');
-			if ( titleEl.length ) {
-				var commentCount = jQuery('.comment').length;
-				var postTitle = jQuery('.post-title').text() || '<?php echo esc_js( get_the_title() ); ?>';
-				var persianText = '[' + commentCount + '] پی‌نوشت روی خبر «' + postTitle + '» درج شده است';
-				titleEl.hide();
-				titleEl.before('<h3 style="font-size:18px; color:#333; margin:16px 0 12px; font-weight:600; text-align:right;"><strong>' + persianText + '</strong></h3>');
-			}
-		}, 400);
-	});
-	</script>
-	<?php
-}
 function flatsome_child_rename_posts_menu() {
     global $menu, $submenu;
 
