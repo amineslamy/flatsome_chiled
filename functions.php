@@ -95,8 +95,8 @@ class Flatsome_Child_Theme_Init {
 	 * @since 1.0.0
 	 */
 	private function load_dependencies() {
-		require_once get_stylesheet_directory() . '/includes/override_functions.php';
-		require_once get_stylesheet_directory() . '/includes/Flatsome_Child_Options.php';
+		require_once get_stylesheet_directory() . '/inc/override_functions.php';
+		require_once get_stylesheet_directory() . '/inc/Flatsome_Child_Options.php';
 	}
 
 	/**
