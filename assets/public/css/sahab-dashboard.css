@@ -55,6 +55,15 @@
     text-decoration: underline;
 }
 
+.sahab-table-link {
+    color: #0284c7 !important;
+    text-decoration: none !important;
+    font-weight: 500;
+}
+.sahab-table-link:hover {
+    text-decoration: underline !important;
+}
+
 /* دایره‌های پی‌نوشت‌ها */
 .sahab-comment-grid-wrapper {
     display: flex !important;

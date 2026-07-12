@@ -153,7 +153,7 @@ if ( ! function_exists( 'sahab_dashboard_translate_value' ) ) {
 						$item_key = (string) $item;
 						$labels[] = isset( $field_object['choices'][ $item_key ] ) ? (string) $field_object['choices'][ $item_key ] : $item_key;
 					}
-					return implode( '، ', array_filter( $labels ) );
+					return implode( ' | ', array_filter( $labels ) );
 				}
 				$value_key = (string) $value;
 				if ( isset( $field_object['choices'][ $value_key ] ) ) {
@@ -236,16 +236,24 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 				$categories = get_the_category( $post_id );
 				$case_label = '---';
 				if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
-					$cat_names = array();
+					$case_links = array();
 					foreach ( $categories as $category ) {
 						if ( 'uncategorized' !== $category->slug && 'دسته-بندی-نشده' !== $category->name ) {
-							$cat_names[] = $category->name;
+							$case_links[] = sprintf(
+								'<a href="%s" class="sahab-table-link">%s</a>',
+								esc_url( get_category_link( $category->term_id ) ),
+								esc_html( $category->name )
+							);
 						}
 					}
-					if ( empty( $cat_names ) && isset( $categories[0] ) ) {
-						$cat_names[] = $categories[0]->name;
+					if ( empty( $case_links ) && isset( $categories[0] ) ) {
+						$case_links[] = sprintf(
+							'<a href="%s" class="sahab-table-link">%s</a>',
+							esc_url( get_category_link( $categories[0]->term_id ) ),
+							esc_html( $categories[0]->name )
+						);
 					}
-					$case_label = implode( '، ', $cat_names );
+					$case_label = implode( ' | ', $case_links );
 				}
 
 				// ۳. موضوع (ACF)
