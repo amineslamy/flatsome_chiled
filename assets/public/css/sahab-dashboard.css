@@ -91,12 +91,18 @@
 
 /* دکمه‌های آیکونیک فرانت‌آند در ستون عملیات (کاملاً بومی و ایزوله) */
 .sahab-dashboard-actions {
-    display: inline-flex !important;
-    gap: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    white-space: nowrap !important;
+}
+.sahab-actions-top-row {
+    display: flex !important;
+    gap: 8px !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 .sahab-dashboard-actions .sahab-btn-svg {
     background: transparent !important;

@@ -238,22 +238,20 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 				$event_date = get_post_meta( $post_id, 'event_date', true );
 				$publish_date = get_the_date( 'Y/m/d', $post_id );
 
-				// ۷. ساخت ۳ آیکون خطی، فوق‌فشرده و آفلاین بدون هیچ پس‌زمینه (تگ‌های خطوط ضربدر کاملاً فیکس شدند)
-				$actions_html = sprintf(
-					'<div class="sahab-dashboard-actions">
-						<a href="%1$s" target="_blank" class="sahab-btn-svg sahab-btn-view" title="مشاهده خبر">
-							<svg viewBox="0 0 24 24" width="18" height="18" stroke="#0284c7" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-						</a>
-						<a href="%2$s" target="_blank" class="sahab-btn-svg sahab-btn-edit" title="ویرایش خبر">
-							<svg viewBox="0 0 24 24" width="18" height="18" stroke="#0f766e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path></svg>
-						</a>
-						<button type="button" class="sahab-btn-svg sahab-btn-delete" title="حذف خبر" onclick="if(confirm(\'آیا از حذف این خبر اطمینان دارید؟\')){alert(\'سیستم حذف محلی در نسخه بعدی مستقر می‌شود.\');}">
-							<svg viewBox="0 0 24 24" width="18" height="18" stroke="#dc2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-						</button>
-					</div>',
-					esc_url( get_permalink( $post_id ) ),
-					esc_url( admin_url( 'post.php?post=' . absint( $post_id ) . '&action=edit' ) )
-				);
+				// ۷. ساخت ۳ آیکون خطی با چینش عمودی دو ردیفه
+				$actions_html = '<div class="sahab-dashboard-actions">'
+					. '<div class="sahab-actions-top-row">'
+					. '<a href="' . esc_url( get_permalink( $post_id ) ) . '" target="_blank" class="sahab-btn-svg sahab-btn-view" title="مشاهده خبر">'
+					. '<svg viewBox="0 0 24 24" width="18" height="18" stroke="#0284c7" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>'
+					. '</a>'
+					. '<a href="' . esc_url( admin_url( 'post.php?post=' . absint( $post_id ) . '&action=edit' ) ) . '" target="_blank" class="sahab-btn-svg sahab-btn-edit" title="ویرایش خبر">'
+					. '<svg viewBox="0 0 24 24" width="18" height="18" stroke="#0f766e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path></svg>'
+					. '</a>'
+					. '</div>'
+					. '<button type="button" class="sahab-btn-svg sahab-btn-delete" title="حذف خبر">'
+					. '<svg viewBox="0 0 24 24" width="18" height="18" stroke="#dc2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+					. '</button>'
+					. '</div>';
 
 				$result_array[] = array(
 					'automation_id'          => $final_num,
