@@ -56,6 +56,14 @@
 }
 
 /* دایره‌های پی‌نوشت‌ها */
+.sahab-comment-grid-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 46px !important;
+    gap: 3px !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+}
 .sahab-comment-link-badge {
     text-decoration: none !important;
     display: inline-flex;
@@ -64,11 +72,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    margin: 0 1px;
+    width: 19px !important;
+    height: 19px !important;
+    margin: 0 !important;
     border-radius: 50%;
-    font-size: 10px;
+    font-size: 10px !important;
     font-weight: bold;
     color: #fff;
     transition: transform 0.1s;
@@ -83,32 +91,45 @@
 
 /* دکمه‌های آیکونیک فرانت‌آند در ستون عملیات (کاملاً بومی و ایزوله) */
 .sahab-dashboard-actions {
-    display: inline-flex;
-    gap: 4px;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+    display: inline-flex !important;
+    gap: 10px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    white-space: nowrap !important;
 }
-.sahab-btn-svg {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 4px;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.15s, transform 0.1s;
-    padding: 0;
+.sahab-dashboard-actions .sahab-btn-svg {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
-.sahab-btn-svg:hover {
-    transform: scale(1.08);
+.sahab-dashboard-actions .sahab-btn-svg svg {
+    display: block !important;
+    width: 18px !important;
+    height: 18px !important;
+    background: transparent !important;
 }
-.sahab-btn-view { background-color: #0284c7 !important; }   /* آبی */
-.sahab-btn-edit { background-color: #0f766e !important; }   /* سبز */
-.sahab-btn-delete { background-color: #dc2626 !important; } /* ضربدر قرمز */
-
-.sahab-btn-svg svg {
-    display: block;
+.sahab-dashboard-actions .sahab-btn-svg:hover {
+    transform: scale(1.2) !important;
+}
+.sahab-btn-view,
+.sahab-btn-edit,
+.sahab-btn-delete {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }

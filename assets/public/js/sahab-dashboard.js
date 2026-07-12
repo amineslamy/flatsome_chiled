@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
                         var rewriteHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge rewrite" title="بازنویسی‌ها: ' + data.rewrite + ' عدد">' + data.rewrite + '</span></a>';
                         var miscHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge misc" title="سایر پی‌نوشت‌ها: ' + data.misc + ' عدد">' + data.misc + '</span></a>';
                         
-                        return '<div style="display:flex; justify-content:center;">' + noteHtml + theoryHtml + rewriteHtml + miscHtml + '</div>';
+                        return '<div class="sahab-comment-grid-wrapper">' + noteHtml + theoryHtml + rewriteHtml + miscHtml + '</div>';
                     }
                 },
                 { "data": "actions", "orderable": false }
