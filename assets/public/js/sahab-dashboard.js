@@ -1,6 +1,8 @@
 jQuery(document).ready(function($) {
     var selectedDeleteId = null;
 
+    $.fn.dataTable.ext.errMode = 'none';
+
     if ($('#sahab-main-dashboard').length) {
         $('#sahab-main-dashboard').DataTable({
             "ajax": {
@@ -66,6 +68,7 @@ jQuery(document).ready(function($) {
     $('#sahab-main-dashboard').on('click', '.sahab-btn-delete', function() {
         selectedDeleteId = $(this).data('id');
         $('#sahab-delete-confirm-input').val('').trigger('input');
+        $('#sahab-delete-modal-error').hide().text('');
         $('#sahab-delete-modal').fadeIn(200);
     });
 
@@ -75,6 +78,7 @@ jQuery(document).ready(function($) {
 
     $('#sahab-delete-confirm-input').on('input', function() {
         var value = $(this).val();
+        $('#sahab-delete-modal-error').hide().text('');
         $('#sahab-modal-confirm-btn').prop('disabled', value !== 'delete');
     });
 
@@ -95,11 +99,15 @@ jQuery(document).ready(function($) {
                     $('#sahab-delete-modal').fadeOut(200);
                     $('#sahab-main-dashboard').DataTable().ajax.reload(null, false);
                 } else {
-                    alert(response.data.message);
+                    $('#sahab-delete-modal-error').text(response.data.message).fadeIn(200);
                 }
             },
-            error: function() {
-                alert('خطا در ارتباط با سرور محلی.');
+            error: function(xhr) {
+                if (xhr.status === 403 && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                    $('#sahab-delete-modal-error').text(xhr.responseJSON.data.message).fadeIn(200);
+                } else {
+                    $('#sahab-delete-modal-error').text('خطا در ارتباط با سرور محلی.').fadeIn(200);
+                }
             }
         });
     });

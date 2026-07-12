@@ -53,6 +53,32 @@ if ( ! function_exists( 'sahab_dashboard_enqueue_assets' ) ) {
 	add_action( 'wp_enqueue_scripts', 'sahab_dashboard_enqueue_assets' );
 }
 
+if ( ! function_exists( 'sahab_global_auth_redirect' ) ) {
+	/**
+	 * هدایت هوشمند بر اساس وضعیت احراز هویت برای داشبورد و صفحه اصلی
+	 */
+	function sahab_global_auth_redirect() {
+		if ( is_front_page() || is_home() ) {
+			if ( is_user_logged_in() ) {
+				wp_safe_redirect( home_url( '/dashboard/' ) );
+				exit;
+			}
+
+			wp_safe_redirect( wp_login_url( home_url( '/dashboard/' ) ) );
+			exit;
+		}
+
+		if ( ! is_user_logged_in() ) {
+			$post = get_post();
+			if ( $post instanceof WP_Post && ( is_page( 'dashboard' ) || has_shortcode( $post->post_content, 'sahab_dashboard' ) ) ) {
+				wp_safe_redirect( wp_login_url( get_permalink( $post ) ) );
+				exit;
+			}
+		}
+	}
+	add_action( 'template_redirect', 'sahab_global_auth_redirect' );
+}
+
 if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 	/**
 	 * رندر شورت‌کد اسکلت جدول ۱۱ ستونه سحاب
@@ -89,6 +115,7 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 				<h3>⚠️ هشدار امنیتی؛ حذف قطعی خبر</h3>
 				<p>شما در حال حذف کامل این خبر از سامانه سحاب هستید. این عملیات کاملاً غیرقابل بازگشت بوده و خبر دیگر قابل دسترسی نخواهد بود.</p>
 				<p class="sahab-modal-instruction">لطفاً برای تایید، کلمه <strong style="color:#dc2626;">delete</strong> را در کادر زیر تایپ کنید:</p>
+				<div id="sahab-delete-modal-error" style="color:#dc2626; font-size:12px; margin-bottom:10px; font-weight:bold; display:none;"></div>
 				<input type="text" id="sahab-delete-confirm-input" placeholder="تایپ کلمه delete..." autocomplete="off" />
 				<div class="sahab-modal-footer-actions">
 					<button type="button" id="sahab-modal-cancel-btn" class="sahab-modal-btn btn-secondary">انصراف</button>
