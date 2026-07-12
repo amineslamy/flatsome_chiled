@@ -139,3 +139,19 @@
     box-shadow: none !important;
     border-radius: 0 !important;
 }
+.sahab-modal-overlay {
+    position: fixed !important; z-index: 99999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6) !important; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+.sahab-modal-content {
+    background-color: #fff !important; padding: 24px !important; border-radius: 8px !important; width: 100% !important; max-width: 450px !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04) !important; text-align: right !important; border-top: 4px solid #dc2626 !important;
+}
+.sahab-modal-content h3 { margin-top: 0; color: #1e293b; font-size: 16px; font-weight: bold; margin-bottom: 12px; }
+.sahab-modal-content p { color: #475569; font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
+#sahab-delete-confirm-input {
+    width: 100% !important; padding: 8px 12px !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; font-size: 14px !important; margin-bottom: 16px !important; direction: ltr !important; text-align: left !important;
+}
+.sahab-modal-footer-actions { display: flex; gap: 10px; justify-content: flex-start; }
+.sahab-modal-btn { padding: 8px 16px !important; font-size: 13px !important; font-weight: bold !important; border: none !important; border-radius: 6px !important; cursor: pointer !important; }
+.sahab-modal-btn.btn-secondary { background-color: #e2e8f0 !important; color: #334155 !important; }
+.sahab-modal-btn.btn-danger { background-color: #dc2626 !important; color: #fff !important; }
+.sahab-modal-btn.btn-danger:disabled { background-color: #f1f5f9 !important; color: #94a3b8 !important; cursor: not-allowed !important; }

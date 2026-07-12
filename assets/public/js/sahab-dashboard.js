@@ -1,4 +1,6 @@
 jQuery(document).ready(function($) {
+    var selectedDeleteId = null;
+
     if ($('#sahab-main-dashboard').length) {
         $('#sahab-main-dashboard').DataTable({
             "ajax": {
@@ -60,4 +62,45 @@ jQuery(document).ready(function($) {
             }
         });
     }
+
+    $('#sahab-main-dashboard').on('click', '.sahab-btn-delete', function() {
+        selectedDeleteId = $(this).data('id');
+        $('#sahab-delete-confirm-input').val('').trigger('input');
+        $('#sahab-delete-modal').fadeIn(200);
+    });
+
+    $('#sahab-modal-cancel-btn').on('click', function() {
+        $('#sahab-delete-modal').fadeOut(200);
+    });
+
+    $('#sahab-delete-confirm-input').on('input', function() {
+        var value = $(this).val();
+        $('#sahab-modal-confirm-btn').prop('disabled', value !== 'delete');
+    });
+
+    $('#sahab-modal-confirm-btn').on('click', function() {
+        if (!selectedDeleteId) {
+            return;
+        }
+
+        $.ajax({
+            url: sahab_dashboard_vars.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'sahab_delete_dashboard_post',
+                post_id: selectedDeleteId
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#sahab-delete-modal').fadeOut(200);
+                    $('#sahab-main-dashboard').DataTable().ajax.reload(null, false);
+                } else {
+                    alert(response.data.message);
+                }
+            },
+            error: function() {
+                alert('خطا در ارتباط با سرور محلی.');
+            }
+        });
+    });
 });

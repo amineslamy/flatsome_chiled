@@ -84,6 +84,18 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 				</tbody>
 			</table>
 		</div>
+		<div id="sahab-delete-modal" class="sahab-modal-overlay" style="display:none;">
+			<div class="sahab-modal-content" dir="rtl">
+				<h3>⚠️ هشدار امنیتی؛ حذف قطعی خبر</h3>
+				<p>شما در حال حذف کامل این خبر از سامانه سحاب هستید. این عملیات کاملاً غیرقابل بازگشت بوده و خبر دیگر قابل دسترسی نخواهد بود.</p>
+				<p class="sahab-modal-instruction">لطفاً برای تایید، کلمه <strong style="color:#dc2626;">delete</strong> را در کادر زیر تایپ کنید:</p>
+				<input type="text" id="sahab-delete-confirm-input" placeholder="تایپ کلمه delete..." autocomplete="off" />
+				<div class="sahab-modal-footer-actions">
+					<button type="button" id="sahab-modal-cancel-btn" class="sahab-modal-btn btn-secondary">انصراف</button>
+					<button type="button" id="sahab-modal-confirm-btn" class="sahab-modal-btn btn-danger" disabled>حذف قطعی</button>
+				</div>
+			</div>
+		</div>
 		<?php
 		return ob_get_clean();
 	}
@@ -93,6 +105,7 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 // هوک‌های رسمی اتصال دیتاتیبلز به موتورخانه داتا
 add_action( 'wp_ajax_sahab_get_dashboard_data', 'flatsome_child_get_dashboard_data' );
 add_action( 'wp_ajax_nopriv_sahab_get_dashboard_data', 'flatsome_child_get_dashboard_data' );
+add_action( 'wp_ajax_sahab_delete_dashboard_post', 'flatsome_child_delete_dashboard_post' );
 
 if ( ! function_exists( 'sahab_dashboard_translate_value' ) ) {
 	/**
@@ -248,7 +261,7 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 					. '<svg viewBox="0 0 24 24" width="18" height="18" stroke="#0f766e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path></svg>'
 					. '</a>'
 					. '</div>'
-					. '<button type="button" class="sahab-btn-svg sahab-btn-delete" title="حذف خبر">'
+					. '<button type="button" class="sahab-btn-svg sahab-btn-delete" title="حذف خبر" data-id="' . absint( $post_id ) . '">'
 					. '<svg viewBox="0 0 24 24" width="18" height="18" stroke="#dc2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
 					. '</button>'
 					. '</div>';
@@ -273,5 +286,25 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 		wp_reset_postdata();
 		echo wp_json_encode( array( 'data' => $result_array ) );
 		wp_die();
+	}
+}
+
+if ( ! function_exists( 'flatsome_child_delete_dashboard_post' ) ) {
+	/**
+	 * حذف امن خبر از دیتابیس از طریق AJAX و حذف از دیتاتیبلز
+	 */
+	function flatsome_child_delete_dashboard_post() {
+		if ( ! is_user_logged_in() || ! current_user_can( 'delete_posts' ) ) {
+			wp_send_json_error( array( 'message' => 'سطح دسترسی غیرمجاز.' ), 403 );
+		}
+
+		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		if ( $post_id && 'post' === get_post_type( $post_id ) ) {
+			$deleted = wp_delete_post( $post_id, true );
+			if ( $deleted ) {
+				wp_send_json_success( array( 'message' => 'خبر با موفقیت حذف شد.' ) );
+			}
+		}
+		wp_send_json_error( array( 'message' => 'خطا در حذف خبر.' ) );
 	}
 }
