@@ -116,4 +116,5 @@ require_once get_stylesheet_directory() . '/inc/comments-handler.php';
 require_once get_stylesheet_directory() . '/inc/acf-automation.php';
 require_once get_stylesheet_directory() . '/inc/jalali-datepicker.php';
 require_once get_stylesheet_directory() . '/inc/admin-labels.php';
+require_once get_stylesheet_directory() . '/inc/dashboard-core.php';
 
