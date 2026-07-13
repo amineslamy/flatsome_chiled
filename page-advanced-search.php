@@ -136,18 +136,24 @@ get_header(); ?>
                         if (!empty($_GET['as_tags']))    $args['tag__in'] = array_map('intval', $_GET['as_tags']);
 
                         if (!empty($_GET['start_reg']) || !empty($_GET['end_reg'])) {
-                            $args['date_query'] = array('relation' => 'AND');
+                            if (!isset($args['meta_query'])) {
+                                $args['meta_query'] = array('relation' => 'AND');
+                            }
                             if (!empty($_GET['start_reg'])) {
-                                $start_parts = explode('/', sanitize_text_field($_GET['start_reg']));
-                                if (count($start_parts) === 3) {
-                                    $args['date_query'][] = array('after' => sahab_jalali_to_gregorian($start_parts[0], $start_parts[1], $start_parts[2]), 'inclusive' => true);
-                                }
+                                $args['meta_query'][] = array(
+                                    'key'     => 'sahab_reg_date_shamsi',
+                                    'value'   => sanitize_text_field($_GET['start_reg']),
+                                    'compare' => '>=',
+                                    'type'    => 'CHAR'
+                                );
                             }
                             if (!empty($_GET['end_reg'])) {
-                                $end_parts = explode('/', sanitize_text_field($_GET['end_reg']));
-                                if (count($end_parts) === 3) {
-                                    $args['date_query'][] = array('before' => sahab_jalali_to_gregorian($end_parts[0], $end_parts[1], $end_parts[2]), 'inclusive' => true);
-                                }
+                                $args['meta_query'][] = array(
+                                    'key'     => 'sahab_reg_date_shamsi',
+                                    'value'   => sanitize_text_field($_GET['end_reg']),
+                                    'compare' => '<=',
+                                    'type'    => 'CHAR'
+                                );
                             }
                         }
 
@@ -299,7 +305,11 @@ get_header(); ?>
                             echo '<td style="padding: 12px; text-align: center; color: #444;">' . esc_html($author_name) . '</td>';
                             echo '<td style="padding: 12px; text-align: center; color: #0066cc; font-size:12px;">' . esc_html($cats_str) . '</td>';
                             echo '<td style="padding: 12px; text-align: center; color: #666; font-size:12px;">' . esc_html($tags_str) . '</td>';
-                            echo '<td style="padding: 12px; text-align: center; color: #555;">' . get_the_date('Y/m/d') . '</td>';
+                            $display_reg_shamsi = get_post_meta( $post_id, 'sahab_reg_date_shamsi', true );
+                            if ( empty( $display_reg_shamsi ) ) {
+                                $display_reg_shamsi = get_the_date( 'Y/m/d' );
+                            }
+                            echo '<td style="padding: 12px; text-align: center; color: #555;">' . esc_html( $display_reg_shamsi ) . '</td>';
                             echo '<td style="padding: 12px; text-align: center; color: #d9534f; font-weight: bold;">' . (!empty($event_date) ? esc_html($event_date) : '---') . '</td>';
                             echo '<td style="padding: 12px; text-align: center;"><a href="' . get_permalink() . '" target="_blank" style="font-size: 12px; color: #0056b3; font-weight: bold; text-decoration: underline;">مشاهده ←</a></td>';
                             echo '</tr>';
