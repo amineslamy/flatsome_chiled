@@ -58,8 +58,8 @@ if ( ! function_exists( 'sahab_global_auth_redirect' ) ) {
 	 * هدایت هوشمند بر اساس وضعیت احراز هویت برای داشبورد و صفحه اصلی
 	 */
 	function sahab_global_auth_redirect() {
-		// If the user is filtering by subject, allow them to view the front page archive
-		if ( isset( $_GET['subject'] ) ) {
+		// If the user is filtering by subject or date, allow them to view the front page archive
+		if ( isset( $_GET['subject'] ) || isset( $_GET['reg_date'] ) || isset( $_GET['event_date'] ) ) {
 			return;
 		}
 
@@ -309,8 +309,36 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 				$creator_link = sprintf( '<a href="%s" target="_blank" class="sahab-user-link">%s</a>', esc_url( get_author_posts_url( $creator_id ? (int)$creator_id : $author_id ) ), esc_html( $creator_name ) );
 
 				// ۶. تواریخ
-				$event_date = get_post_meta( $post_id, 'event_date', true );
-				$publish_date = get_the_date( 'Y/m/d', $post_id );
+				$event_date_raw = get_post_meta( $post_id, 'event_date', true );
+				// Registration date: prefer the shadow meta, fallback to parsidate() for legacy posts
+				$reg_shamsi = get_post_meta( $post_id, 'sahab_reg_date_shamsi', true );
+				$event_date_display = ! empty( $event_date_raw ) ? (string) $event_date_raw : '---';
+				$event_date_link = '---';
+				if ( ! empty( $event_date_raw ) ) {
+					$sanitized_event_date = str_replace( '/', '-', (string) $event_date_raw );
+					$event_date_link = sprintf(
+						'<a href="%s" class="sahab-table-link">%s</a>',
+						esc_url( home_url( '/?event_date=' . $sanitized_event_date ) ),
+						esc_html( $event_date_display )
+					);
+				}
+
+				// Registration display: use shadow meta if present, otherwise generate now
+				$display_reg_date = '---';
+				$reg_date_link = '---';
+				if ( ! empty( $reg_shamsi ) ) {
+					$display_reg_date = (string) $reg_shamsi;
+				} elseif ( ! empty( $post->post_date ) && function_exists( 'parsidate' ) ) {
+					$display_reg_date = parsidate( 'Y/m/d', $post->post_date, 'eng' );
+				}
+				if ( $display_reg_date !== '---' && ! empty( $display_reg_date ) ) {
+					$sanitized_reg_date = str_replace( '/', '-', $display_reg_date );
+					$reg_date_link = sprintf(
+						'<a href="%s" class="sahab-table-link">%s</a>',
+						esc_url( home_url( '/?reg_date=' . $sanitized_reg_date ) ),
+						esc_html( $display_reg_date )
+					);
+				}
 
 				// ۷. ساخت ۳ آیکون خطی با چینش عمودی دو ردیفه
 				$actions_html = '<div class="sahab-dashboard-actions">'
@@ -335,8 +363,8 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 					'evaluation'             => $final_evaluation,
 					'expert'                 => $expert_link,
 					'creator'                => $creator_link,
-					'event_date'             => ! empty( $event_date ) ? (string) $event_date : '---',
-					'publish_date'           => ! empty( $publish_date ) ? $publish_date : '---',
+					'event_date'             => $event_date_link,
+					'publish_date'           => $reg_date_link,
 					'comments_count_summary' => flatsome_child_get_dashboard_comment_summary( $post_id ),
 					'permalink'              => get_permalink( $post_id ),
 					'actions'                => $actions_html,
@@ -393,3 +421,20 @@ function sahab_register_custom_die_handler( $handler ) {
 	};
 }
 add_filter( 'wp_die_handler', 'sahab_register_custom_die_handler', 10 );
+
+if ( ! function_exists( 'flatsome_child_generate_shadow_reg_date' ) ) {
+	/**
+	 * Generate a shadow Jalali registration date and save as post meta
+	 * Key: sahab_reg_date_shamsi (format: Y/m/d)
+	 */
+	function flatsome_child_generate_shadow_reg_date( $post_id ) {
+		if ( get_post_type( $post_id ) !== 'post' ) return;
+		if ( get_post_meta( $post_id, 'sahab_reg_date_shamsi', true ) ) return;
+        
+		$post = get_post( $post_id );
+		// Generate clean '1405/04/23' using the active WP-Parsidate plugin
+		$jalali_now = parsidate( 'Y/m/d', $post->post_date, 'eng' );
+		update_post_meta( $post_id, 'sahab_reg_date_shamsi', $jalali_now );
+	}
+	add_action( 'acf/save_post', 'flatsome_child_generate_shadow_reg_date', 20 );
+}
