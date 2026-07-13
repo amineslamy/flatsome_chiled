@@ -1,20 +1,38 @@
 <?php
 /**
- * شخصی‌سازی تمیز، سبک و اتوماسیون کامل چیدمان صفحه ایجاد خبر سحاب
+ * شخصی‌سازی تمیز، مینی‌مال و پایدار صفحه ایجاد خبر سحاب همراه با منوی جمع‌شده
  */
 
+// ۱. حذف گزینه‌های اضافی از منوی کناری به صورت بومی
+function sahab_remove_unwanted_admin_menus() {
+    remove_menu_page( 'tools.php' );          // حذف ابزارها
+    remove_menu_page( 'edit-comments.php' );  // حذف دیدگاه‌ها
+}
+add_action( 'admin_menu', 'sahab_remove_unwanted_admin_menus', 999 );
+
+// ۲. اجبار به جمع شدن (Collapse) منوی بغل برای همه کاربران در این صفحه
+function sahab_force_folded_admin_menu( $classes ) {
+    $screen = get_current_screen();
+    if ( $screen && $screen->post_type === 'post' ) {
+        $classes .= ' folded'; // اضافه کردن کلاس بومی وردپرس برای جمع شدن منو
+    }
+    return $classes;
+}
+add_filter( 'admin_body_class', 'sahab_force_folded_admin_menu' );
+
+// ۳. استایل‌های ظاهری مینی‌مال و هماهنگ‌سازی فضا
 function sahab_custom_admin_editor_styles() {
     $screen = get_current_screen();
     if ( $screen && isset( $screen->post_type ) && $screen->post_type === 'post' ) {
         $custom_css = "
-            /* ۱. شخصی‌سازی رنگ بارها و فضا */
+            /* شخصی‌سازی رنگ بارها بدون دستکاری هندسه اصلی */
             #wpadminbar { background: #1e293b !important; }
             #wpcontent { 
                 padding-top: 55px !important; 
                 background: #f8fafc !important; 
             }
             
-            /* ۲. فلت کردن باکس‌های فرعی */
+            /* فلت کردن باکس‌ها */
             .postbox { 
                 border-radius: 8px !important; 
                 border: 1px solid #e2e8f0 !important; 
@@ -28,7 +46,7 @@ function sahab_custom_admin_editor_styles() {
             }
             .postbox-header h2 { font-weight: bold !important; color: #334155 !important; }
 
-            /* ۳. استایل اختصاصی برای چکیده اتوماتیک شده زیر عنوان */
+            /* استایل اختصاصی برای چکیده اتوماتیک شده زیر عنوان */
             #postexcerpt {
                 background: transparent !important;
                 border: none !important;
@@ -36,7 +54,7 @@ function sahab_custom_admin_editor_styles() {
                 margin: 15px 0 !important;
                 padding: 0 !important;
             }
-            #postexcerpt .postbox-header { display: none !important; } /* حذف هدر زشت باکس */
+            #postexcerpt .postbox-header { display: none !important; }
             #postexcerpt .inside { padding: 0 !important; margin: 0 !important; }
             #postexcerpt .inside textarea {
                 direction: rtl !important;
@@ -48,11 +66,9 @@ function sahab_custom_admin_editor_styles() {
                 border-radius: 6px !important;
                 border: 1px solid #cbd5e1 !important;
                 box-sizing: border-box !important;
-                box-shadow: inset 0 1px 2px rgba(0,0,0,0.05) !important;
             }
-            #postexcerpt .inside textarea::placeholder { color: #94a3b8; }
             
-            /* ۴. شیک کردن دکمه اصلی انتشار */
+            /* شیک کردن دکمه انتشار */
             #publish { 
                 background: #d9534f !important; 
                 color: #fff !important; 
@@ -75,7 +91,7 @@ function sahab_custom_admin_editor_styles() {
 }
 add_action( 'admin_enqueue_scripts', 'sahab_custom_admin_editor_styles' );
 
-// ۵. تزریق نوار ناوبری شبیه‌سازی شده فرانت‌آند
+// ۴. تزریق نوار ناوبری شبیه‌سازی شده فرانت‌آند
 function sahab_inject_menu_to_admin_editor() {
     $screen = get_current_screen();
     if ( $screen && $screen->post_type === 'post' ) {
@@ -91,7 +107,7 @@ function sahab_inject_menu_to_admin_editor() {
 }
 add_action( 'in_admin_header', 'sahab_inject_menu_to_admin_editor' );
 
-// ۶. جابجایی اتوماتیک و فوری چکیده به زیر عنوان با جی‌کوئری
+// ۵. جابجایی اتوماتیک چکیده به زیر عنوان با جی‌کوئری کاملاً ایمن
 function sahab_automate_layout_features() {
     $screen = get_current_screen();
     if ( $screen && $screen->post_type === 'post' ) {
@@ -101,9 +117,7 @@ function sahab_automate_layout_features() {
                 var excerptBox = $('#postexcerpt');
                 var titleDiv = $('#titlediv');
                 if (excerptBox.length && titleDiv.length) {
-                    // قرار دادن چکیده دقیقا زیر کادر عنوان
                     excerptBox.insertAfter(titleDiv);
-                    // اضافه کردن خودکار یک Placeholder شیک که کاربر بداند اینجا چکیده است
                     excerptBox.find('textarea').attr('placeholder', '✍️ چکیده گزارش را اینجا بنویسید (خلاصه کوتاه و کلیدی)...');
                 }
             });
@@ -113,23 +127,37 @@ function sahab_automate_layout_features() {
 }
 add_action( 'admin_footer', 'sahab_automate_layout_features' );
 
-// ۷. تمیزکاری اجباری منوی تنظیمات صفحه و فعال‌سازی چکیده به صورت پیش‌فرض برای همه
+// ۶. تنظیم المان‌های مخفی صفحه پیش‌فرض
 function sahab_force_enable_default_meta_boxes($hidden, $screen) {
     if ( $screen->id === 'post' ) {
-        // فیلدهای بلااستفاده که باید مخفی شوند
         $hidden = array('postcustom', 'trackbacksdiv', 'commentstatusdiv', 'commentsdiv', 'slugdiv', 'formatdiv');
-        
-        // اطمینان از اینکه چکیده (postexcerpt) هرگز در این آرایه مخفی‌ها قرار نمی‌گیرد
         if (($key = array_search('postexcerpt', $hidden)) !== false) {
             unset($hidden[$key]);
-        }
-
-        // همچنین اطمینان حاصل می‌کنیم که تصویر شاخص همیشه نمایش داده شود
-        if (($key2 = array_search('_thumbnail_id', $hidden)) !== false) {
-            unset($hidden[$key2]);
         }
     }
     return $hidden;
 }
 add_filter( 'hidden_meta_boxes', 'sahab_force_enable_default_meta_boxes', 99, 2 );
 add_filter( 'default_hidden_meta_boxes', 'sahab_force_enable_default_meta_boxes', 99, 2 );
+
+// ۱. ست کردن تم رنگی ادمین به صورت پیش‌فرض برای کاربران جدید
+function sahab_set_default_admin_color_theme($user_id) {
+    $args = array(
+        'ID' => $user_id,
+        'admin_color' => 'ocean' // می‌توانید آن را به fresh، light یا midnight هم تغییر دهید
+    );
+    wp_update_user($args);
+}
+add_action('user_register', 'sahab_set_default_admin_color_theme');
+
+// ۲. اجبار تم رنگی برای کاربران فعلی سامانه (وقتی وارد ادمین می‌شوند)
+function sahab_force_admin_color_theme() {
+    global $_wp_admin_css_colors;
+    $current_color = get_user_option('admin_color');
+    
+    // اگر کاربر تمی غیر از تم مدنظر ما داشت، تم او را به اقیانوس (ocean) تغییر بده
+    if ($current_color !== 'ocean' && is_array($_wp_admin_css_colors) && array_key_exists('ocean', $_wp_admin_css_colors)) {
+        update_user_meta(get_current_user_id(), 'admin_color', 'ocean');
+    }
+}
+add_action('admin_init', 'sahab_force_admin_color_theme');
