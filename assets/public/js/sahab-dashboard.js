@@ -8,8 +8,16 @@ jQuery(document).ready(function($) {
             "ajax": {
                 "url": sahab_dashboard_vars.ajax_url,
                 "type": "POST",
-                "data": {
-                    "action": "sahab_get_dashboard_data"
+                "data": function(d) {
+                    return $.extend({}, d, {
+                        action: 'sahab_get_dashboard_data',
+                        f_id: $('#filter_id').val(),
+                        f_case: $('#filter_case').val(),
+                        f_subject: $('#filter_subject').val(),
+                        f_expert: $('#filter_expert').val(),
+                        f_author: $('#filter_author').val(),
+                        f_notes: $('#filter_notes').val()
+                    });
                 }
             },
             "columns": [
@@ -63,7 +71,6 @@ jQuery(document).ready(function($) {
             },
             "initComplete": function(settings, json) {
                 var api = this.api();
-
                 var lengthSelect = $('#sahab-main-dashboard_length select').appendTo('#sahab_custom_length');
                 var searchInput = $('#sahab-main-dashboard_filter input').appendTo('#sahab_custom_search');
                 $('#sahab-main-dashboard_length, #sahab-main-dashboard_filter').remove();
@@ -80,50 +87,10 @@ jQuery(document).ready(function($) {
                     'padding': '4px'
                 });
 
-                var escapeRegex = function(value) {
-                    return value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                };
-
-                $('#filter_id').on('input', function() {
-                    api.column(0).search(this.value).draw();
-                });
-                $('#filter_case').on('change', function() {
-                    api.column(2).search(this.value).draw();
-                });
-                $('#filter_subject').on('change', function() {
-                    var value = this.value;
-                    if (value) {
-                        var regex = '(^|\\s\\|\\s*)' + escapeRegex(value) + '(\\s*\\| |$)';
-                        api.column(3).search(regex, true, false).draw();
-                    } else {
-                        api.column(3).search('').draw();
-                    }
-                });
-                $('#filter_expert').on('input', function() {
-                    api.column(5).search(this.value).draw();
-                });
-                $('#filter_author').on('input', function() {
-                    api.column(6).search(this.value).draw();
-                });
-                $('#filter_notes').on('change', function() {
-                    var val = this.value;
-                    if (val === 'opinion') {
-                        api.column(9).search('نظریه', true, false).draw();
-                    } else if (val === 'rewrite') {
-                        api.column(9).search('بازنویسی', true, false).draw();
-                    } else if (val === 'note') {
-                        api.column(9).search('ملاحظه', true, false).draw();
-                    } else if (val === 'misc') {
-                        api.column(9).search('متفرقه', true, false).draw();
-                    } else {
-                        api.column(9).search('').draw();
-                    }
-                });
                 $('#clear_all_filters').on('click', function(e) {
                     e.preventDefault();
-                    $('#filter_id, #filter_case, #filter_subject, #filter_expert, #filter_author, #filter_notes').val('');
-                    api.columns([0, 2, 3, 5, 6, 9]).search('').draw();
-                    searchInput.val('');
+                    var cleanUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+                    window.location.href = cleanUrl;
                 });
             }
         });
