@@ -48,12 +48,12 @@ jQuery(document).ready(function($) {
             "pageLength": 10,
             "language": {
                 "processing": "در حال پردازش...",
-                "lengthMenu": "نمایش _MENU_ خبر",
+                "lengthMenu": "_MENU_",
                 "zeroRecords": "هیچ خبری یافت نشد",
                 "info": "نمایش _START_ تا _END_ از مجموع _TOTAL_ خبر",
                 "infoEmpty": "نمایش 0 تا 0 از 0 خبر",
                 "infoFiltered": "(فیلتر شده از _MAX_ خبر)",
-                "search": "جستجوی زنده:",
+                "search": "",
                 "paginate": {
                     "first": "ابتدا",
                     "previous": "قبلی",
@@ -63,11 +63,21 @@ jQuery(document).ready(function($) {
             },
             "initComplete": function(settings, json) {
                 var api = this.api();
-                $('#sahab_custom_length').append($('#sahab-main-dashboard_length'));
-                $('#sahab_custom_search').append($('#sahab-main-dashboard_filter'));
-                $('#sahab-main-dashboard_length, #sahab-main-dashboard_filter').css({
+
+                var lengthSelect = $('#sahab-main-dashboard_length select').appendTo('#sahab_custom_length');
+                var searchInput = $('#sahab-main-dashboard_filter input').appendTo('#sahab_custom_search');
+                $('#sahab-main-dashboard_length, #sahab-main-dashboard_filter').remove();
+
+                lengthSelect.css({
                     'margin': '0',
-                    'width': '100%'
+                    'height': '30px',
+                    'font-size': '11px'
+                });
+                searchInput.attr('placeholder', 'جستجوی زنده عنوان...').css({
+                    'margin': '0',
+                    'height': '30px',
+                    'font-size': '11px',
+                    'padding': '4px'
                 });
 
                 var escapeRegex = function(value) {
@@ -97,10 +107,14 @@ jQuery(document).ready(function($) {
                 });
                 $('#filter_notes').on('change', function() {
                     var val = this.value;
-                    if (val === 'has_opinion') {
-                        api.column(9).search('[1-9]', true, false).draw();
-                    } else if (val === 'has_rewrite') {
-                        api.column(9).search('بازنویسی|تغییر', true, false).draw();
+                    if (val === 'opinion') {
+                        api.column(9).search('نظریه', true, false).draw();
+                    } else if (val === 'rewrite') {
+                        api.column(9).search('بازنویسی', true, false).draw();
+                    } else if (val === 'note') {
+                        api.column(9).search('ملاحظه', true, false).draw();
+                    } else if (val === 'misc') {
+                        api.column(9).search('متفرقه', true, false).draw();
                     } else {
                         api.column(9).search('').draw();
                     }
@@ -109,7 +123,7 @@ jQuery(document).ready(function($) {
                     e.preventDefault();
                     $('#filter_id, #filter_case, #filter_subject, #filter_expert, #filter_author, #filter_notes').val('');
                     api.columns([0, 2, 3, 5, 6, 9]).search('').draw();
-                    $('#sahab-main-dashboard_filter input').val('');
+                    searchInput.val('');
                 });
             }
         });
