@@ -47,9 +47,21 @@ if ( isset($_POST['sahab_submit_report']) && wp_verify_nonce($_POST['sahab_repor
             }
         }
 
-        // ثبت فیلد نوع پی‌نوشت (گروه دوم ACF که روی دیدگاه‌ها بود یا به عنوان متای پست)
-        if ( !empty($_POST['comment_type_select']) ) {
-            update_post_meta($post_id, 'comment_type', sanitize_text_field($_POST['comment_type_select']));
+        // ثبت پی‌نوشت سحاب به عنوان دیدگاه بومی وردپرس
+        if ( !empty($_POST['sahab_note_content']) && !empty($_POST['comment_type_select']) ) {
+            $comment_data = array(
+                'comment_post_ID'      => $post_id,
+                'comment_author'       => get_the_author_meta('display_name', $post_data['post_author']),
+                'comment_author_email' => get_the_author_meta('user_email', $post_data['post_author']),
+                'comment_content'      => sanitize_textarea_field($_POST['sahab_note_content']),
+                'user_id'              => $post_data['post_author'],
+                'comment_approved'     => 1,
+            );
+
+            $comment_id = wp_insert_comment($comment_data);
+            if ( $comment_id ) {
+                update_comment_meta($comment_id, 'comment_type', sanitize_text_field($_POST['comment_type_select']));
+            }
         }
 
         $success_message = "🎉 گزارش با موفقیت ثبت شد و در پیشخوان قرار گرفت.";
@@ -115,16 +127,22 @@ get_header(); ?>
                     ?>
                 </div>
 
-                <!-- ۵. فیلد پی‌نوشت سحاب -->
-                <div class="sahab-field-group" style="background: #fff7ed; padding: 20px; border-radius: 6px; border: 1px solid #ffedd5;">
-                    <label style="color: #c2410c;">💬 مدیریت و ثبت پی‌نوشت‌های سحاب</label>
-                    <select name="comment_type_select" style="width: 100%; max-width: 300px;">
-                        <option value="">هیچ‌کدام</option>
-                        <option value="rewrite">بازنویسی خبر</option>
-                        <option value="note">ملاحظه</option>
-                        <option value="theory">نظریه</option>
-                        <option value="misc">متفرقه</option>
-                    </select>
+                <!-- ۵. مدیریت و ثبت پی‌نوشت‌های سحاب -->
+                <div class="sahab-field-group" style="background: #fff7ed; padding: 25px; border-radius: 8px; border: 1px solid #ffedd5d5; margin-bottom: 25px;">
+                    <label style="color: #c2410c; font-size: 15px; margin-bottom: 12px; display: block;">💬 مدیریت و ثبت پی‌نوشت‌های سحاب</label>
+                    <div style="display: flex; gap: 15px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;">
+                        <div style="width: 100%; max-width: 200px;">
+                            <select name="comment_type_select" style="width: 100%; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; padding: 0 10px;">
+                                <option value="">نوع پی‌نوشت را انتخاب کنید...</option>
+                                <option value="note">ملاحظه</option>
+                                <option value="theory">نظریه</option>
+                                <option value="rewrite">بازنویسی خبر</option>
+                                <option value="misc">متفرقه</option>
+                            </select>
+                        </div>
+                        <div style="color: #7c2d12; font-size: 12px;">💡 در صورت تمایل به ثبت پی‌نوشت همزمان با ایجاد خبر، نوع و متن آن را وارد کنید.</div>
+                    </div>
+                    <textarea name="sahab_note_content" rows="3" placeholder="متن پی‌نوشت، ملاحظه یا نظریه خود را اینجا بنویسید..." style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px; font-size: 13px; min-height: 120px;"></textarea>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;">
