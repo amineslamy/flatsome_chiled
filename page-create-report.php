@@ -48,7 +48,8 @@ if ( isset($_POST['sahab_submit_report']) && wp_verify_nonce($_POST['sahab_repor
         }
 
         // ثبت پی‌نوشت سحاب به عنوان دیدگاه بومی وردپرس
-        if ( !empty($_POST['sahab_note_content']) && !empty($_POST['comment_type_select']) ) {
+        $comment_type = !empty($_POST['comment_type_select']) ? sanitize_text_field($_POST['comment_type_select']) : 'misc';
+        if ( !empty($_POST['sahab_note_content']) ) {
             $comment_data = array(
                 'comment_post_ID'      => $post_id,
                 'comment_author'       => get_the_author_meta('display_name', $post_data['post_author']),
@@ -60,7 +61,7 @@ if ( isset($_POST['sahab_submit_report']) && wp_verify_nonce($_POST['sahab_repor
 
             $comment_id = wp_insert_comment($comment_data);
             if ( $comment_id ) {
-                update_comment_meta($comment_id, 'comment_type', sanitize_text_field($_POST['comment_type_select']));
+                update_comment_meta($comment_id, 'comment_type', $comment_type);
             }
         }
 
@@ -108,7 +109,11 @@ get_header(); ?>
                         'media_buttons' => true,
                         'textarea_rows' => 12,
                         'teeny'         => false,
-                        'quicktags'     => true
+                        'quicktags'     => true,
+                        'tinymce'       => array(
+                            'toolbar1' => 'bold,italic,strikethrough,bullist,numlist,blockquote,hr,alignleft,aligncenter,alignright,link,unlink,wp_more,fullscreen',
+                            'toolbar2' => 'formatselect,underline,alignjustify,forecolor,pastetext,removeformat,charmap,outdent,indent,undo,redo',
+                        ),
                     )); 
                     ?>
                 </div>
@@ -128,20 +133,28 @@ get_header(); ?>
                 </div>
 
                 <!-- ۵. مدیریت و ثبت پی‌نوشت‌های سحاب -->
-                <div class="sahab-field-group" style="background: #fff7ed; padding: 25px; border-radius: 8px; border: 1px solid #ffedd5d5; margin-bottom: 25px;">
-                    <label style="color: #c2410c; font-size: 15px; margin-bottom: 12px; display: block;">💬 مدیریت و ثبت پی‌نوشت‌های سحاب</label>
-                    <div style="display: flex; gap: 15px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;">
-                        <div style="width: 100%; max-width: 200px;">
-                            <select name="comment_type_select" style="width: 100%; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; padding: 0 10px;">
-                                <option value="">نوع پی‌نوشت را انتخاب کنید...</option>
-                                <option value="note">ملاحظه</option>
-                                <option value="theory">نظریه</option>
-                                <option value="rewrite">بازنویسی خبر</option>
-                                <option value="misc">متفرقه</option>
-                            </select>
-                        </div>
+                <div class="sahab-field-group" style="background: #fff7ed; padding: 25px; border-radius: 8px; border: 1px solid #ffedd5; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <label style="color: #c2410c; font-size: 15px; margin: 0; font-weight: bold;">💬 مدیریت و ثبت پی‌نوشت‌های سحاب</label>
                         <div style="color: #7c2d12; font-size: 12px;">💡 در صورت تمایل به ثبت پی‌نوشت همزمان با ایجاد خبر، نوع و متن آن را وارد کنید.</div>
                     </div>
+                    
+                    <!-- ردیف دکمه‌های رادیویی در یک خط افقی -->
+                    <div style="display: flex; gap: 20px; background: #fff; padding: 10px 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 12px; align-items: center;">
+                        <label style="font-weight: normal !important; color: #334155; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="comment_type_select" value="misc" checked style="margin: 0; width: auto;"> متفرقه
+                        </label>
+                        <label style="font-weight: normal !important; color: #334155; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="comment_type_select" value="note" style="margin: 0; width: auto;"> ملاحظه
+                        </label>
+                        <label style="font-weight: normal !important; color: #334155; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="comment_type_select" value="theory" style="margin: 0; width: auto;"> نظریه
+                        </label>
+                        <label style="font-weight: normal !important; color: #334155; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="comment_type_select" value="rewrite" style="margin: 0; width: auto;"> بازنویسی خبر
+                        </label>
+                    </div>
+                    
                     <textarea name="sahab_note_content" rows="3" placeholder="متن پی‌نوشت، ملاحظه یا نظریه خود را اینجا بنویسید..." style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px; font-size: 13px; min-height: 120px;"></textarea>
                 </div>
 
