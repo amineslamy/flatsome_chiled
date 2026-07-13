@@ -438,3 +438,54 @@ if ( ! function_exists( 'flatsome_child_generate_shadow_reg_date' ) ) {
 	}
 	add_action( 'acf/save_post', 'flatsome_child_generate_shadow_reg_date', 20 );
 }
+
+	/**
+	 * Handle homepage query filters for subject, event_date and reg_date
+	 */
+	function sahab_handle_homepage_query_filters( $query ) {
+		// Only modify the main query on the frontend homepage/archive
+		if ( is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
+
+		$meta_query = array( 'relation' => 'AND' );
+
+		// 1. Filter by Shadow Registration Date (?reg_date=1405-04-13)
+		if ( ! empty( $_GET['reg_date'] ) ) {
+			$reg_date = sanitize_text_field( wp_unslash( $_GET['reg_date'] ) );
+			// Convert dash back to slash to match our shadow DB format '1405/04/13'
+			$db_reg_date = str_replace( '-', '/', $reg_date );
+			$meta_query[] = array(
+				'key'     => 'sahab_reg_date_shamsi',
+				'value'   => $db_reg_date,
+				'compare' => '='
+			);
+		}
+
+		// 2. Filter by Event Date (?event_date=1405-04-13)
+		if ( ! empty( $_GET['event_date'] ) ) {
+			$event_date = sanitize_text_field( wp_unslash( $_GET['event_date'] ) );
+			$db_event_date = str_replace( '-', '/', $event_date );
+			$meta_query[] = array(
+				'key'     => 'event_date',
+				'value'   => $db_event_date,
+				'compare' => '='
+			);
+		}
+
+		// 3. Filter by Subject (?subject=value)
+		if ( ! empty( $_GET['subject'] ) ) {
+			$subject = sanitize_text_field( wp_unslash( $_GET['subject'] ) );
+			$meta_query[] = array(
+				'key'     => 'subject',
+				'value'   => '"' . $subject . '"', // Accurate wrapper for ACF serialized checkbox arrays
+				'compare' => 'LIKE'
+			);
+		}
+
+		// If any custom filters were applied, inject them cleanly into the query
+		if ( count( $meta_query ) > 1 ) {
+			$query->set( 'meta_query', $meta_query );
+		}
+	}
+	add_action( 'pre_get_posts', 'sahab_handle_homepage_query_filters' );
