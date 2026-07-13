@@ -42,3 +42,47 @@ function sahab_inject_menu_to_admin_editor() {
     }
 }
 add_action( 'in_admin_header', 'sahab_inject_menu_to_admin_editor' );
+
+// فیکس کردن تیک‌های پیش‌فرض برای همه کاربران در صفحه پست جدید
+function sahab_default_screen_options($hidden, $screen) {
+    if ( $screen->id === 'post' ) {
+        // فیلدهایی که می‌خواهیم برای همه «مخفی» باشند (بدون تیک)
+        $hidden = array('postcustom', 'trackbacksdiv', 'commentstatusdiv', 'commentsdiv', 'slugdiv', 'formatdiv');
+    }
+    return $hidden;
+}
+add_filter( 'hidden_meta_boxes', 'sahab_default_screen_options', 10, 2 );
+
+// ۳. جابجایی باکس چکیده به زیر عنوان با جاوااسکریپت در فوتر ادمین
+add_action('admin_footer', 'sahab_reorder_excerpt_field_via_js');
+function sahab_reorder_excerpt_field_via_js() {
+    $screen = get_current_screen();
+    if ( $screen && $screen->post_type === 'post' ) {
+        ?>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                // پیدا کردن باکس چکیده و باکس عنوان
+                var excerptBox = $('#postexcerpt');
+                var titleDiv = $('#titlediv');
+                
+                if (excerptBox.length && titleDiv.length) {
+                    // جابجایی فیزیکی باکس چکیده به زیر عنوان و قبل از ویرایشگر اصلی
+                    excerptBox.insertAfter(titleDiv);
+                    
+                    // اعمال استایل‌های مینی‌مال برای هماهنگی بیشتر و حذف حاشیه‌های اضافی باکس قدیمی
+                    excerptBox.css({
+                        'margin-top': '20px',
+                        'margin-bottom': '20px',
+                        'border': '1px solid #e2e8f0',
+                        'border-radius': '8px',
+                        'box-shadow': 'none'
+                    });
+                    
+                    // تغییر عنوان هدر باکس برای زیبایی بیشتر
+                    excerptBox.find('.postbox-header h2').text('📝 چکیده گزارش');
+                }
+            });
+        </script>
+        <?php
+    }
+}
