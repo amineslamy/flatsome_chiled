@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
     $.fn.dataTable.ext.errMode = 'none';
 
     if ($('#sahab-main-dashboard').length) {
-        $('#sahab-main-dashboard').DataTable({
+        var dashboardTable = $('#sahab-main-dashboard').DataTable({
             "ajax": {
                 "url": sahab_dashboard_vars.ajax_url,
                 "type": "POST",
@@ -32,7 +32,6 @@ jQuery(document).ready(function($) {
                     "render": function(data, type, row) {
                         if (!data) return '---';
                         
-                        // حل مشکل لینک undefined با استفاده از ساختار دقیق دیتای برگشتی
                         var commentUrl = row.permalink + '#comments';
                         
                         var noteHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge note" title="ملاحظات: ' + data.note + ' عدد">' + data.note + '</span></a>';
@@ -61,6 +60,57 @@ jQuery(document).ready(function($) {
                     "next": "بعدی",
                     "last": "انتها"
                 }
+            },
+            "initComplete": function(settings, json) {
+                var api = this.api();
+                $('#sahab_custom_length').append($('#sahab-main-dashboard_length'));
+                $('#sahab_custom_search').append($('#sahab-main-dashboard_filter'));
+                $('#sahab-main-dashboard_length, #sahab-main-dashboard_filter').css({
+                    'margin': '0',
+                    'width': '100%'
+                });
+
+                var escapeRegex = function(value) {
+                    return value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                };
+
+                $('#filter_id').on('input', function() {
+                    api.column(0).search(this.value).draw();
+                });
+                $('#filter_case').on('change', function() {
+                    api.column(2).search(this.value).draw();
+                });
+                $('#filter_subject').on('change', function() {
+                    var value = this.value;
+                    if (value) {
+                        var regex = '(^|\\s\\|\\s*)' + escapeRegex(value) + '(\\s*\\| |$)';
+                        api.column(3).search(regex, true, false).draw();
+                    } else {
+                        api.column(3).search('').draw();
+                    }
+                });
+                $('#filter_expert').on('input', function() {
+                    api.column(5).search(this.value).draw();
+                });
+                $('#filter_author').on('input', function() {
+                    api.column(6).search(this.value).draw();
+                });
+                $('#filter_notes').on('change', function() {
+                    var val = this.value;
+                    if (val === 'has_opinion') {
+                        api.column(9).search('[1-9]', true, false).draw();
+                    } else if (val === 'has_rewrite') {
+                        api.column(9).search('بازنویسی|تغییر', true, false).draw();
+                    } else {
+                        api.column(9).search('').draw();
+                    }
+                });
+                $('#clear_all_filters').on('click', function(e) {
+                    e.preventDefault();
+                    $('#filter_id, #filter_case, #filter_subject, #filter_expert, #filter_author, #filter_notes').val('');
+                    api.columns([0, 2, 3, 5, 6, 9]).search('').draw();
+                    $('#sahab-main-dashboard_filter input').val('');
+                });
             }
         });
     }

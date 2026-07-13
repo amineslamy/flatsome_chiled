@@ -92,6 +92,35 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 		ob_start();
 		?>
 		<div class="sahab-dashboard-wrapper" dir="rtl">
+			<div class="sahab-dashboard-compact-bar" style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0; direction: rtl; margin-bottom: 15px; font-size: 12px; overflow: hidden;">
+				<div id="sahab_custom_length" style="width: 45px;"></div>
+				<div id="sahab_custom_search" style="flex: 1 1 130px; min-width: 90px;"></div>
+				<input type="text" id="filter_id" placeholder="🔢 شماره" style="max-width: 65px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px;">
+				<select id="filter_case" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px;">
+					<option value="">📌 کیس</option>
+					<?php foreach ( get_categories() as $cat ) : ?>
+						<option value="<?php echo esc_attr( $cat->name ); ?>"><?php echo esc_html( $cat->name ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<select id="filter_subject" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px;">
+					<option value="">🏷️ موضوع</option>
+					<?php
+					$field = function_exists( 'acf_get_field' ) ? acf_get_field( 'subject' ) : false;
+					if ( $field && ! empty( $field['choices'] ) ) :
+						foreach ( $field['choices'] as $value => $label ) :
+					?>
+						<option value="<?php echo esc_attr( $label ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; endif; ?>
+				</select>
+				<input type="text" id="filter_expert" placeholder="👤 کارشناس" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px;">
+				<input type="text" id="filter_author" placeholder="✍️ ثبت کننده" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px;">
+				<select id="filter_notes" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px;">
+					<option value="">📝 پی‌نوشت</option>
+					<option value="has_opinion">دارای نظریه</option>
+					<option value="has_rewrite">دارای بازنویسی</option>
+				</select>
+				<button id="clear_all_filters" style="padding: 5px 10px; background: #ef4444; color: #fff; border-radius: 4px; border: none; cursor: pointer; height: 30px; font-weight: bold; white-space: nowrap; font-size: 11px;">🔄 حذف فیلترها</button>
+			</div>
 			<table id="sahab-main-dashboard" class="display responsive nowrap" style="width:100%;">
 				<thead>
 					<tr>
@@ -481,6 +510,11 @@ if ( ! function_exists( 'flatsome_child_generate_shadow_reg_date' ) ) {
 				'value'   => '"' . $subject . '"', // Accurate wrapper for ACF serialized checkbox arrays
 				'compare' => 'LIKE'
 			);
+		}
+
+		// 4. Filter by Category Slug (?category_filter=slug)
+		if ( ! empty( $_GET['category_filter'] ) ) {
+			$query->set( 'category_name', sanitize_text_field( wp_unslash( $_GET['category_filter'] ) ) );
 		}
 
 		// If any custom filters were applied, inject them cleanly into the query
