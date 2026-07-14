@@ -92,16 +92,36 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 		ob_start();
 		?>
 		<div class="sahab-dashboard-wrapper" dir="rtl">
-			<form id="sahab-dashboard-filters" method="get" action="<?php echo esc_url( remove_query_arg( array( 'f_id', 'f_case', 'f_subject', 'f_expert', 'f_author', 'f_notes' ) ) ); ?>" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 6px; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0; direction: rtl; margin-bottom: 15px; font-size: 12px; overflow: hidden;">
+			<form id="sahab-dashboard-filters" method="get" action="<?php echo esc_url( remove_query_arg( array( 'f_id', 'f_case', 'f_type', 'f_subject', 'f_expert', 'f_author', 'f_notes' ) ) ); ?>" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 6px; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0; direction: rtl; margin-bottom: 15px; font-size: 12px; overflow: hidden;">
 				<div id="sahab_custom_length" style="width: 45px; margin: 0;"></div>
 				<div id="sahab_custom_search" style="flex: 1 1 130px; min-width: 90px; margin: 0;"></div>
 				<input type="text" name="f_id" id="filter_id" value="<?php echo esc_attr( isset( $_GET['f_id'] ) ? sanitize_text_field( wp_unslash( $_GET['f_id'] ) ) : '' ); ?>" placeholder="شماره" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 65px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+				<?php
+				$news_type_field = function_exists( 'acf_get_field' ) ? acf_get_field( 'news_type' ) : false;
+				$news_type_choices = ( $news_type_field && ! empty( $news_type_field['choices'] ) ) ? $news_type_field['choices'] : array(
+					'open'      => 'آشکار',
+					'official'  => 'رسمی',
+					'technical' => 'فنی',
+					'cyber'     => 'سایبری',
+					'hidden'    => 'پنهان',
+					'ravi'      => 'راوی',
+				);
+				?>
+
 				<select name="f_case" id="filter_case" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
 					<option value="">کیس</option>
 					<?php foreach ( get_categories() as $cat ) : ?>
 						<option value="<?php echo esc_attr( $cat->name ); ?>" <?php selected( isset( $_GET['f_case'] ) ? sanitize_text_field( wp_unslash( $_GET['f_case'] ) ) : '', $cat->name ); ?>><?php echo esc_html( $cat->name ); ?></option>
 					<?php endforeach; ?>
 				</select>
+
+				<select name="f_type" id="filter_type" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+					<option value="">نوع خبر</option>
+					<?php foreach ( $news_type_choices as $value => $label ) : ?>
+						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $_GET['f_type'] ) ? sanitize_text_field( wp_unslash( $_GET['f_type'] ) ) : '', $value ); ?>><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+
 				<select name="f_subject" id="filter_subject" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
 					<option value="">موضوع</option>
 					<?php
@@ -131,6 +151,7 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 						<th>عنوان خبر</th>
 						<th>کیس</th>
 						<th>موضوع</th>
+						<th>نوع خبر</th>
 						<th>ارزیابی / ارجحیت</th>
 						<th>کارشناس</th>
 						<th>ثبت کننده</th>
@@ -251,9 +272,21 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 		$filter_id      = isset( $_REQUEST['f_id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_id'] ) ) : '';
 		$filter_case    = isset( $_REQUEST['f_case'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_case'] ) ) : '';
 		$filter_subject = isset( $_REQUEST['f_subject'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_subject'] ) ) : '';
+		$filter_type    = isset( $_REQUEST['f_type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_type'] ) ) : '';
 		$filter_expert  = isset( $_REQUEST['f_expert'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_expert'] ) ) : '';
 		$filter_author  = isset( $_REQUEST['f_author'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_author'] ) ) : '';
 		$filter_notes   = isset( $_REQUEST['f_notes'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['f_notes'] ) ) : '';
+
+		// Dynamic ACF choices for news_type inside AJAX context
+		$news_type_field = function_exists( 'acf_get_field' ) ? acf_get_field( 'news_type' ) : false;
+		$news_type_choices = ( $news_type_field && ! empty( $news_type_field['choices'] ) ) ? $news_type_field['choices'] : array(
+			'open'      => 'آشکار',
+			'official'  => 'رسمی',
+			'technical' => 'فنی',
+			'cyber'     => 'سایبری',
+			'hidden'    => 'پنهان',
+			'ravi'      => 'راوی',
+		);
 
 		$query_args = array(
 			'post_type'           => 'post',
@@ -279,6 +312,14 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 				'key'     => 'subject',
 				'value'   => '"' . $filter_subject . '"',
 				'compare' => 'LIKE',
+			);
+		}
+
+		if ( $filter_type ) {
+			$meta_query[] = array(
+				'key'     => 'news_type',
+				'value'   => $filter_type,
+				'compare' => '=',
 			);
 		}
 
@@ -398,6 +439,13 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 				}
 				$subject_label = ! empty( $subject_links ) ? implode( ' | ', $subject_links ) : $subject_label;
 
+						// news_type (ACF)
+						$type_val = get_post_meta( $post_id, 'news_type', true );
+						if ( empty( $type_val ) && function_exists( 'get_field' ) ) {
+							$type_val = get_field( 'news_type', $post_id );
+						}
+						$type_label = isset( $news_type_choices[ $type_val ] ) ? $news_type_choices[ $type_val ] : '---';
+
 				// ۴. ارزیابی و ارجحیت (بدون بج، تفکیک متنی ساده با |)
 				$eval_val = get_post_meta( $post_id, 'evaluation', true );
 				$prio_val = get_post_meta( $post_id, 'priority', true );
@@ -475,6 +523,7 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 					'event_date'             => $event_date_link,
 					'publish_date'           => $reg_date_link,
 					'comments_count_summary' => flatsome_child_get_dashboard_comment_summary( $post_id ),
+					'news_type'              => esc_html( $type_label ),
 					'permalink'              => get_permalink( $post_id ),
 					'actions'                => $actions_html,
 				);
@@ -603,3 +652,4 @@ if ( ! function_exists( 'flatsome_child_generate_shadow_reg_date' ) ) {
 		}
 	}
 	add_action( 'pre_get_posts', 'sahab_handle_homepage_query_filters' );
+	

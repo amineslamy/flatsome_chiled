@@ -13,6 +13,7 @@ jQuery(document).ready(function($) {
                         action: 'sahab_get_dashboard_data',
                         f_id: $('#filter_id').val(),
                         f_case: $('#filter_case').val(),
+                            f_type: $('#filter_type').val(),
                         f_subject: $('#filter_subject').val(),
                         f_expert: $('#filter_expert').val(),
                         f_author: $('#filter_author').val(),
@@ -30,6 +31,7 @@ jQuery(document).ready(function($) {
                 },
                 { "data": "case" },
                 { "data": "subject" },
+                { "data": "news_type" },
                 { "data": "evaluation" },
                 { "data": "expert" },
                 { "data": "creator" },
@@ -86,6 +88,10 @@ jQuery(document).ready(function($) {
                     'font-size': '11px',
                     'padding': '4px'
                 });
+
+                // Ensure the live search input and filters fit on one line
+                $('#sahab-dashboard-filters #sahab_custom_search input').css('width', '180px');
+                $('#sahab-dashboard-filters select, #sahab-dashboard-filters input').css('height', '30px');
 
                 $('#clear_all_filters').on('click', function(e) {
                     e.preventDefault();
