@@ -111,6 +111,43 @@ class Flatsome_Child_Theme_Init {
 }
 Flatsome_Child_Theme_Init::instance();
 
+/**
+ * پلتفرم هوشمند سحاب (OSINT)
+ * ماژول مدیریت سلسله‌مراتب و ساختار اداری کارشناسان
+ */
+
+// ۱. اضافه کردن ستون مدیر به جدول کاربران در پیشخوان
+function sahab_add_user_manager_column($columns) {
+    $columns['user_manager'] = 'مدیر مستقیم (اداره)';
+    return $columns;
+}
+add_filter('manage_users_columns', 'sahab_add_user_manager_column');
+
+// ۲. پر کردن دیتای ستون مدیر با استفاده از فیلد ACF
+function sahab_show_user_manager_column_content($value, $column_name, $user_id) {
+    if ($column_name === 'user_manager') {
+        // دریافت شناسه مدیر از فیلد ACF کاربر
+        $manager_id = get_field('reports_to', 'user_' . $user_id);
+        
+        if ($manager_id) {
+            $manager_data = get_userdata($manager_id);
+            if ($manager_data) {
+                // نمایش نام مدیر مستقیم کارشناس
+                return '<strong style="color: #0891a1;">' . esc_html($manager_data->display_name) . '</strong>';
+            }
+        }
+        
+        // اگر کاربر خودش نقش ویرایشگر (مدیر) داشته باشد یا سرپرست نداشته باشد
+        $user_data = get_userdata($user_id);
+        if (in_array('editor', (array) $user_data->roles)) {
+            return '<span class="badge" style="background: #eae9fd; color: #4c46c9; padding: 3px 8px; border-radius: 10px; font-size: 11px;">سرپرست اداره</span>';
+        }
+        
+        return '<span style="color: #94a3b8;">تعیین نشده</span>';
+    }
+    return $value;
+}
+add_filter('manage_users_custom_column', 'sahab_show_user_manager_column_content', 10, 3);
 
 require_once get_stylesheet_directory() . '/inc/comments-handler.php';
 require_once get_stylesheet_directory() . '/inc/acf-automation.php';
@@ -118,3 +155,5 @@ require_once get_stylesheet_directory() . '/inc/jalali-datepicker.php';
 require_once get_stylesheet_directory() . '/inc/admin-labels.php';
 require_once get_stylesheet_directory() . '/inc/dashboard-core.php';
 require_once get_stylesheet_directory() . '/inc/admin-customizer.php';
+// لود کردن ماژول گزارشات تحلیلی سحاب به صورت ماژولار
+require_once get_stylesheet_directory() . '/inc/sahab-bi-reporting.php';
