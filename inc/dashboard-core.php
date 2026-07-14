@@ -58,8 +58,8 @@ if ( ! function_exists( 'sahab_global_auth_redirect' ) ) {
 	 * هدایت هوشمند بر اساس وضعیت احراز هویت برای داشبورد و صفحه اصلی
 	 */
 	function sahab_global_auth_redirect() {
-		// If the user is filtering by subject or date, allow them to view the front page archive
-		if ( isset( $_GET['subject'] ) || isset( $_GET['reg_date'] ) || isset( $_GET['event_date'] ) ) {
+		// If the user is filtering by subject, date or news type, allow them to view the front page archive
+		if ( isset( $_GET['subject'] ) || isset( $_GET['reg_date'] ) || isset( $_GET['event_date'] ) || isset( $_GET['news_type'] ) ) {
 			return;
 		}
 
@@ -92,10 +92,9 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 		ob_start();
 		?>
 		<div class="sahab-dashboard-wrapper" dir="rtl">
-			<form id="sahab-dashboard-filters" method="get" action="<?php echo esc_url( remove_query_arg( array( 'f_id', 'f_case', 'f_type', 'f_subject', 'f_expert', 'f_author', 'f_notes' ) ) ); ?>" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 6px; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0; direction: rtl; margin-bottom: 15px; font-size: 12px; overflow: hidden;">
+			<form id="sahab-dashboard-filters" method="get" action="<?php echo esc_url( remove_query_arg( array( 'f_id', 'f_case', 'f_type', 'f_subject', 'f_expert', 'f_author', 'f_notes' ) ) ); ?>" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap !important; gap: 4px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; direction: rtl; margin-bottom: 15px; font-size: 11px; overflow: hidden;">
 				<div id="sahab_custom_length" style="width: 45px; margin: 0;"></div>
-				<div id="sahab_custom_search" style="flex: 1 1 130px; min-width: 90px; margin: 0;"></div>
-				<input type="text" name="f_id" id="filter_id" value="<?php echo esc_attr( isset( $_GET['f_id'] ) ? sanitize_text_field( wp_unslash( $_GET['f_id'] ) ) : '' ); ?>" placeholder="شماره" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 65px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+				<div id="sahab_custom_search" style="flex: 0 0 140px; min-width: 90px; margin: 0;"></div>
 				<?php
 				$news_type_field = function_exists( 'acf_get_field' ) ? acf_get_field( 'news_type' ) : false;
 				$news_type_choices = ( $news_type_field && ! empty( $news_type_field['choices'] ) ) ? $news_type_field['choices'] : array(
@@ -108,21 +107,23 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 				);
 				?>
 
-				<select name="f_case" id="filter_case" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+				<input type="text" name="f_id" id="filter_id" value="<?php echo esc_attr( isset( $_GET['f_id'] ) ? sanitize_text_field( wp_unslash( $_GET['f_id'] ) ) : '' ); ?>" placeholder="شماره" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 50px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+
+			<select name="f_case" id="filter_case" onchange="this.form.submit();" style="max-width: 85px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
 					<option value="">کیس</option>
 					<?php foreach ( get_categories() as $cat ) : ?>
 						<option value="<?php echo esc_attr( $cat->name ); ?>" <?php selected( isset( $_GET['f_case'] ) ? sanitize_text_field( wp_unslash( $_GET['f_case'] ) ) : '', $cat->name ); ?>><?php echo esc_html( $cat->name ); ?></option>
 					<?php endforeach; ?>
 				</select>
 
-				<select name="f_type" id="filter_type" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+				<select name="f_type" id="filter_type" onchange="this.form.submit();" style="max-width: 85px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
 					<option value="">نوع خبر</option>
 					<?php foreach ( $news_type_choices as $value => $label ) : ?>
 						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $_GET['f_type'] ) ? sanitize_text_field( wp_unslash( $_GET['f_type'] ) ) : '', $value ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
 
-				<select name="f_subject" id="filter_subject" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+				<select name="f_subject" id="filter_subject" onchange="this.form.submit();" style="max-width: 85px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
 					<option value="">موضوع</option>
 					<?php
 					$field = function_exists( 'acf_get_field' ) ? acf_get_field( 'subject' ) : false;
@@ -133,16 +134,17 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current_subject, $value ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; endif; ?>
 				</select>
-				<input type="text" name="f_expert" id="filter_expert" value="<?php echo esc_attr( isset( $_GET['f_expert'] ) ? sanitize_text_field( wp_unslash( $_GET['f_expert'] ) ) : '' ); ?>" placeholder="کارشناس" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
-				<input type="text" name="f_author" id="filter_author" value="<?php echo esc_attr( isset( $_GET['f_author'] ) ? sanitize_text_field( wp_unslash( $_GET['f_author'] ) ) : '' ); ?>" placeholder="ثبت کننده" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
-				<select name="f_notes" id="filter_notes" onchange="this.form.submit();" style="max-width: 110px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+				<input type="text" name="f_expert" id="filter_expert" value="<?php echo esc_attr( isset( $_GET['f_expert'] ) ? sanitize_text_field( wp_unslash( $_GET['f_expert'] ) ) : '' ); ?>" placeholder="کارشناس" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 85px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+			<input type="text" name="f_author" id="filter_author" value="<?php echo esc_attr( isset( $_GET['f_author'] ) ? sanitize_text_field( wp_unslash( $_GET['f_author'] ) ) : '' ); ?>" placeholder="ثبت کننده" onkeypress="if ( event.key === 'Enter' ) { this.form.submit(); }" style="max-width: 85px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
+
+			<select name="f_notes" id="filter_notes" onchange="this.form.submit();" style="max-width: 80px; width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; height: 30px; font-size: 11px; margin: 0;">
 					<option value="">پی‌نوشت</option>
 					<option value="theory" <?php selected( isset( $_GET['f_notes'] ) ? sanitize_text_field( wp_unslash( $_GET['f_notes'] ) ) : '', 'theory' ); ?>>نظریه</option>
 					<option value="rewrite" <?php selected( isset( $_GET['f_notes'] ) ? sanitize_text_field( wp_unslash( $_GET['f_notes'] ) ) : '', 'rewrite' ); ?>>بازنویسی</option>
 					<option value="note" <?php selected( isset( $_GET['f_notes'] ) ? sanitize_text_field( wp_unslash( $_GET['f_notes'] ) ) : '', 'note' ); ?>>ملاحظه</option>
 					<option value="misc" <?php selected( isset( $_GET['f_notes'] ) ? sanitize_text_field( wp_unslash( $_GET['f_notes'] ) ) : '', 'misc' ); ?>>متفرقه</option>
 				</select>
-				<button id="clear_all_filters" type="button" style="padding: 5px 10px; background: #ef4444; color: #fff; border-radius: 4px; border: none; cursor: pointer; height: 30px; font-weight: bold; white-space: nowrap; font-size: 11px; margin: 0;">حذف فیلترها</button>
+				<button id="clear_all_filters" type="button" style="padding: 4px 8px; background: #ef4444; color: #fff; border-radius: 4px; border: none; cursor: pointer; height: 30px; font-weight: bold; white-space: nowrap; font-size: 10px; line-height: 1; margin: 0;">حذف فیلترها</button>
 			</form>
 			<table id="sahab-main-dashboard" class="display responsive nowrap" style="width:100%;">
 				<thead>
@@ -163,7 +165,7 @@ if ( ! function_exists( 'sahab_dashboard_shortcode' ) ) {
 				</thead>
 				<tbody>
 					<tr>
-						<td colspan="11">در حال بارگذاری و آماده‌سازی اطلاعات میز کار سحاب...</td>
+						<td colspan="12">در حال بارگذاری و آماده‌سازی اطلاعات میز کار سحاب...</td>
 					</tr>
 				</tbody>
 			</table>
@@ -439,12 +441,20 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 				}
 				$subject_label = ! empty( $subject_links ) ? implode( ' | ', $subject_links ) : $subject_label;
 
-						// news_type (ACF)
+						// news_type (ACF) — render as clickable filter link when present
 						$type_val = get_post_meta( $post_id, 'news_type', true );
 						if ( empty( $type_val ) && function_exists( 'get_field' ) ) {
 							$type_val = get_field( 'news_type', $post_id );
 						}
-						$type_label = isset( $news_type_choices[ $type_val ] ) ? $news_type_choices[ $type_val ] : '---';
+						$type_label = '---';
+						if ( ! empty( $type_val ) ) {
+							$display_text = isset( $news_type_choices[ $type_val ] ) ? $news_type_choices[ $type_val ] : $type_val;
+							$type_label = sprintf(
+								'<a href="%s" class="sahab-table-link">%s</a>',
+								esc_url( home_url( '/?news_type=' . urlencode( $type_val ) ) ),
+								esc_html( $display_text )
+							);
+						}
 
 				// ۴. ارزیابی و ارجحیت (بدون بج، تفکیک متنی ساده با |)
 				$eval_val = get_post_meta( $post_id, 'evaluation', true );
@@ -523,7 +533,7 @@ if ( ! function_exists( 'flatsome_child_get_dashboard_data' ) ) {
 					'event_date'             => $event_date_link,
 					'publish_date'           => $reg_date_link,
 					'comments_count_summary' => flatsome_child_get_dashboard_comment_summary( $post_id ),
-					'news_type'              => esc_html( $type_label ),
+					'news_type'              => $type_label,
 					'permalink'              => get_permalink( $post_id ),
 					'actions'                => $actions_html,
 				);
@@ -638,6 +648,16 @@ if ( ! function_exists( 'flatsome_child_generate_shadow_reg_date' ) ) {
 				'key'     => 'subject',
 				'value'   => '"' . $subject . '"', // Accurate wrapper for ACF serialized checkbox arrays
 				'compare' => 'LIKE'
+			);
+		}
+
+		// 4. Filter by News Type (?news_type=value)
+		if ( ! empty( $_GET['news_type'] ) ) {
+			$news_type = sanitize_text_field( wp_unslash( $_GET['news_type'] ) );
+			$meta_query[] = array(
+				'key'     => 'news_type',
+				'value'   => $news_type,
+				'compare' => '='
 			);
 		}
 

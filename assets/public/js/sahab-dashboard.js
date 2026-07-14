@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
                         action: 'sahab_get_dashboard_data',
                         f_id: $('#filter_id').val(),
                         f_case: $('#filter_case').val(),
-                            f_type: $('#filter_type').val(),
+                        f_type: $('#filter_type').val(),
                         f_subject: $('#filter_subject').val(),
                         f_expert: $('#filter_expert').val(),
                         f_author: $('#filter_author').val(),
@@ -31,7 +31,13 @@ jQuery(document).ready(function($) {
                 },
                 { "data": "case" },
                 { "data": "subject" },
-                { "data": "news_type" },
+                { 
+                    "data": "news_type",
+                    "render": function(data, type, row) {
+                        // Allow rendering of the HTML link tags returned by the server
+                        return data;
+                    }
+                },
                 { "data": "evaluation" },
                 { "data": "expert" },
                 { "data": "creator" },
@@ -82,15 +88,20 @@ jQuery(document).ready(function($) {
                     'height': '30px',
                     'font-size': '11px'
                 });
-                searchInput.attr('placeholder', 'جستجوی زنده عنوان...').css({
+                searchInput.attr('placeholder', 'جستجو...').css({
                     'margin': '0',
                     'height': '30px',
                     'font-size': '11px',
                     'padding': '4px'
                 });
 
-                // Ensure the live search input and filters fit on one line
-                $('#sahab-dashboard-filters #sahab_custom_search input').css('width', '180px');
+                // Enforce tight spacing and widths for a clean single-row filter bar
+                $('#sahab-dashboard-filters').css({
+                    'flex-wrap': 'nowrap',
+                    'justify-content': 'space-between'
+                });
+                $('#sahab-dashboard-filters #sahab_custom_search').css('flex', '0 0 110px');
+                $('#sahab-dashboard-filters #sahab_custom_search input').css('width', '100px');
                 $('#sahab-dashboard-filters select, #sahab-dashboard-filters input').css('height', '30px');
 
                 $('#clear_all_filters').on('click', function(e) {
