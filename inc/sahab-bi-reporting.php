@@ -1,64 +1,59 @@
 <?php
 /**
  * پلتفرم هوشمند سحاب (OSINT)
- * ماژول ماژولار پردازش آماری و تجمیع داده‌های ادارات و کارشناسان
+ * ماژول پردازش آماری و تجمیع داده‌های ادارات و کارشناسان (نسخه داینامیک مستقل از نقش)
  * مسیر فایل: inc/sahab-bi-reporting.php
  */
 
-// جلوگیری از دسترسی مستقیم به فایل
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * دریافت گزارش داینامیک بر اساس بازه زمانی و سلسله‌مراتب سازمانی
- */
 function sahab_get_dynamic_bi_report($start_date = '', $end_date = '') {
-    // اگر تاریخی ارسال نشده باشد، بازه ۳۰ روز گذشته را پیش‌فرض قرار می‌دهد
-    if (empty($start_date)) {
-        $start_date = date('Y-m-d', strtotime('-30 days'));
-    }
-    if (empty($end_date)) {
-        $end_date = date('Y-m-d');
-    }
+    if (empty($start_date)) $start_date = date('Y-m-d', strtotime('-30 days'));
+    if (empty($end_date)) $end_date = date('Y-m-d');
 
-    // ۱. دریافت تمامی کاربران سیستم به صورت داینامیک
-    $all_users = get_users(array('fields' => array('ID', 'display_name', 'roles')));
+    // ۱. دریافت تمامی کاربران بدون فیلتر کردن روی نقش انگلیسی برای پایداری ۱۰۰٪
+    $all_users = get_users(array('fields' => array('ID', 'display_name')));
     
     $managers = array();
     $analysts = array();
 
-    // تفکیک داینامیک مدیران و کارشناسان بر اساس نقش وردپرس
+    // گام اول: شناسایی کارشناسان و مدیران بر اساس اتصالات واقعی ACF
     foreach ($all_users as $user) {
-        // سپر امنیتی: تبدیل نقش‌ها به آرایه برای جلوگیری از خطای Argument #2 must be of type array
-        $user_roles = is_array($user->roles) ? $user->roles : array();
+        if ($user->ID === 1 || strtolower($user->display_name) === 'administrator') {
+            continue; // حذف کاربر ادمین اصلی از جدول آماری
+        }
 
-        if (in_array('editor', $user_roles)) {
-            $managers[$user->ID] = array(
-                'name' => $user->display_name,
-                'total_news' => 0,
-                'subordinates' => array()
-            );
-        } elseif (in_array('author', $user_roles) || in_array('administrator', $user_roles)) {
-            // پیدا کردن مدیر مستقیم کارشناس از طریق فیلد ACF
-            $manager_id = get_field('reports_to', 'user_' . $user->ID);
+        $manager_id = get_field('reports_to', 'user_' . $user->ID);
+
+        if ($manager_id) {
+            $manager_id = intval($manager_id);
+            
+            // ثبت کارشناس به صورت داینامیک
             $analysts[$user->ID] = array(
                 'name' => $user->display_name,
-                'manager_id' => $manager_id ? intval($manager_id) : 0,
+                'manager_id' => $manager_id,
                 'news_count' => 0,
                 'footnotes' => array('molaheze' => 0, 'nazarie' => 0, 'baznevisi' => 0)
             );
-            
-            // اضافه کردن کارشناس به لیست زیرمجموعه مدیرش به صورت داینامیک
-            if ($manager_id && isset($managers[$manager_id])) {
-                $managers[$manager_id]['subordinates'][] = $user->ID;
+
+            // ایجاد داینامیک ساختار اداره برای مدیر، اگر قبلاً ثبت نشده باشد
+            if (!isset($managers[$manager_id])) {
+                $manager_data = get_userdata($manager_id);
+                $managers[$manager_id] = array(
+                    'name' => $manager_data ? $manager_data->display_name : 'اداره تابعه سحاب',
+                    'total_news' => 0,
+                    'subordinates' => array()
+                );
             }
+            $managers[$manager_id]['subordinates'][] = $user->ID;
         }
     }
 
-    // ۲. کوئری به دیتابیس برای دریافت اخبار در بازه زمانی مشخص شده
+    // ۲. کوئری به دیتابیس برای دریافت اخبار در بازه زمانی فیلتر شده
     $args = array(
-        'post_type'      => 'post', // یا پست‌تایپ اختصاصی اخبار سحاب شما
+        'post_type'      => 'post', 
         'post_status'    => 'publish',
         'posts_per_page' => -1,
         'fields'         => 'ids',
@@ -73,29 +68,21 @@ function sahab_get_dynamic_bi_report($start_date = '', $end_date = '') {
     
     $news_ids = get_posts($args);
 
-    // ۳. پردازش داینامیک اسناد خبری و تجمیع آمار
+    // ۳. تجمیع داده‌ها زنجیره‌ای
     foreach ($news_ids as $post_id) {
         $author_id = intval(get_post_field('post_author', $post_id));
         
-        // اگر نویسنده خبر جزو کارشناسان تعریف شده باشد
         if (isset($analysts[$author_id])) {
             $analysts[$author_id]['news_count']++;
             
-            // بررسی داینامیک پی‌نوشت‌ها بر اساس ساختار ACF خبر شما
+            // بررسی پی‌نوشت‌ها (با نام فیلد سفارشی ACF شما در پلتفرم)
             $footnote_type = get_field('footnote_type', $post_id); 
-            if ($footnote_type === 'molaheze') {
-                $analysts[$author_id]['footnotes']['molaheze']++;
-            }
-            if ($footnote_type === 'nazarie') {
-                $analysts[$author_id]['footnotes']['nazarie']++;
-            }
-            if ($footnote_type === 'baznevisi') {
-                $analysts[$author_id]['footnotes']['baznevisi']++;
-            }
+            if ($footnote_type === 'molaheze')  $analysts[$author_id]['footnotes']['molaheze']++;
+            if ($footnote_type === 'nazarie')   $analysts[$author_id]['footnotes']['nazarie']++;
+            if ($footnote_type === 'baznevisi')  $analysts[$author_id]['footnotes']['baznevisi']++;
 
-            // اضافه کردن به آمار کل مدیر/اداره تابعه به صورت داینامیک
             $m_id = $analysts[$author_id]['manager_id'];
-            if ($m_id && isset($managers[$m_id])) {
+            if (isset($managers[$m_id])) {
                 $managers[$m_id]['total_news']++;
             }
         }
