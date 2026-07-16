@@ -25,9 +25,12 @@ $total_news = $report_data['total_processed'];
 $global_stats = $report_data['global_stats'];
 $choices = $report_data['choices'];
 
-$total_staff = count($departments) + count($analysts);
-$total_topics = count($choices['subject']);
-$total_cases = 18;
+$total_staff = count($analysts);
+$total_topics = count(array_filter($global_stats['subjects'])); // فقط موضوعاتی که در این بازه خبر داشته‌اند
+if ($total_topics === 0) {
+    $total_topics = count($choices['subject']);
+}
+$total_cases = isset($report_data['total_active_cases']) ? $report_data['total_active_cases'] : count($choices['case']);
 ?>
 
 <!-- استایل‌های عایق‌بندی شده اداری کاملاً هم‌تراز با لایوت بومی سحاب -->
@@ -86,44 +89,62 @@ $total_cases = 18;
         gap: 12px;
     }
 
-    /* دکمه حذف فیلتر قرمز هماهنگ با میز کار سحاب */
+    /* ردیف فیلترهای یکدست و تک‌خطی فیکس شده */
+    .sahab-filter-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
+        flex-wrap: nowrap;
+        padding: 0 !important;
+    }
+
+    .sahab-filter-inputs {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: nowrap;
+    }
+
+    /* اصلاح ارتفاع باکس و هم‌ترازی کامل دکمه قرمز */
+    .sahab-report-box.no-print {
+        padding: 10px 20px !important;
+        min-height: auto !important;
+        margin-bottom: 15px !important;
+    }
+
     .sahab-btn-reset {
         background-color: #e11d48 !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 6px;
-        padding: 6px 14px;
-        font-size: 13px;
-        text-decoration: none;
-        font-weight: bold;
+        border-radius: 6px !important;
+        padding: 6px 14px !important;
+        font-size: 13px !important;
+        text-decoration: none !important;
+        font-weight: bold !important;
         cursor: pointer;
-        display: inline-block;
-        transition: background-color 0.15s;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 34px !important;
+        margin: 0 !important;
+        line-height: 1 !important;
     }
 
-    .sahab-btn-reset:hover {
-        background-color: #be123c !important;
-        color: #ffffff !important;
+    .sahab-input-date,
+    .sahab-select {
+        height: 34px !important;
+        margin: 0 !important;
     }
 
     .sahab-btn-print {
-        background-color: transparent;
-        border: 1px solid #cbd5e1;
-        color: #475569;
-        font-weight: 600;
-        border-radius: 6px;
-        padding: 6px 14px;
-        font-size: 13px;
-        cursor: pointer;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    body.dark .sahab-btn-print {
-        border-color: #475569;
-        color: #cbd5e1;
+        height: 34px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
     }
 
     /* گریدبندی کارت‌ها و نمودارها */
@@ -314,6 +335,28 @@ $total_cases = 18;
                         <?php endforeach; ?>
                     </select>
 
+                    <select name="filter_analyst" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">همه کارشناسان</option>
+                        <?php
+                        // لود لیست کامل تحلیلگران برای فیلتر مستقیم
+                        $all_base_users = get_users(array('fields' => array('ID', 'display_name')));
+                        foreach ($all_base_users as $u_item):
+                            if ($u_item->ID === 1 || strtolower($u_item->display_name) === 'administrator')
+                                continue;
+                            // اگر فیلتر اداره فعال بود، فقط کارشناسان آن اداره را نشان بده
+                            if (!empty($filter_dept)) {
+                                $u_manager = get_field('reports_to', 'user_' . $u_item->ID);
+                                if (intval($u_manager) !== intval($filter_dept))
+                                    continue;
+                            }
+                            ?>
+                            <option value="<?php echo esc_attr($u_item->ID); ?>" <?php selected($filter_analyst, $u_item->ID); ?>>
+                                <?php echo esc_html($u_item->display_name); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
                     <a href="<?php echo strtok($_SERVER["REQUEST_URI"], '?'); ?>" class="sahab-btn-reset">حذف
                         فیلترها</a>
                 </div>
@@ -371,11 +414,11 @@ $total_cases = 18;
 
             <!-- SECTOR: DEPARTMENTS COMPARATIVE BAR CHART -->
             <div class="sahab-report-box">
-                <h3 class="text-sm font-black text-slate-500 mb-4">سنجش عملکرد و حجم تولید سند ادارات</h3>
+                <h3 class="text-sm font-black text-slate-500 mb-4">سنجش عملکرد ادارات (در بازه انتخابی)</h3>
                 <div class="sahab-grid-charts" style="align-items: center;">
                     <div style="flex: 3; min-width: 500px;">
                         <!-- کانتینر فیکس شده نمودار ادارات -->
-                        <div id="deptBarChart"></div>
+                        <div id="deptDonutChart"></div>
                     </div>
                     <div style="flex: 2; min-width: 250px;" class="space-y-2">
                         <?php if (!empty($departments)):
@@ -512,25 +555,31 @@ $total_cases = 18;
         var topicLabels = <?php echo json_encode(array_values($choices['subject'])); ?>;
         var topicData = <?php echo json_encode(array_values($global_stats['subjects'])); ?>;
         new ApexCharts(document.querySelector("#topicDonut"), {
-            chart: { type: 'donut', height: 260, foreColor: textColors, animations: { enabled: false } },
+            chart: { type: 'pie', height: 260, foreColor: textColors, animations: { enabled: false } },
             series: topicData,
             labels: topicLabels,
             stroke: { show: false }
         }).render();
 
-        // ۳. فیکس قطعی با استخراج مقادیر خالص آرایه (array_values) جهت فعال‌سازی چارت ادارات (تصویر ۳)
+        // ۳. جایگزینی با نمودار حلقوی توپر و شیک برای سهم ادارات
         var deptLabels = <?php echo json_encode(array_values(wp_list_pluck($departments, 'name'))); ?>;
         var deptData = <?php echo json_encode(array_values(wp_list_pluck($departments, 'total_news'))); ?>;
 
-        if (deptLabels.length === 0) { deptLabels = ['هیچ اداره‌ای یافت نشد']; deptData = [0]; }
+        if (deptLabels.length === 0) { deptLabels = ['بدون داده']; deptData = [0]; }
 
-        new ApexCharts(document.querySelector("#deptBarChart"), {
-            chart: { type: 'bar', height: 220, toolbar: { show: false }, foreColor: textColors, animations: { enabled: false } },
-            plotOptions: { bar: { horizontal: true, barHeight: '40%', borderRadius: 4 } },
-            colors: ['#0284c7'],
-            dataLabels: { enabled: true, textAnchor: 'start', style: { colors: ['#fff'] } },
-            series: [{ name: 'حجم اسناد تولیدی', data: deptData }],
-            xaxis: { categories: deptLabels }
+        new ApexCharts(document.querySelector("#deptDonutChart"), {
+            chart: { type: 'donut', height: 240, foreColor: textColors, animations: { enabled: false } },
+            series: deptData,
+            labels: deptLabels,
+            stroke: { show: false },
+            colors: ['#0284c7', '#f59e0b', '#10b981', '#6366f1', '#ec4899'],
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '50%' // ضخامت کلف و منسجم حلقه
+                    }
+                }
+            }
         }).render();
     });
 </script>

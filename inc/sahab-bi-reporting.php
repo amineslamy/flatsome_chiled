@@ -20,40 +20,27 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
     $start_date = str_replace('-', '/', $start_date);
     $end_date = str_replace('-', '/', $end_date);
 
-    // ۱. استخراج خودکار و داینامیک گزینه‌های ACF
-    $acf_fields = array('subject', 'classification', 'priority', 'news_type', 'evaluation');
+    // ۱. استخراج خودکار و داینامیک گزینه‌های ACF (شامل کیس و سایر فیلدهای ارزیابی)
+    $acf_fields = array('subject', 'classification', 'priority', 'news_type', 'evaluation', 'case');
     $dynamic_choices = array();
     foreach ($acf_fields as $field_name) {
         $field_info = acf_get_field($field_name);
         $dynamic_choices[$field_name] = ($field_info && isset($field_info['choices'])) ? $field_info['choices'] : array();
     }
 
-    // ۲. استخراج داینامیک کاربران سیستم
+    // ۲. استخراج داینامیک کاربران سیستم و ساختار درختی ادارات
     $all_users = get_users(array('fields' => array('ID', 'display_name')));
     $managers = array();
     $analysts = array();
 
+    // ابتدا ایجاد لیست مدیران/ادارات معتبر
     foreach ($all_users as $user) {
         if ($user->ID === 1 || strtolower($user->display_name) === 'administrator') {
             continue;
         }
-
         $manager_id = get_field('reports_to', 'user_' . $user->ID);
-
         if ($manager_id) {
             $manager_id = intval($manager_id);
-
-            $analysts[$user->ID] = array(
-                'name' => $user->display_name,
-                'manager_id' => $manager_id,
-                'news_count' => 0,
-                'subjects' => array_fill_keys(array_keys($dynamic_choices['subject']), 0),
-                'classifications' => array_fill_keys(array_keys($dynamic_choices['classification']), 0),
-                'priorities' => array_fill_keys(array_keys($dynamic_choices['priority']), 0),
-                'news_types' => array_fill_keys(array_keys($dynamic_choices['news_type']), 0),
-                'evaluations' => array_fill_keys(array_keys($dynamic_choices['evaluation']), 0)
-            );
-
             if (!isset($managers[$manager_id])) {
                 $manager_data = get_userdata($manager_id);
                 $managers[$manager_id] = array(
@@ -64,6 +51,26 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
             }
             $managers[$manager_id]['subordinates'][] = $user->ID;
         }
+    }
+
+    // سپس ایجاد اطلاعات پایه کارشناسان
+    foreach ($all_users as $user) {
+        if ($user->ID === 1 || strtolower($user->display_name) === 'administrator') {
+            continue;
+        }
+        $manager_id = get_field('reports_to', 'user_' . $user->ID);
+        $manager_id = $manager_id ? intval($manager_id) : 0;
+
+        $analysts[$user->ID] = array(
+            'name' => $user->display_name,
+            'manager_id' => $manager_id,
+            'news_count' => 0,
+            'subjects' => array_fill_keys(array_keys($dynamic_choices['subject']), 0),
+            'classifications' => array_fill_keys(array_keys($dynamic_choices['classification']), 0),
+            'priorities' => array_fill_keys(array_keys($dynamic_choices['priority']), 0),
+            'news_types' => array_fill_keys(array_keys($dynamic_choices['news_type']), 0),
+            'evaluations' => array_fill_keys(array_keys($dynamic_choices['evaluation']), 0)
+        );
     }
 
     // ۳. تعیین پرسنل هدف بر اساس فیلترهای بالا
@@ -151,19 +158,45 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
             }
 
             $m_id = $analysts[$author_id]['manager_id'];
-            if (isset($managers[$m_id])) {
+            if ($m_id && isset($managers[$m_id])) {
                 $managers[$m_id]['total_news']++;
             }
         }
     }
 
+    // حذف تحلیلگران بدون فعالیت در این بازه یا فیلتر جاری برای خلوت شدن کارنامه (اختیاری اما حرفه‌ای)
+    if (!empty($filter_analyst) || !empty($filter_dept)) {
+        foreach ($analysts as $a_id => $data) {
+            if (!in_array($a_id, $target_author_ids)) {
+                unset($analysts[$a_id]);
+            }
+        }
+    }
+
     // مرتب‌سازی کلیدهای تاریخ روند
-    ksort($global_stats['timeline']);
+    if (!empty($global_stats['timeline'])) {
+        ksort($global_stats['timeline']);
+    }
+
+    // استخراج داینامیک تعداد کیس‌های فعال در این بازه گزارش‌گیری
+    $active_cases_count = 0;
+    $cases_in_posts = array();
+    foreach ($news_ids as $post_id) {
+        $post_case = get_field('case', $post_id);
+        if (!empty($post_case)) {
+            $cases_in_posts[] = $post_case;
+        }
+    }
+    $active_cases_count = count(array_unique($cases_in_posts));
+    if ($active_cases_count === 0) {
+        $active_cases_count = count($dynamic_choices['case']); // برگشت به تعداد کل فیلد در صورت عدم وجود داده در بازه
+    }
 
     return array(
         'departments' => $managers,
         'analysts' => $analysts,
         'total_processed' => count($news_ids),
+        'total_active_cases' => $active_cases_count,
         'global_stats' => $global_stats,
         'choices' => $dynamic_choices
     );
