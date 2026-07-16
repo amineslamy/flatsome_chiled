@@ -1,7 +1,7 @@
 <?php
 /**
  * پلتفرم هوشمند سحاب (OSINT)
- * ماژول پردازش آماری و تجمیع داده‌ها (نسخه ۱۰۰٪ داینامیک و متصل به فیلدهای واقعی ACF)
+ * ماژول ماژولار پردازش آماری و تجمیع داده‌ها بر پایه فیلد سایه شمسی
  * مسیر فایل: inc/sahab-bi-reporting.php
  */
 
@@ -9,17 +9,23 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_dept = '', $filter_analyst = '') {
-    if (empty($start_date)) $start_date = date('Y-m-d', strtotime('-30 days'));
-    if (empty($end_date)) $end_date = date('Y-m-d');
+function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_dept = '', $filter_analyst = '')
+{
+    // اصلاح فرمت تاریخ‌های ورودی (تبدیل احتمالی خط تیره به اسلش برای مطابقت با دیتابیس)
+    if (empty($start_date))
+        $start_date = '1405/03/01';
+    if (empty($end_date))
+        $end_date = '1405/04/31';
 
-    // ۱. استخراج خودکار و داینامیک گزینه‌ها و برچسب‌های فارسی از تنظیمات ACF شما
+    $start_date = str_replace('-', '/', $start_date);
+    $end_date = str_replace('-', '/', $end_date);
+
+    // ۱. استخراج خودکار و داینامیک گزینه‌های ACF
     $acf_fields = array('subject', 'classification', 'priority', 'news_type', 'evaluation');
     $dynamic_choices = array();
-    
     foreach ($acf_fields as $field_name) {
         $field_info = acf_get_field($field_name);
-        $dynamic_choices[$field_name] = ( $field_info && isset($field_info['choices']) ) ? $field_info['choices'] : array();
+        $dynamic_choices[$field_name] = ($field_info && isset($field_info['choices'])) ? $field_info['choices'] : array();
     }
 
     // ۲. استخراج داینامیک کاربران سیستم
@@ -29,15 +35,14 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
 
     foreach ($all_users as $user) {
         if ($user->ID === 1 || strtolower($user->display_name) === 'administrator') {
-            continue; 
+            continue;
         }
 
         $manager_id = get_field('reports_to', 'user_' . $user->ID);
 
         if ($manager_id) {
             $manager_id = intval($manager_id);
-            
-            // مقداردهی اولیه سبد آماری کارشناس بر اساس گزینه‌های زنده ACF
+
             $analysts[$user->ID] = array(
                 'name' => $user->display_name,
                 'manager_id' => $manager_id,
@@ -61,7 +66,7 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
         }
     }
 
-    // ۳. اعمال فیلترهای سلسله‌مراتب (کل سامانه / اداره خاص / کارشناس خاص)
+    // ۳. تعیین پرسنل هدف بر اساس فیلترهای بالا
     $target_author_ids = array();
     if (!empty($filter_analyst)) {
         $target_author_ids = array(intval($filter_analyst));
@@ -75,49 +80,55 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
         return array('departments' => $managers, 'analysts' => array(), 'total_processed' => 0, 'global_stats' => array(), 'choices' => $dynamic_choices);
     }
 
-    // ۴. کوئری به دیتابیس برای دریافت اسناد خبری
+    // ۴. کوئری هوشمند مگا-دیتا مستقیماً روی فیلد سایه شمسی سحاب
     $args = array(
-        'post_type'      => 'post', 
-        'post_status'    => 'publish',
+        'post_type' => 'post',
+        'post_status' => 'publish',
         'posts_per_page' => -1,
-        'fields'         => 'ids',
-        'author__in'     => $target_author_ids,
-        'date_query'     => array(
+        'fields' => 'ids',
+        'author__in' => $target_author_ids,
+        'meta_query' => array(
+            'relation' => 'AND',
             array(
-                'after'     => $start_date,
-                'before'    => $end_date,
-                'inclusive' => true,
-            ),
-        ),
+                'key' => 'sahab_reg_date_shamsi',
+                'value' => array($start_date, $end_date),
+                'compare' => 'BETWEEN',
+                'type' => 'CHAR' // ساختار متنی اسلش‌دار رشته‌ای
+            )
+        )
     );
-    
+
     $news_ids = get_posts($args);
 
-    // مقداردهی سبد آمار کلان سیستم بر اساس گزینه‌های زنده ACF
     $global_stats = array(
         'subjects' => array_fill_keys(array_keys($dynamic_choices['subject']), 0),
         'classifications' => array_fill_keys(array_keys($dynamic_choices['classification']), 0),
         'priorities' => array_fill_keys(array_keys($dynamic_choices['priority']), 0),
         'news_types' => array_fill_keys(array_keys($dynamic_choices['news_type']), 0),
         'evaluations' => array_fill_keys(array_keys($dynamic_choices['evaluation']), 0),
-        'timeline' => array() // برای نمودار روند زمان
+        'timeline' => array()
     );
 
-    // ۵. پردازش اسناد و تجمیع داده‌ها بر اساس کلیدهای واقعی دیتابیس
+    // ۵. تجمیع دقیق اسناد یافت شده
     foreach ($news_ids as $post_id) {
         $author_id = intval(get_post_field('post_author', $post_id));
-        $post_date = get_the_date('Y-m-d', $post_id);
-        
+
+        // استخراج مستقیم تاریخ شمسی از فیلد سایه برای نمودار روند زمان
+        $post_jalali_date = get_post_meta($post_id, 'sahab_reg_date_shamsi', true);
+        if (empty($post_jalali_date)) {
+            continue;
+        }
+
         if (isset($analysts[$author_id])) {
             $analysts[$author_id]['news_count']++;
-            
-            // الف) محاسبه روند زمانی
-            if (!isset($global_stats['timeline'][$post_date])) {
-                $global_stats['timeline'][$post_date] = 0;
-            }
-            $global_stats['timeline'][$post_date]++;
 
-            // ب) پردازش موضوع (چک‌باکس)
+            // آمار روند زمان نمودار
+            if (!isset($global_stats['timeline'][$post_jalali_date])) {
+                $global_stats['timeline'][$post_jalali_date] = 0;
+            }
+            $global_stats['timeline'][$post_jalali_date]++;
+
+            // پردازش موضوع (چک‌باکس)
             $sub_values = get_field('subject', $post_id);
             if (!empty($sub_values)) {
                 $sub_values = is_array($sub_values) ? $sub_values : array($sub_values);
@@ -129,7 +140,7 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
                 }
             }
 
-            // ج) بقیه فیلدهای انتخابی (رشته واحد)
+            // مابقی فیلدهای انتخابی ACF
             foreach (array('classification', 'priority', 'news_type', 'evaluation') as $f_key) {
                 $plural_key = $f_key . 's';
                 $val = get_field($f_key, $post_id);
@@ -139,7 +150,6 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
                 }
             }
 
-            // د) تجمیع در آمار اداره
             $m_id = $analysts[$author_id]['manager_id'];
             if (isset($managers[$m_id])) {
                 $managers[$m_id]['total_news']++;
@@ -147,14 +157,14 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
         }
     }
 
-    // مرتب‌سازی تاریخ‌های نمودار روند از قدیم به جدید
+    // مرتب‌سازی کلیدهای تاریخ روند
     ksort($global_stats['timeline']);
 
     return array(
-        'departments'     => $managers,
-        'analysts'        => $analysts,
+        'departments' => $managers,
+        'analysts' => $analysts,
         'total_processed' => count($news_ids),
-        'global_stats'    => $global_stats,
-        'choices'         => $dynamic_choices
+        'global_stats' => $global_stats,
+        'choices' => $dynamic_choices
     );
 }
