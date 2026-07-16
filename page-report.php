@@ -12,8 +12,19 @@ if (!defined('ABSPATH')) {
 // ۱. فراخوانی هدر بومی و اصلی پلتفرم سحاب
 get_header();
 
-$start_date = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : '1405/03/01';
-$end_date = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : '1405/04/31';
+
+// دریافت تاریخ‌ها یا تولید داینامیک بازه یک ماهه اخیر به کمک موتور پارسی‌دیت سحاب
+if (function_exists('parsidate')) {
+    $default_end = parsidate('Y/m/d', current_time('mysql'), 'eng');
+    $thirty_days_ago_mysql = date('Y-m-d H:i:s', current_time('timestamp') - (30 * DAY_IN_SECONDS));
+    $default_start = parsidate('Y/m/d', $thirty_days_ago_mysql, 'eng');
+} else {
+    $default_end = '1405/04/31';
+    $default_start = '1405/03/01';
+}
+
+$start_date = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : $default_start;
+$end_date = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : $default_end;
 $filter_dept = isset($_GET['filter_dept']) ? sanitize_text_field($_GET['filter_dept']) : '';
 $filter_analyst = isset($_GET['filter_analyst']) ? sanitize_text_field($_GET['filter_analyst']) : '';
 $filter_case = isset($_GET['filter_case']) ? sanitize_text_field($_GET['filter_case']) : '';
@@ -427,7 +438,7 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
 
         <!-- ===================== TAB NAVIGATION ===================== -->
         <div class="sahab-tabs-nav no-print">
-            <button class="sahab-tab-btn active" onclick="switchTab(event, 'bi-system')">تحلیل سیستم و ادارات</button>
+            <button class="sahab-tab-btn active" onclick="switchTab(event, 'bi-system')">کارنامه سامانه و ادارات</button>
             <button class="sahab-tab-btn" onclick="switchTab(event, 'bi-analysts')">کارنامه کارشناسان</button>
         </div>
 

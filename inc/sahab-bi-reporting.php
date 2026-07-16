@@ -11,11 +11,18 @@ if (!defined('ABSPATH')) {
 
 function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_dept = '', $filter_analyst = '', $filter_case = '', $filter_subject = '')
 {
-    // اصلاح فرمت تاریخ‌های ورودی (تبدیل احتمالی خط تیره به اسلش برای مطابقت با دیتابیس)
-    if (empty($start_date))
-        $start_date = '1405/03/01';
-    if (empty($end_date))
-        $end_date = '1405/04/31';
+    // محاسبه پویا و بومی تاریخ امروز و یک ماه قبل با تابع پارسی‌دیت فعال در سحاب
+    if (empty($end_date)) {
+        $end_date = function_exists('parsidate') ? parsidate('Y/m/d', current_time('mysql'), 'eng') : '1405/04/31';
+    }
+    if (empty($start_date)) {
+        if (function_exists('parsidate')) {
+            $thirty_days_ago_mysql = date('Y-m-d H:i:s', current_time('timestamp') - (30 * DAY_IN_SECONDS));
+            $start_date = parsidate('Y/m/d', $thirty_days_ago_mysql, 'eng');
+        } else {
+            $start_date = '1405/03/01';
+        }
+    }
 
     $start_date = str_replace('-', '/', $start_date);
     $end_date = str_replace('-', '/', $end_date);
