@@ -16,9 +16,10 @@ $start_date = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date
 $end_date = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : '1405/04/31';
 $filter_dept = isset($_GET['filter_dept']) ? sanitize_text_field($_GET['filter_dept']) : '';
 $filter_analyst = isset($_GET['filter_analyst']) ? sanitize_text_field($_GET['filter_analyst']) : '';
+$filter_case = isset($_GET['filter_case']) ? sanitize_text_field($_GET['filter_case']) : '';
+$filter_subject = isset($_GET['filter_subject']) ? sanitize_text_field($_GET['filter_subject']) : '';
 
-$report_data = sahab_get_advanced_bi_report($start_date, $end_date, $filter_dept, $filter_analyst);
-
+$report_data = sahab_get_advanced_bi_report($start_date, $end_date, $filter_dept, $filter_analyst, $filter_case, $filter_subject);
 $departments = $report_data['departments'];
 $analysts = $report_data['analysts'];
 $total_news = $report_data['total_processed'];
@@ -134,10 +135,46 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
         line-height: 1 !important;
     }
 
-    .sahab-input-date,
-    .sahab-select {
+    .sahab-input-date {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        color: #1e293b !important;
+        width: 85px !important;
+        /* فشرده کردن عرض تاریخ‌ها */
         height: 34px !important;
-        margin: 0 !important;
+        display: inline-block !important;
+        text-align: center;
+    }
+
+    .sahab-select {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        color: #1e293b !important;
+        height: 34px !important;
+        display: inline-block !important;
+    }
+
+    /* عرض‌های اختصاصی و کاملاً مهندسی شده برای تک‌خط ماندن فیلترها */
+    select[name="filter_dept"] {
+        width: 105px !important;
+    }
+
+    select[name="filter_analyst"] {
+        width: 95px !important;
+    }
+
+    select[name="filter_case"] {
+        width: 95px !important;
+    }
+
+    select[name="filter_subject"] {
+        width: 105px !important;
     }
 
     .sahab-btn-print {
@@ -337,14 +374,12 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
 
                     <select name="filter_analyst" class="sahab-select"
                         onchange="document.getElementById('sahab-bi-filter-form').submit();">
-                        <option value="">همه کارشناسان</option>
+                        <option value="">کارشناس</option>
                         <?php
-                        // لود لیست کامل تحلیلگران برای فیلتر مستقیم
                         $all_base_users = get_users(array('fields' => array('ID', 'display_name')));
                         foreach ($all_base_users as $u_item):
                             if ($u_item->ID === 1 || strtolower($u_item->display_name) === 'administrator')
                                 continue;
-                            // اگر فیلتر اداره فعال بود، فقط کارشناسان آن اداره را نشان بده
                             if (!empty($filter_dept)) {
                                 $u_manager = get_field('reports_to', 'user_' . $u_item->ID);
                                 if (intval($u_manager) !== intval($filter_dept))
@@ -357,11 +392,35 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
                         <?php endforeach; ?>
                     </select>
 
+                    <!-- فیلتر داینامیک کیس بر اساس ACF -->
+                    <select name="filter_case" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">همه کیس‌ها</option>
+                        <?php if (!empty($choices['case'])):
+                            foreach ($choices['case'] as $c_key => $c_label): ?>
+                                <option value="<?php echo esc_attr($c_key); ?>" <?php selected($filter_case, $c_key); ?>>
+                                    <?php echo esc_html($c_label); ?>
+                                </option>
+                            <?php endforeach; endif; ?>
+                    </select>
+
+                    <!-- فیلتر داینامیک موضوع بر اساس ACF -->
+                    <select name="filter_subject" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">همه موضوعات</option>
+                        <?php if (!empty($choices['subject'])):
+                            foreach ($choices['subject'] as $s_key => $s_label): ?>
+                                <option value="<?php echo esc_attr($s_key); ?>" <?php selected($filter_subject, $s_key); ?>>
+                                    <?php echo esc_html($s_label); ?>
+                                </option>
+                            <?php endforeach; endif; ?>
+                    </select>
+
                     <a href="<?php echo strtok($_SERVER["REQUEST_URI"], '?'); ?>" class="sahab-btn-reset">حذف
-                        فیلترها</a>
+                        </a>
                 </div>
                 <div>
-                    <button type="button" onclick="window.print()" class="sahab-btn-print">🖨 چاپ</button>
+                    <button type="button" onclick="window.print()" class="sahab-btn-print">چاپ </button>
                 </div>
             </form>
         </div>

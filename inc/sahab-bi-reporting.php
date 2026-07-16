@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_dept = '', $filter_analyst = '')
+function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_dept = '', $filter_analyst = '', $filter_case = '', $filter_subject = '')
 {
     // اصلاح فرمت تاریخ‌های ورودی (تبدیل احتمالی خط تیره به اسلش برای مطابقت با دیتابیس)
     if (empty($start_date))
@@ -20,12 +20,19 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
     $start_date = str_replace('-', '/', $start_date);
     $end_date = str_replace('-', '/', $end_date);
 
-    // ۱. استخراج خودکار و داینامیک گزینه‌های ACF (شامل کیس و سایر فیلدهای ارزیابی)
-    $acf_fields = array('subject', 'classification', 'priority', 'news_type', 'evaluation', 'case');
+    // ۱. استخراج خودکار و داینامیک گزینه‌های ACF و دسته‌بندی‌های بومی (کیس‌ها)
+    $acf_fields = array('subject', 'classification', 'priority', 'news_type', 'evaluation');
     $dynamic_choices = array();
     foreach ($acf_fields as $field_name) {
         $field_info = acf_get_field($field_name);
         $dynamic_choices[$field_name] = ($field_info && isset($field_info['choices'])) ? $field_info['choices'] : array();
+    }
+
+    // واکشی داینامیک کیس‌ها به عنوان دسته‌بندی‌های بومی (category) وردپرس
+    $categories = get_categories(array('hide_empty' => false));
+    $dynamic_choices['case'] = array();
+    foreach ($categories as $cat) {
+        $dynamic_choices['case'][$cat->slug] = $cat->name;
     }
 
     // ۲. استخراج داینامیک کاربران سیستم و ساختار درختی ادارات
@@ -87,23 +94,39 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
         return array('departments' => $managers, 'analysts' => array(), 'total_processed' => 0, 'global_stats' => array(), 'choices' => $dynamic_choices);
     }
 
-    // ۴. کوئری هوشمند مگا-دیتا مستقیماً روی فیلد سایه شمسی سحاب
+    // ۴. ساختار شرطی مگا-کوئری روی فیلد سایه شمسی و فیلترهای انتخابی سحاب
+    $meta_query = array(
+        'relation' => 'AND',
+        array(
+            'key' => 'sahab_reg_date_shamsi',
+            'value' => array($start_date, $end_date),
+            'compare' => 'BETWEEN',
+            'type' => 'CHAR'
+        )
+    );
+
+    // فیلتر انتخابی موضوع (ACF Checkbox)
+    if (!empty($filter_subject)) {
+        $meta_query[] = array(
+            'key' => 'subject',
+            'value' => '"' . $filter_subject . '"',
+            'compare' => 'LIKE'
+        );
+    }
+
     $args = array(
         'post_type' => 'post',
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'fields' => 'ids',
         'author__in' => $target_author_ids,
-        'meta_query' => array(
-            'relation' => 'AND',
-            array(
-                'key' => 'sahab_reg_date_shamsi',
-                'value' => array($start_date, $end_date),
-                'compare' => 'BETWEEN',
-                'type' => 'CHAR' // ساختار متنی اسلش‌دار رشته‌ای
-            )
-        )
+        'meta_query' => $meta_query
     );
+
+    // اعمال فیلتر کیس به عنوان دسته‌بندی بومی وردپرس
+    if (!empty($filter_case)) {
+        $args['category_name'] = $filter_case;
+    }
 
     $news_ids = get_posts($args);
 
@@ -178,18 +201,18 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
         ksort($global_stats['timeline']);
     }
 
-    // استخراج داینامیک تعداد کیس‌های فعال در این بازه گزارش‌گیری
+    // استخراج داینامیک تعداد کیس‌های فعال بومی در این بازه گزارش‌گیری
     $active_cases_count = 0;
     $cases_in_posts = array();
     foreach ($news_ids as $post_id) {
-        $post_case = get_field('case', $post_id);
-        if (!empty($post_case)) {
-            $cases_in_posts[] = $post_case;
+        $post_cats = wp_get_post_categories($post_id, array('fields' => 'ids'));
+        if (!empty($post_cats)) {
+            $cases_in_posts = array_merge($cases_in_posts, $post_cats);
         }
     }
     $active_cases_count = count(array_unique($cases_in_posts));
     if ($active_cases_count === 0) {
-        $active_cases_count = count($dynamic_choices['case']); // برگشت به تعداد کل فیلد در صورت عدم وجود داده در بازه
+        $active_cases_count = count($dynamic_choices['case']);
     }
 
     return array(
