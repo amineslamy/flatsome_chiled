@@ -442,43 +442,43 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
             <button class="sahab-tab-btn" onclick="switchTab(event, 'bi-analysts')">کارنامه کارشناسان</button>
         </div>
 
-        <!-- ===================== TAB 1: SYSTEM ===================== -->
+         <!-- ===================== TAB 1: SYSTEM ===================== -->
         <div id="bi-system" class="sahab-tab-content active">
             <div class="sahab-grid-4">
                 <div class="grid-col">
                     <span class="text-xs text-slate-400 block mb-1 font-semibold">کل اخبار فیلتر شده</span>
-                    <div class="text-2xl font-black text-sky-600 dark:text-sky-400 font-mono">
+                    <div class="text-2xl font-black text-sky-600 dark:text-sky-400 font-mono mb-2">
                         <?php echo esc_html(number_format_i18n($total_news)); ?>
                     </div>
+                    <div id="newsTypeDonut"></div>
                 </div>
                 <div class="grid-col">
                     <span class="text-xs text-slate-400 block mb-1 font-semibold">کیس‌های عملیاتی</span>
-                    <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                    <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono mb-2">
                         <?php echo esc_html($total_cases); ?>
                     </div>
+                    <div id="casesDonut"></div>
                 </div>
                 <div class="grid-col">
                     <span class="text-xs text-slate-400 block mb-1 font-semibold">موضوعات فعال رصد</span>
-                    <div class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">
+                    <div class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono mb-2">
                         <?php echo esc_html($total_topics); ?>
                     </div>
+                    <div id="topicDonut"></div>
                 </div>
                 <div class="grid-col">
                     <span class="text-xs text-slate-400 block mb-1 font-semibold">پرسنل حاضر در گزارش</span>
-                    <div class="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono">
+                    <div class="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono mb-2">
                         <?php echo esc_html($total_staff); ?>
                     </div>
+                    <div id="staffDonut"></div>
                 </div>
             </div>
-
+        
             <div class="sahab-grid-charts">
                 <div class="sahab-report-box sahab-chart-main box-green">
                     <h4 class="text-xs font-bold text-slate-500 mb-4">تحلیل روند زمانی توزیع اسناد سحاب</h4>
                     <div id="trendChart"></div>
-                </div>
-                <div class="sahab-report-box sahab-chart-side">
-                    <h4 class="text-xs font-bold text-slate-500 mb-4">سهم موضوعات (داینامیک ACF)</h4>
-                    <div id="topicDonut"></div>
                 </div>
             </div>
 
@@ -606,52 +606,79 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
 
     document.addEventListener('DOMContentLoaded', function () {
         var isDark = document.body.classList.contains('dark');
-        var textColors = isDark ? '#94a3b8' : '#64748b';
+        var textColor = isDark ? '#94a3b8' : '#64748b';
 
+        var palettes = {
+            sky:     ['#0ea5e9','#38bdf8','#7dd3fc','#bae6fd','#0284c7','#0369a1'],
+            emerald: ['#10b981','#34d399','#6ee7b7','#059669','#047857','#a7f3d0'],
+            amber:   ['#f59e0b','#fbbf24','#fcd34d','#d97706','#b45309','#fde68a'],
+            rose:    ['#f43f5e','#fb7185','#fda4af','#e11d48','#be123c','#fecdd3'],
+            dept:    ['#0284c7','#f59e0b','#10b981','#6366f1','#ec4899','#8b5cf6']
+        };
+
+        function donutCfg(labels, data, colors, height) {
+            height = height || 180;
+            return {
+                chart: { type: 'donut', height: height, toolbar: { show: false }, foreColor: textColor, animations: { enabled: false } },
+                series: data,
+                labels: labels,
+                colors: colors,
+                stroke: { show: false },
+                plotOptions: { pie: { donut: { size: '65%' } } },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        return opts.w.globals.labels[opts.seriesIndex] + ': ' + Math.round(val) + '%';
+                    },
+                    style: { fontSize: '10px' },
+                    dropShadow: { enabled: false }
+                },
+                legend: { show: false },
+                tooltip: { y: { formatter: function (v) { return v + ' خبر'; } } }
+            };
+        }
+
+        // ۱. نمودار روند زمانی (دست نخورده)
         var timelineLabels = <?php echo json_encode(array_keys($global_stats['timeline'])); ?>;
-        var timelineData = <?php echo json_encode(array_values($global_stats['timeline'])); ?>;
-        if (timelineLabels.length === 0) { timelineLabels = ['بدون داده']; timelineData = [0]; }
+            var timelineData = <?php echo json_encode(array_values($global_stats['timeline'])); ?>;
+            if (timelineLabels.length === 0) { timelineLabels = ['بدون داده']; timelineData = [0]; }
+            new ApexCharts(document.querySelector('#trendChart'), {
+                chart: { type: 'area', height: 260, toolbar: { show: false }, foreColor: textColor, animations: { enabled: false } },
+                series: [{ name: 'اسناد ثبت شده', data: timelineData }],
+                xaxis: { categories: timelineLabels },
+                colors: ['#10b981'],
+                stroke: { curve: 'straight', width: 2 }
+            }).render();
 
-        // ۱. چارت روند زمان
-        new ApexCharts(document.querySelector("#trendChart"), {
-            chart: { type: 'area', height: 260, toolbar: { show: false }, foreColor: textColors, animations: { enabled: false } },
-            series: [{ name: 'اسناد ثبت شده', data: timelineData }],
-            xaxis: { categories: timelineLabels },
-            colors: ['#10b981'],
-            stroke: { curve: 'straight', width: 2 }
-        }).render();
+            // ۲. کارت کل اخبار — توزیع news_type
+            var ntLabels = <?php echo json_encode(array_values($choices['news_type'])); ?>;
+            var ntData = <?php echo json_encode(array_values($global_stats['news_types'])); ?>;
+            if (ntLabels.length) new ApexCharts(document.querySelector('#newsTypeDonut'), donutCfg(ntLabels, ntData, palettes.sky)).render();
 
-        // ۲. چارت دایره ای موضوعات
-        var topicLabels = <?php echo json_encode(array_values($choices['subject'])); ?>;
-        var topicData = <?php echo json_encode(array_values($global_stats['subjects'])); ?>;
-        new ApexCharts(document.querySelector("#topicDonut"), {
-            chart: { type: 'pie', height: 260, foreColor: textColors, animations: { enabled: false } },
-            series: topicData,
-            labels: topicLabels,
-            stroke: { show: false }
-        }).render();
+            // ۳. کارت کیس‌ها — توزیع categories
+            var casesRaw = <?php echo json_encode(array_values($global_stats['cases'] ?? [])); ?>;
+            var caseLabels = casesRaw.map(function (c) { return c.name; });
+            var caseData = casesRaw.map(function (c) { return c.count; });
+            if (caseLabels.length) new ApexCharts(document.querySelector('#casesDonut'), donutCfg(caseLabels, caseData, palettes.emerald)).render();
 
-        // ۳. جایگزینی با نمودار حلقوی توپر و شیک برای سهم ادارات
-        var deptLabels = <?php echo json_encode(array_values(wp_list_pluck($departments, 'name'))); ?>;
-        var deptData = <?php echo json_encode(array_values(wp_list_pluck($departments, 'total_news'))); ?>;
+            // ۴. کارت موضوعات — توزیع subjects
+            var topicLabels = <?php echo json_encode(array_values($choices['subject'])); ?>;
+            var topicData = <?php echo json_encode(array_values($global_stats['subjects'])); ?>;
+            if (topicLabels.length) new ApexCharts(document.querySelector('#topicDonut'), donutCfg(topicLabels, topicData, palettes.amber)).render();
 
-        if (deptLabels.length === 0) { deptLabels = ['بدون داده']; deptData = [0]; }
+            // ۵. کارت پرسنل — تعداد خبر هر کارشناس
+            var staffRaw = <?php echo json_encode(array_values($analysts)); ?>;
+            var staffLabels = staffRaw.map(function (a) { return a.name; });
+            var staffData = staffRaw.map(function (a) { return a.news_count; });
+            if (staffLabels.length) new ApexCharts(document.querySelector('#staffDonut'), donutCfg(staffLabels, staffData, palettes.rose)).render();
 
-        new ApexCharts(document.querySelector("#deptDonutChart"), {
-            chart: { type: 'donut', height: 240, foreColor: textColors, animations: { enabled: false } },
-            series: deptData,
-            labels: deptLabels,
-            stroke: { show: false },
-            colors: ['#0284c7', '#f59e0b', '#10b981', '#6366f1', '#ec4899'],
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '50%' // ضخامت کلف و منسجم حلقه
-                    }
-                }
-            }
-        }).render();
-    });
+            // ۶. نمودار ادارات
+            var deptLabels = <?php echo json_encode(array_values(wp_list_pluck($departments, 'name'))); ?>;
+            var deptData = <?php echo json_encode(array_values(wp_list_pluck($departments, 'total_news'))); ?>;
+            if (!deptLabels.length) { deptLabels = ['بدون داده']; deptData = [0]; }
+            new ApexCharts(document.querySelector('#deptDonutChart'), donutCfg(deptLabels, deptData, palettes.dept, 240)).render();
+        });
+
 </script>
 
 <?php

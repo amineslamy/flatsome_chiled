@@ -98,7 +98,7 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
     }
 
     if (empty($target_author_ids)) {
-        return array('departments' => $managers, 'analysts' => array(), 'total_processed' => 0, 'global_stats' => array(), 'choices' => $dynamic_choices);
+        return array('departments' => $managers, 'analysts' => array(), 'total_processed' => 0, 'total_active_cases' => 0, 'global_stats' => array(), 'choices' => $dynamic_choices);
     }
 
     // ۴. ساختار شرطی مگا-کوئری روی فیلد سایه شمسی و فیلترهای انتخابی سحاب
@@ -143,7 +143,8 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
         'priorities' => array_fill_keys(array_keys($dynamic_choices['priority']), 0),
         'news_types' => array_fill_keys(array_keys($dynamic_choices['news_type']), 0),
         'evaluations' => array_fill_keys(array_keys($dynamic_choices['evaluation']), 0),
-        'timeline' => array()
+        'timeline' => array(),
+        'cases' => array(),
     );
 
     // ۵. تجمیع دقیق اسناد یافت شده
@@ -162,6 +163,13 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
             // آمار روند زمان نمودار
             if (!isset($global_stats['timeline'][$post_jalali_date])) {
                 $global_stats['timeline'][$post_jalali_date] = 0;
+            }
+            $post_cats = wp_get_post_categories($post_id, array('fields' => 'all'));
+            foreach ($post_cats as $cat) {
+                if (!isset($global_stats['cases'][$cat->slug])) {
+                    $global_stats['cases'][$cat->slug] = array('name' => $cat->name, 'count' => 0);
+                }
+                $global_stats['cases'][$cat->slug]['count']++;
             }
             $global_stats['timeline'][$post_jalali_date]++;
 
