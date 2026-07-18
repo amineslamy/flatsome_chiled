@@ -657,8 +657,10 @@ if (!empty($departments)) {
     </div>
 </div>
 
-        <!-- ===================== TAB 2: ANALYSTS ===================== -->
-        <div id="bi-analysts" class="sahab-tab-content">
+</div> <!-- بستن تگ پایانی تب اول (bi-system) که در جایگذاری قبلی جا افتاده بود -->
+
+<!-- ===================== TAB 2: ANALYSTS ===================== -->
+<div id="bi-analysts" class="sahab-tab-content">
 
             <!-- تصویر شماره ۲: انتقال کامل کارت نمودار پرسنل حاضر در گزارش به این بخش -->
             <div class="sahab-stat-cards" style="margin-bottom: 25px;">
