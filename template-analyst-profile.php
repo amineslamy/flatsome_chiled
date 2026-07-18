@@ -1,84 +1,355 @@
 <?php
 /**
- * Template Name: Profile Analyst Report
- * Description: صفحه پروفایل تحلیلی و کارنامه اختصاصی هر کارشناس در تب جدید
+ * Template Name: شناسنامه و کارنامه تحلیلی کارشناس
+ * مسیر فایل: ریشه قالب / flatsome-child / template-analyst-profile.php
  */
 
-// ۱. دریافت پارامترها از آدرس URL
-$analyst_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$from_date = isset($_GET['from_date']) ? sanitize_text_field($_GET['from_date']) : '';
-$to_date = isset($_GET['to_date']) ? sanitize_text_field($_GET['to_date']) : '';
-
-if (!$analyst_id) {
-    wp_die('خطا: شناسه کارشناس معتبر نمی‌باشد.');
+if (!defined('ABSPATH')) {
+    exit;
 }
 
-// لود کردن هدر وردپرس برای دسترسی به توابع و استایل‌ها
+// ۱. فراخوانی هدر بومی پلتفرم سحاب
 get_header();
 
-// ۲. شبیه‌سازی منطق استخراج داده داشبورد اصلی
-// در صورتی که منطق ساخت $report_data در یک فایل جداگانه include می‌شود یا تابع است، آن را فراخوانی کنید.
-// در اینجا فرض می‌کنیم متغیرهای محیطی با فراخوانی منطق اصلی مقداردهی می‌شوند.
-// برای راه‌اندازی اولیه، داده‌ها را مستقیماً از دیتابیس یا آرایه مادر واکشی می‌کنیم:
+// ۲. دریافت داینامیک شناسه کارشناس از فرم فیلتر یا پارامتر آدرس
+$analyst_id = isset($_GET['filter_analyst']) ? intval($_GET['filter_analyst']) : (isset($_GET['id']) ? intval($_GET['id']) : 0);
 
-global $wpdb;
+// ۳. دریافت تاریخ‌ها یا تولید داینامیک بازه پیش‌فرض یک ماهه اخیر به کمک موتور پارسی‌دیت سحاب
+if (function_exists('parsidate')) {
+    $default_end = parsidate('Y/m/d', current_time('mysql'), 'eng');
+    $thirty_days_ago_mysql = date('Y-m-d H:i:s', current_time('timestamp') - (30 * DAY_IN_SECONDS));
+    $default_start = parsidate('Y/m/d', $thirty_days_ago_mysql, 'eng');
+} else {
+    $default_end = '1405/04/31';
+    $default_start = '1405/03/01';
+}
 
-// به دست آوردن نام واقعی کارشناس از روی شناسه (با فرض نام کارشناسان از متای کاربر یا جدول متناظر)
+$start_date = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : $default_start;
+$end_date = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : $default_end;
+$filter_dept = isset($_GET['filter_dept']) ? sanitize_text_field($_GET['filter_dept']) : '';
+$filter_case = isset($_GET['filter_case']) ? sanitize_text_field($_GET['filter_case']) : '';
+$filter_subject = isset($_GET['filter_subject']) ? sanitize_text_field($_GET['filter_subject']) : '';
+
 // اصلاح تابع وردپرس برای دریافت اطلاعات کاربر
 $user_info = get_user_by('id', $analyst_id);
 $analyst_name = $user_info ? $user_info->display_name : 'کارشناس شماره ' . $analyst_id;
 
-// نمونه‌سازی داده‌های موضوعی و ارزیابی برای رندر نمودارها (این مقادیر در گام بعد با کوئری دیتابیس دقیق شما همگام می‌شوند)
-$subject_labels = array('روحانیون شاخص', 'بین الملل', 'تحجر', 'سیاسی');
-$subject_counts = array(2, 1, 3, 0); // مقادیر تستی اولیه برای صحت‌سنجی نمودارها
-
-$eval_labels = array('صحت دارد', 'احتمالاً صحت دارد', 'عدم صحت');
-$eval_counts = array(1, 2, 0);
+// ۴. فراخوانی داده‌های آماری پیشرفته BI سحاب اختصاصی کارشناس جاری
+$report_data = sahab_get_advanced_bi_report($start_date, $end_date, $filter_dept, $analyst_id, $filter_case, $filter_subject);
+$departments = $report_data['departments'];
+$total_news = $report_data['total_processed'];
+$global_stats = $report_data['global_stats'];
+$choices = $report_data['choices'];
 ?>
 
-<!-- تزریق کتابخانه‌های مورد نیاز -->
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+<!-- استایل‌های عایق‌بندی شده اداری کاملاً هم‌تراز با لایوت بومی سحاب -->
+<style>
+    .sahab-bi-container {
+        background-color: #f1f5f9;
+        color: #1e293b;
+        padding: 24px;
+        font-size: 13px;
+        line-height: 1.5;
+        text-align: right;
+    }
 
-<div class="sahab-profile-wrapper bg-slate-100 min-h-screen py-8 px-4" style="direction: rtl; text-align: right;">
-    <div class="max-w-7xl mx-auto">
+    body.dark .sahab-bi-container {
+        background-color: #0f172a;
+        color: #f8fafc;
+    }
 
-        <!-- هدر کارنامه اختصاصی -->
-        <div
-            class="bg-white rounded-2xl p-6 shadow-sm mb-6 flex justify-between items-center border border-slate-200/60">
-            <div>
-                <h1 class="text-2xl font-black text-slate-800">کارنامه تحلیلی:
-                    <?php echo esc_html($analyst_name); ?>
-                </h1>
-                <p class="text-sm text-slate-500 mt-1">گزارش عملکرد، توزیع موضوعی و روند فعالیت در بازه زمانی درخواستی
-                </p>
-            </div>
+    .sahab-report-box {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        width: 100%;
+        display: block;
+        clear: both;
+    }
 
-            <div class="text-left font-mono text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <div>از تاریخ:
-                    <?php echo $from_date ? esc_html($from_date) : 'شروع سیستم'; ?>
+    body.dark .sahab-report-box {
+        background-color: #1e293b;
+        border-color: #334155;
+    }
+
+    .sahab-report-box.box-green {
+        border: 1px solid var(--sahab-green, #10b981);
+    }
+
+    /* استایل ردیف فیلترها */
+    .sahab-filter-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
+        flex-wrap: nowrap;
+        padding: 0 !important;
+    }
+
+    .sahab-filter-inputs {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: nowrap;
+    }
+
+    .sahab-report-box.no-print {
+        padding: 10px 20px !important;
+        min-height: auto !important;
+        margin-bottom: 15px !important;
+    }
+
+    .sahab-btn-reset {
+        background-color: #e11d48 !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 6px !important;
+        padding: 6px 14px !important;
+        font-size: 13px !important;
+        text-decoration: none !important;
+        font-weight: bold !important;
+        cursor: pointer;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 34px !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+    }
+
+    .sahab-input-date {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        color: #1e293b !important;
+        width: 85px !important;
+        height: 34px !important;
+        display: inline-block !important;
+        text-align: center;
+    }
+
+    .sahab-select {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        color: #1e293b !important;
+        height: 34px !important;
+        display: inline-block !important;
+    }
+
+    select[name="filter_dept"] {
+        width: 105px !important;
+    }
+
+    select[name="filter_analyst"] {
+        width: 95px !important;
+    }
+
+    select[name="filter_case"] {
+        width: 95px !important;
+    }
+
+    select[name="filter_subject"] {
+        width: 105px !important;
+    }
+
+    .sahab-btn-print {
+        height: 34px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+    }
+
+    /* ساختار گرید توزیع ۲ تایی نمودارها */
+    .sahab-grid-charts {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sahab-chart-fullwidth {
+        grid-column: span 2;
+    }
+
+    @media (max-w: 992px) {
+        .sahab-grid-charts {
+            grid-template-columns: 1fr;
+        }
+
+        .sahab-chart-fullwidth {
+            grid-column: span 1;
+        }
+
+        .sahab-filter-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .sahab-filter-inputs {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<!-- تزریق پیش‌نیازهای پلاترهای جاوا اسکریپتی -->
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/assets/admin/js/apexcharts.min.js"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/assets/admin/js/jalali-datepicker.min.js"></script>
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/assets/admin/css/jalali-datepicker.min.css">
+
+<div class="sahab-bi-container">
+    <div class="max-w-[1400px] mx-auto">
+
+        <!-- ===================== بخش هدر کارنامه کارشناس ===================== -->
+        <div class="sahab-report-box" style="margin-bottom: 15px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h2 class="text-xl font-black text-slate-700 dark:text-white" style="margin: 0 0 5px 0;">
+                        کارنامه تحلیلی:
+                        <?php echo esc_html($analyst_name); ?>
+                    </h2>
+                    <p class="text-xs text-slate-400" style="margin:0;">گزارش عملکرد، توزیع موضوعی و روند فعالیت در بازه
+                        زمانی درخواستی</p>
                 </div>
-                <div class="mt-1">تا تاریخ:
-                    <?php echo $to_date ? esc_html($to_date) : 'امروز'; ?>
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 6px 15px; text-align: left;"
+                    class="dark:bg-slate-800 dark:border-slate-700">
+                    <span class="text-xs text-slate-400">کل اخبار فیلتر شده کارشناس:</span>
+                    <strong class="text-lg font-mono text-sky-600" style="margin-right: 5px;">
+                        <?php echo number_format_i18n($total_news); ?>
+                    </strong>
                 </div>
             </div>
         </div>
 
-        <!-- بخش نمودارها (چیدمان کارت‌ها) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- ===================== ۱. ردیف فیلترهای داینامیک و متناظر با صفحه قبل (همراه با فیلتر کارشناس) ===================== -->
+        <div class="sahab-report-box no-print">
+            <form method="GET" id="sahab-bi-filter-form" action="" class="sahab-filter-row">
 
-            <!-- کارت نمودار ۱: توزیع موضوعی اخبار -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60">
-                <h3 class="text-sm font-bold text-slate-700 mb-4 border-r-4 border-sky-500 pr-2">توزیع موضوعی اخبار
-                    کارشناس</h3>
-                <div id="subjectChart"></div>
+                <div class="sahab-filter-inputs">
+                    <span class="text-xs font-semibold">از تاریخ:</span>
+                    <input type="text" data-jdp name="start_date" class="sahab-input-date"
+                        value="<?php echo esc_attr($start_date); ?>" autocomplete="off"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+
+                    <span class="text-xs font-semibold">تا تاریخ:</span>
+                    <input type="text" data-jdp name="end_date" class="sahab-input-date"
+                        value="<?php echo esc_attr($end_date); ?>" autocomplete="off"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+
+                    <select name="filter_dept" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">همه ادارات</option>
+                        <?php foreach ($departments as $m_id => $dept): ?>
+                            <option value="<?php echo esc_attr($m_id); ?>" <?php selected($filter_dept, $m_id); ?>>
+                                <?php echo esc_html($dept['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <!-- اضافه شدن فیلتر داینامیک کارشناسان متناظر با تصویر شماره 1 -->
+                    <select name="filter_analyst" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">کارشناس</option>
+                        <?php
+                        $all_base_users = get_users(array('fields' => array('ID', 'display_name')));
+                        foreach ($all_base_users as $u_item):
+                            if ($u_item->ID === 1 || strtolower($u_item->display_name) === 'administrator')
+                                continue;
+                            if (!empty($filter_dept)) {
+                                $u_manager = get_field('reports_to', 'user_' . $u_item->ID);
+                                if (intval($u_manager) !== intval($filter_dept))
+                                    continue;
+                            }
+                            ?>
+                            <option value="<?php echo esc_attr($u_item->ID); ?>" <?php selected($analyst_id, $u_item->ID); ?>>
+                                <?php echo esc_html($u_item->display_name); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <select name="filter_case" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">همه کیس‌ها</option>
+                        <?php if (!empty($choices['case'])):
+                            foreach ($choices['case'] as $c_key => $c_label): ?>
+                                <option value="<?php echo esc_attr($c_key); ?>" <?php selected($filter_case, $c_key); ?>>
+                                    <?php echo esc_html($c_label); ?>
+                                </option>
+                            <?php endforeach; endif; ?>
+                    </select>
+
+                    <select name="filter_subject" class="sahab-select"
+                        onchange="document.getElementById('sahab-bi-filter-form').submit();">
+                        <option value="">همه موضوعات</option>
+                        <?php if (!empty($choices['subject'])):
+                            foreach ($choices['subject'] as $s_key => $s_label): ?>
+                                <option value="<?php echo esc_attr($s_key); ?>" <?php selected($filter_subject, $s_key); ?>>
+                                    <?php echo esc_html($s_label); ?>
+                                </option>
+                            <?php endforeach; endif; ?>
+                    </select>
+
+                    <a href="<?php echo add_query_arg('id', $analyst_id, strtok($_SERVER["REQUEST_URI"], '?')); ?>"
+                        class="sahab-btn-reset">حذف فیلترها</a>
+                </div>
+                <div>
+                    <button type="button" onclick="window.print()" class="sahab-btn-print">چاپ گزارش</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ===================== ۲. گرید نهایی هندسه چهارگانه نمودارها ===================== -->
+        <div class="sahab-grid-charts">
+
+            <!-- نمودار ۱: روند زمانی انتشار اخبار کارشناس (تمام‌عرض بالا) -->
+            <div class="sahab-report-box sahab-chart-fullwidth box-green">
+                <h4 class="text-sm font-bold text-slate-600 mb-4 dark:text-slate-300"
+                    style="border-right: 3px solid #10b981; padding-right: 8px;">روند زمانی انتشار اخبار</h4>
+                <div id="trendChart"></div>
             </div>
 
-            <!-- کارت نمودار ۲: وضعیت ارزیابی گزارش‌ها -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60">
-                <h3 class="text-sm font-bold text-slate-700 mb-4 border-r-4 border-emerald-500 pr-2">وضعیت ارزیابی
-                    گزارش‌ها</h3>
-                <div id="evalChart"></div>
+            <!-- نمودار ۲: توزیع موضوعی اخبار کارشناس -->
+            <div class="sahab-report-box">
+                <h4 class="text-sm font-bold text-slate-600 mb-4 dark:text-slate-300"
+                    style="border-right: 3px solid #0284c7; padding-right: 8px;">توزیع موضوعی اخبار کارشناس</h4>
+                <div id="topicBarChart"></div>
+            </div>
+
+            <!-- نمودار ۳: وضعیت ارزیابی گزارش‌ها -->
+            <div class="sahab-report-box">
+                <h4 class="text-sm font-bold text-slate-600 mb-4 dark:text-slate-300"
+                    style="border-right: 3px solid #10b981; padding-right: 8px;">وضعیت ارزیابی گزارش‌ها</h4>
+                <div style="min-height: 220px; display: flex; align-items: center; justify-content: center;">
+                    <div id="evaluationDonut" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- نمودار ۴: کل اخبار فیلتر شده بر حسب نوع خبر -->
+            <div class="sahab-report-box">
+                <h4 class="text-sm font-bold text-slate-600 mb-4 dark:text-slate-300"
+                    style="border-right: 3px solid #6366f1; padding-right: 8px;">کل اخبار فیلتر شده (بر حسب نوع خبر)
+                </h4>
+                <div id="newsTypeDonut"></div>
+            </div>
+
+            <!-- نمودار ۵: کیس‌های عملیاتی مربوط به کارشناس -->
+            <div class="sahab-report-box">
+                <h4 class="text-sm font-bold text-slate-600 mb-4 dark:text-slate-300"
+                    style="border-right: 3px solid #f59e0b; padding-right: 8px;">کیس‌های عملیاتی (تعداد اخبار کارشناس در
+                    هر کیس)</h4>
+                <div id="casesDonut"></div>
             </div>
 
         </div>
@@ -86,54 +357,98 @@ $eval_counts = array(1, 2, 0);
     </div>
 </div>
 
+<!-- ===================== ۳. پردازش تیکرها و انجین پلات متحرک سحاب ===================== -->
 <script>
-    // تنظیمات و رندر نمودار توزیع موضوعی (نمودار ستونی ApexCharts)
-    var subjectOptions = {
-        series: [{
-            name: 'تعداد اخبار',
-            data: <?php echo json_encode($subject_counts); ?>
-        }],
-        chart: {
-            type: 'bar',
-            height: 300,
-            fontFamily: 'Vazirmatn, Tahoma, sans-serif'
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 6,
-                horizontal: false,
-                columnWidth: '45%',
-            }
-        },
-        dataLabels: { enabled: false },
-        xaxis: {
-            categories: <?php echo json_encode($subject_labels); ?>,
-        },
-        colors: ['#0284c7'],
-        grid: { borderColor: '#f1f5f9' }
-    };
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof jalaliDatepicker !== 'undefined') {
+            jalaliDatepicker.startWatch({
+                minDate: "attr", maxDate: "attr", time: false, separatorChar: "/", changeMonthRotateYear: true
+            });
+        }
 
-    var subjectChart = new ApexCharts(document.querySelector("#subjectChart"), subjectOptions);
-    subjectChart.render();
+        var isDark = document.body.classList.contains('dark');
+        var tc = isDark ? '#94a3b8' : '#64748b';
 
-    // تنظیمات و رندر نمودار وضعیت ارزیابی (نمودار دونات / پای)
-    var evalOptions = {
-        series: <?php echo json_encode($eval_counts); ?>,
-        chart: {
-            type: 'donut',
-            height: 300,
-            fontFamily: 'Vazirmatn, Tahoma, sans-serif'
-        },
-        labels: <?php echo json_encode($eval_labels); ?>,
-        colors: ['#10b981', '#0ea5e9', '#f59e0b'],
-        legend: { position: 'bottom' },
-        dataLabels: { enabled: true }
-    };
+        function donutCfg(series, labels, colors) {
+            return {
+                chart: {
+                    type: 'donut',
+                    height: 230,
+                    sparkline: { enabled: false },
+                    animations: { enabled: true }
+                },
+                series: series,
+                labels: labels,
+                colors: colors,
+                stroke: { show: true, width: 2, colors: [isDark ? '#1e293b' : '#fff'] },
+                dataLabels: { enabled: true, style: { fontSize: '11px', fontFamily: 'monospace' } },
+                plotOptions: { pie: { donut: { size: '65%' } } },
+                legend: {
+                    show: true,
+                    position: 'bottom',
+                    fontSize: '11px',
+                    fontFamily: 'Tahoma',
+                    labels: { colors: tc },
+                    markers: { width: 8, height: 8 }
+                },
+                tooltip: { theme: isDark ? 'dark' : 'light' }
+            };
+        }
 
-    var evalChart = new ApexCharts(document.querySelector("#evalChart"), evalOptions);
-    evalChart.render();
+        // ۱. روند زمانی انتشار اخبار
+        var tlLabels = <?php echo json_encode(array_keys($global_stats['timeline'])); ?>;
+        var tlData = <?php echo json_encode(array_values($global_stats['timeline'])); ?>;
+        if (!tlLabels.length) { tlLabels = ['بدون داده']; tlData = [0]; }
+        new ApexCharts(document.querySelector('#trendChart'), {
+            chart: { type: 'area', height: 280, toolbar: { show: false }, foreColor: tc },
+            series: [{ name: 'اخبار ثبت شده کارشناس', data: tlData }],
+            xaxis: { categories: tlLabels },
+            colors: ['#10b981'],
+            stroke: { curve: 'smooth', width: 3 }
+        }).render();
+
+        // ۲. توزیع موضوعی اخبار کارشناس
+        var tLabels = <?php echo json_encode(array_values($choices['subject'])); ?>;
+        var tData = <?php echo json_encode(array_values($global_stats['subjects'])); ?>;
+        new ApexCharts(document.querySelector('#topicBarChart'), {
+            chart: { type: 'bar', height: 230, toolbar: { show: false } },
+            series: [{ name: 'تعداد اخبار', data: tData }],
+            plotOptions: {
+                bar: { columnWidth: '45%', distributed: true, borderRadius: 4, dataLabels: { position: 'top' } }
+            },
+            colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'],
+            dataLabels: {
+                enabled: true, offsetY: -20,
+                style: { fontSize: '11px', colors: [tc], fontFamily: 'monospace' }
+            },
+            legend: { show: false },
+            xaxis: {
+                categories: tLabels,
+                labels: { style: { colors: tc, fontSize: '11px', fontFamily: 'Tahoma' } }
+            },
+            yaxis: { labels: { style: { colors: tc, fontFamily: 'monospace' } } },
+            tooltip: { theme: isDark ? 'dark' : 'light' }
+        }).render();
+
+        // ۳. وضعیت ارزیابی گزارش‌ها
+        var evalLabels = <?php echo json_encode(array_values($choices['evaluation'])); ?>;
+        var evalData = <?php echo json_encode(array_values($global_stats['evaluations'])); ?>;
+        new ApexCharts(document.querySelector('#evaluationDonut'), donutCfg(evalData, evalLabels, ['#10b981', '#3b82f6', '#f59e0b'])).render();
+
+        // ۴. کل اخبار فیلتر شده بر حسب نوع خبر
+        var ntLabels = <?php echo json_encode(array_values($choices['news_type'])); ?>;
+        var ntData = <?php echo json_encode(array_values($global_stats['news_types'])); ?>;
+        new ApexCharts(document.querySelector('#newsTypeDonut'), donutCfg(ntData, ntLabels, ['#0284c7', '#3b82f6', '#6366f1', '#a855f7', '#ec4899'])).render();
+
+        // ۵. کیس‌های عملیاتی
+        var cLabels = <?php echo json_encode(array_column(array_values($global_stats['cases']), 'name')); ?>;
+        var cData = <?php echo json_encode(array_column(array_values($global_stats['cases']), 'count')); ?>;
+        if (!cData.length) { cLabels = ['بدون مورد فعال']; cData = [0]; }
+        new ApexCharts(document.querySelector('#casesDonut'), donutCfg(cData, cLabels, ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6'])).render();
+    });
 </script>
 
 <?php
+// ۵. فراخوانی فوتر بومی پلتفرم سحاب
 get_footer();
 ?>
