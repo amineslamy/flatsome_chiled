@@ -138,13 +138,13 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
     $news_ids = get_posts($args);
 
     $global_stats = array(
-        'subjects' => array_fill_keys(array_keys($dynamic_choices['subject']), 0),
+        'subjects'        => array_fill_keys(array_keys($dynamic_choices['subject']), 0),
         'classifications' => array_fill_keys(array_keys($dynamic_choices['classification']), 0),
-        'priorities' => array_fill_keys(array_keys($dynamic_choices['priority']), 0),
-        'news_types' => array_fill_keys(array_keys($dynamic_choices['news_type']), 0),
-        'evaluations' => array_fill_keys(array_keys($dynamic_choices['evaluation']), 0),
-        'timeline' => array(),
-        'cases' => array(),
+        'priorities'      => array_fill_keys(array_keys($dynamic_choices['priority']), 0),
+        'news_types'      => array_fill_keys(array_keys($dynamic_choices['news_type']), 0),
+        'evaluations'     => array_fill_keys(array_keys($dynamic_choices['evaluation']), 0),
+        'cases'           => array(),
+        'timeline'        => array()
     );
 
     // ۵. تجمیع دقیق اسناد یافت شده
@@ -164,6 +164,8 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
             if (!isset($global_stats['timeline'][$post_jalali_date])) {
                 $global_stats['timeline'][$post_jalali_date] = 0;
             }
+            $global_stats['timeline'][$post_jalali_date]++;
+
             $post_cats = wp_get_post_categories($post_id, array('fields' => 'all'));
             foreach ($post_cats as $cat) {
                 if (!isset($global_stats['cases'][$cat->slug])) {
@@ -171,7 +173,6 @@ function sahab_get_advanced_bi_report($start_date = '', $end_date = '', $filter_
                 }
                 $global_stats['cases'][$cat->slug]['count']++;
             }
-            $global_stats['timeline'][$post_jalali_date]++;
 
             // پردازش موضوع (چک‌باکس)
             $sub_values = get_field('subject', $post_id);

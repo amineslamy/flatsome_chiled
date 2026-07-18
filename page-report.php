@@ -12,7 +12,6 @@ if (!defined('ABSPATH')) {
 // ۱. فراخوانی هدر بومی و اصلی پلتفرم سحاب
 get_header();
 
-
 // دریافت تاریخ‌ها یا تولید داینامیک بازه یک ماهه اخیر به کمک موتور پارسی‌دیت سحاب
 if (function_exists('parsidate')) {
     $default_end = parsidate('Y/m/d', current_time('mysql'), 'eng');
@@ -38,11 +37,19 @@ $global_stats = $report_data['global_stats'];
 $choices = $report_data['choices'];
 
 $total_staff = count($analysts);
-$total_topics = count(array_filter($global_stats['subjects'])); // فقط موضوعاتی که در این بازه خبر داشته‌اند
+$total_topics = count(array_filter($global_stats['subjects']));
 if ($total_topics === 0) {
     $total_topics = count($choices['subject']);
 }
 $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_active_cases'] : count($choices['case']);
+
+// محاسبه جمع کل اخبار مانیتور شده ادارات برای بج اختصاصی بخش ادارات
+$total_dept_news = 0;
+if (!empty($departments)) {
+    foreach ($departments as $dept) {
+        $total_dept_news += intval($dept['total_news']);
+    }
+}
 ?>
 
 <!-- استایل‌های عایق‌بندی شده اداری کاملاً هم‌تراز با لایوت بومی سحاب -->
@@ -83,25 +90,7 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
         border: 1px solid var(--sahab-green);
     }
 
-    /* ردیف فیلترهای یکدست و تک‌خطی */
-    .sahab-filter-row {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        width: 100%;
-        flex-wrap: nowrap;
-    }
-
-    .sahab-filter-inputs {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-    }
-
-    /* ردیف فیلترهای یکدست و تک‌خطی فیکس شده */
+    /* ردیف فیلترها */
     .sahab-filter-row {
         display: flex;
         flex-direction: row;
@@ -121,7 +110,6 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
         flex-wrap: nowrap;
     }
 
-    /* اصلاح ارتفاع باکس و هم‌ترازی کامل دکمه قرمز */
     .sahab-report-box.no-print {
         padding: 10px 20px !important;
         min-height: auto !important;
@@ -154,7 +142,6 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
         font-size: 12px !important;
         color: #1e293b !important;
         width: 85px !important;
-        /* فشرده کردن عرض تاریخ‌ها */
         height: 34px !important;
         display: inline-block !important;
         text-align: center;
@@ -171,7 +158,6 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
         display: inline-block !important;
     }
 
-    /* عرض‌های اختصاصی و کاملاً مهندسی شده برای تک‌خط ماندن فیلترها */
     select[name="filter_dept"] {
         width: 105px !important;
     }
@@ -195,26 +181,150 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
         margin: 0 !important;
     }
 
-    /* گریدبندی کارت‌ها و نمودارها */
-    .sahab-grid-4 {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
+    /* کارت‌ها به صورت ردیف‌های عریض تک کارت در یک ردیف */
+    .sahab-stat-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
         margin-bottom: 20px;
     }
 
-    .sahab-grid-4 .grid-col {
-        flex: 1;
-        min-width: 220px;
-        background-color: #ffffff;
+    .sahab-stat-card {
+        background: #fff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 16px;
+        padding: 24px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .03);
     }
 
-    body.dark .sahab-grid-4 .grid-col {
-        background-color: #1e293b;
+    body.dark .sahab-stat-card {
+        background: #1e293b;
         border-color: #334155;
+    }
+
+    .sahab-stat-card__info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .sahab-stat-card__label {
+        font-size: 14px;
+        color: #475569;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    /* بج‌های عددی بزرگ و رنگی */
+    .sahab-stat-card__badge-container {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .sahab-stat-card__badge {
+        font-size: 32px;
+        font-weight: 900;
+        font-family: monospace, Tahoma;
+        line-height: 1;
+        padding: 6px 18px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .badge-blue {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .badge-emerald {
+        background-color: #ecfdf5;
+        color: #047857;
+    }
+
+    .badge-amber {
+        background-color: #fffbeb;
+        color: #b45309;
+    }
+
+    .badge-rose {
+        background-color: #fff1f2;
+        color: #be123c;
+    }
+
+    .badge-indigo {
+        background-color: #e0e7ff;
+        color: #4338ca;
+    }
+
+    body.dark .badge-blue {
+        background-color: rgba(29, 78, 216, 0.2);
+        color: #60a5fa;
+    }
+
+    body.dark .badge-emerald {
+        background-color: rgba(4, 120, 87, 0.2);
+        color: #34d399;
+    }
+
+    body.dark .badge-amber {
+        background-color: rgba(180, 83, 9, 0.2);
+        color: #fbbf24;
+    }
+
+    body.dark .badge-rose {
+        background-color: rgba(190, 18, 60, 0.2);
+        color: #f43f5e;
+    }
+
+    body.dark .badge-indigo {
+        background-color: rgba(67, 56, 202, 0.2);
+        color: #818cf8;
+    }
+
+    .sahab-stat-card__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 24px;
+    }
+
+    .sahab-stat-card__row {
+        font-size: 12px;
+        color: #475569;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px dashed #e2e8f0;
+        padding-bottom: 4px;
+    }
+
+    body.dark .sahab-stat-card__row {
+        color: #cbd5e1;
+        border-bottom-color: #334155;
+    }
+
+    .sahab-stat-card__row strong {
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    body.dark .sahab-stat-card__row strong {
+        color: #f8fafc;
+    }
+
+    .sahab-stat-card__chart {
+        width: 45%;
+        min-width: 340px;
+        flex-shrink: 0;
     }
 
     .sahab-grid-charts {
@@ -227,31 +337,6 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
     .sahab-chart-main {
         flex: 3;
         min-width: 600px;
-    }
-
-    .sahab-chart-side {
-        flex: 2;
-        min-width: 350px;
-    }
-
-    .sahab-input-date,
-    .sahab-select {
-        background-color: #ffffff !important;
-        border: 1px solid #cbd5e1 !important;
-        border-radius: 6px !important;
-        padding: 6px 12px !important;
-        font-size: 13px !important;
-        color: #1e293b !important;
-        height: auto !important;
-        display: inline-block !important;
-        width: auto !important;
-    }
-
-    body.dark .sahab-input-date,
-    body.dark .sahab-select {
-        background-color: #1e293b !important;
-        border-color: #475569 !important;
-        color: #f8fafc !important;
     }
 
     /* جدول کارنامه کارشناسان */
@@ -359,7 +444,7 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
 <div class="sahab-bi-container">
     <div class="max-w-[1400px] mx-auto">
 
-        <!-- ===================== CONTROLS FILTER (تک‌ردیفه و اتوماتیک) ===================== -->
+        <!-- ===================== CONTROLS FILTER ===================== -->
         <div class="sahab-report-box no-print">
             <form method="GET" id="sahab-bi-filter-form" action="" class="sahab-filter-row">
                 <div class="sahab-filter-inputs">
@@ -403,7 +488,6 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
                         <?php endforeach; ?>
                     </select>
 
-                    <!-- فیلتر داینامیک کیس بر اساس ACF -->
                     <select name="filter_case" class="sahab-select"
                         onchange="document.getElementById('sahab-bi-filter-form').submit();">
                         <option value="">همه کیس‌ها</option>
@@ -415,7 +499,6 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
                             <?php endforeach; endif; ?>
                     </select>
 
-                    <!-- فیلتر داینامیک موضوع بر اساس ACF -->
                     <select name="filter_subject" class="sahab-select"
                         onchange="document.getElementById('sahab-bi-filter-form').submit();">
                         <option value="">همه موضوعات</option>
@@ -428,80 +511,146 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
                     </select>
 
                     <a href="<?php echo strtok($_SERVER["REQUEST_URI"], '?'); ?>" class="sahab-btn-reset">حذف
-                        </a>
+                        فیلترها</a>
                 </div>
                 <div>
-                    <button type="button" onclick="window.print()" class="sahab-btn-print">چاپ </button>
+                    <button type="button" onclick="window.print()" class="sahab-btn-print">چاپ گزارش</button>
                 </div>
             </form>
         </div>
 
         <!-- ===================== TAB NAVIGATION ===================== -->
         <div class="sahab-tabs-nav no-print">
-            <button class="sahab-tab-btn active" onclick="switchTab(event, 'bi-system')">کارنامه سامانه و ادارات</button>
+            <button class="sahab-tab-btn active" onclick="switchTab(event, 'bi-system')">کارنامه سامانه و
+                ادارات</button>
             <button class="sahab-tab-btn" onclick="switchTab(event, 'bi-analysts')">کارنامه کارشناسان</button>
         </div>
 
-         <!-- ===================== TAB 1: SYSTEM ===================== -->
+        <!-- ===================== TAB 1: SYSTEM ===================== -->
         <div id="bi-system" class="sahab-tab-content active">
-            <div class="sahab-grid-4">
-                <div class="grid-col">
-                    <span class="text-xs text-slate-400 block mb-1 font-semibold">کل اخبار فیلتر شده</span>
-                    <div class="text-2xl font-black text-sky-600 dark:text-sky-400 font-mono mb-2">
-                        <?php echo esc_html(number_format_i18n($total_news)); ?>
-                    </div>
-                    <div id="newsTypeDonut"></div>
-                </div>
-                <div class="grid-col">
-                    <span class="text-xs text-slate-400 block mb-1 font-semibold">کیس‌های عملیاتی</span>
-                    <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono mb-2">
-                        <?php echo esc_html($total_cases); ?>
-                    </div>
-                    <div id="casesDonut"></div>
-                </div>
-                <div class="grid-col">
-                    <span class="text-xs text-slate-400 block mb-1 font-semibold">موضوعات فعال رصد</span>
-                    <div class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono mb-2">
-                        <?php echo esc_html($total_topics); ?>
-                    </div>
-                    <div id="topicDonut"></div>
-                </div>
-                <div class="grid-col">
-                    <span class="text-xs text-slate-400 block mb-1 font-semibold">پرسنل حاضر در گزارش</span>
-                    <div class="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono mb-2">
-                        <?php echo esc_html($total_staff); ?>
-                    </div>
-                    <div id="staffDonut"></div>
-                </div>
-            </div>
-        
+
+            <!-- تصویر شماره ۳: ارتقای روند زمانی به بالاترین قسمت کل تب سامانه -->
             <div class="sahab-grid-charts">
                 <div class="sahab-report-box sahab-chart-main box-green">
-                    <h4 class="text-xs font-bold text-slate-500 mb-4">تحلیل روند زمانی توزیع اسناد سحاب</h4>
+                    <h4 class="text-sm font-bold text-slate-600 mb-4">روند زمانی انتشار اخبار</h4>
                     <div id="trendChart"></div>
                 </div>
             </div>
 
-            <!-- SECTOR: DEPARTMENTS COMPARATIVE BAR CHART -->
-            <div class="sahab-report-box">
-                <h3 class="text-sm font-black text-slate-500 mb-4">سنجش عملکرد ادارات (در بازه انتخابی)</h3>
-                <div class="sahab-grid-charts" style="align-items: center;">
-                    <div style="flex: 3; min-width: 500px;">
-                        <!-- کانتینر فیکس شده نمودار ادارات -->
-                        <div id="deptDonutChart"></div>
+            <div class="sahab-stat-cards">
+
+                <!-- کارت ۱: اخبار -->
+                <div class="sahab-stat-card">
+                    <div class="sahab-stat-card__info">
+                        <div class="sahab-stat-card__label">کل اخبار فیلتر شده</div>
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-blue">
+                                <?php echo number_format_i18n($total_news); ?>
+                            </span>
+                        </div>
+                        <ul class="sahab-stat-card__list">
+                            <?php foreach ($choices['news_type'] as $k => $v):
+                                if (empty($global_stats['news_types'][$k]))
+                                    $global_stats['news_types'][$k] = 0; ?>
+                                <li class="sahab-stat-card__row"><span>
+                                        <?php echo esc_html($v); ?>
+                                    </span><strong>
+                                        <?php echo esc_html($global_stats['news_types'][$k]); ?>
+                                    </strong></li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
-                    <div style="flex: 2; min-width: 250px;" class="space-y-2">
-                        <?php if (!empty($departments)):
-                            foreach ($departments as $m_id => $dept): ?>
-                                <div class="sahab-report-box !p-3 !mb-2" style="background-color: var(--badge-bg);">
-                                    <div class="text-xs font-black">
-                                        <?php echo esc_html($dept['name']); ?>
+                    <div class="sahab-stat-card__chart">
+                        <div id="newsTypeDonut"></div>
+                    </div>
+                </div>
+
+                <!-- کارت ۲: کیس‌ها -->
+                <div class="sahab-stat-card">
+                    <div class="sahab-stat-card__info">
+                        <div class="sahab-stat-card__label">کیس‌های عملیاتی</div>
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-emerald">
+                                <?php echo number_format_i18n($total_cases); ?>
+                            </span>
+                        </div>
+                        <ul class="sahab-stat-card__list">
+                            <?php if (!empty($global_stats['cases'])):
+                                foreach ($global_stats['cases'] as $c): ?>
+                                    <li class="sahab-stat-card__row"><span>
+                                            <?php echo esc_html($c['name']); ?>
+                                        </span><strong>
+                                            <?php echo esc_html($c['count']); ?>
+                                        </strong></li>
+                                <?php endforeach; else: ?>
+                                <li class="sahab-stat-card__row"><span class="text-slate-400">بدون مورد
+                                        فعال</span><strong>۰</strong></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                    <div class="sahab-stat-card__chart">
+                        <div id="casesDonut"></div>
+                    </div>
+                </div>
+
+                <!-- کارت ۳: موضوعات رصدی (تغییر عنوان طبق تصویر شماره ۱) -->
+                <div class="sahab-stat-card">
+                    <div class="sahab-stat-card__info">
+                        <div class="sahab-stat-card__label">موضوعات رصدی</div>
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-amber">
+                                <?php echo number_format_i18n($total_topics); ?>
+                            </span>
+                        </div>
+                        <ul class="sahab-stat-card__list">
+                            <?php foreach ($choices['subject'] as $k => $v):
+                                if (empty($global_stats['subjects'][$k]))
+                                    $global_stats['subjects'][$k] = 0; ?>
+                                <li class="sahab-stat-card__row"><span>
+                                        <?php echo esc_html($v); ?>
+                                    </span><strong>
+                                        <?php echo esc_html($global_stats['subjects'][$k]); ?>
+                                    </strong></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <div class="sahab-stat-card__chart">
+                        <div id="topicDonut"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- سنجش عملکرد ادارات (تصویر شماره ۴ - یکپارچه به همراه بج عددی) -->
+            <div class="sahab-report-box">
+                <div class="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 class="text-sm font-black text-slate-500 style=" margin:0;">سنجش عملکرد ادارات (در بازه انتخابی)
+                    </h3>
+                </div>
+                <div class="sahab-stat-card" style="border:none; padding:0; box-shadow:none;">
+                    <div class="sahab-stat-card__info" style="flex:2;">
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-indigo">
+                                <?php echo number_format_i18n($total_dept_news); ?> خبر مانیتور شده
+                            </span>
+                        </div>
+                        <div class="space-y-2" style="max-height: 280px; overflow-y:auto; padding-left:10px;">
+                            <?php if (!empty($departments)):
+                                foreach ($departments as $m_id => $dept): ?>
+                                    <div class="sahab-report-box !p-3 !mb-2"
+                                        style="background-color: #f8fafc; border-right: 4px solid #0284c7; clear:none;">
+                                        <div class="text-xs font-black">
+                                            <?php echo esc_html($dept['name']); ?>
+                                        </div>
+                                        <div class="text-xs font-bold text-sky-600 mt-1">
+                                            <?php echo esc_html($dept['total_news']); ?> خبر مانیتور شده
+                                        </div>
                                     </div>
-                                    <div class="text-xs font-bold text-sky-600 mt-1">
-                                        <?php echo esc_html($dept['total_news']); ?> خبر مانیتور شده
-                                    </div>
-                                </div>
-                            <?php endforeach; endif; ?>
+                                <?php endforeach; endif; ?>
+                        </div>
+                    </div>
+                    <div class="sahab-stat-card__chart" style="flex:3;">
+                        <div id="deptDonutChart"></div>
                     </div>
                 </div>
             </div>
@@ -509,6 +658,34 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
 
         <!-- ===================== TAB 2: ANALYSTS ===================== -->
         <div id="bi-analysts" class="sahab-tab-content">
+
+            <!-- تصویر شماره ۲: انتقال کامل کارت نمودار پرسنل حاضر در گزارش به این بخش -->
+            <div class="sahab-stat-cards" style="margin-bottom: 25px;">
+                <div class="sahab-stat-card">
+                    <div class="sahab-stat-card__info">
+                        <div class="sahab-stat-card__label">پرسنل حاضر در گزارش</div>
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-rose">
+                                <?php echo number_format_i18n($total_staff); ?> نفر
+                            </span>
+                        </div>
+                        <ul class="sahab-stat-card__list">
+                            <?php foreach (array_slice($analysts, 0, 6) as $a): ?>
+                                <li class="sahab-stat-card__row"><span>
+                                        <?php echo esc_html($a['name']); ?>
+                                    </span><strong>
+                                        <?php echo esc_html($a['news_count']); ?>
+                                    </strong></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <div class="sahab-stat-card__chart">
+                        <div id="staffDonut"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول کارنامه مقایسه‌ای کارشناسان -->
             <div class="sahab-report-box">
                 <h3 class="text-sm font-black text-slate-500 mb-4">جدول کارنامه مقایسه‌ای کارشناسان</h3>
                 <div class="overflow-x-auto">
@@ -576,109 +753,111 @@ $total_cases = isset($report_data['total_active_cases']) ? $report_data['total_a
 </div>
 
 <script>
-    // فعال‌سازی و شنود خودکار کلیک تقویم جلالی بدون نیاز به دکمه اعمال
-    if (typeof jalaliDatepicker !== 'undefined') {
-        jalaliDatepicker.startWatch({
-            minDate: "attr",
-            maxDate: "attr",
-            time: false,
-            separatorChar: "/",
-            changeMonthRotateYear: true
-        });
-
-        // هوک اختصاصی برای ثبت خودکار فرم بلافاصله پس از انتخاب روز در تقویم
-        document.addEventListener("jdp:change", function (e) {
-            document.getElementById('sahab-bi-filter-form').submit();
-        });
-    }
-
-    function toggleTheme() { document.body.classList.toggle('dark'); }
-
-    function switchTab(evt, tabId) {
-        var i, tc, tl;
-        tc = document.getElementsByClassName("sahab-tab-content");
-        for (i = 0; i < tc.length; i++) { tc[i].classList.remove("active"); }
-        tl = document.getElementsByClassName("sahab-tab-btn");
-        for (i = 0; i < tl.length; i++) { tl[i].classList.remove("active"); }
-        document.getElementById(tabId).classList.add("active");
-        evt.currentTarget.classList.add("active");
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
+        if (typeof jalaliDatepicker !== 'undefined') {
+            jalaliDatepicker.startWatch({
+                minDate: "attr", maxDate: "attr", time: false, separatorChar: "/", changeMonthRotateYear: true
+            });
+        }
+
         var isDark = document.body.classList.contains('dark');
-        var textColor = isDark ? '#94a3b8' : '#64748b';
+        var tc = isDark ? '#94a3b8' : '#64748b';
 
-        var palettes = {
-            sky:     ['#0ea5e9','#38bdf8','#7dd3fc','#bae6fd','#0284c7','#0369a1'],
-            emerald: ['#10b981','#34d399','#6ee7b7','#059669','#047857','#a7f3d0'],
-            amber:   ['#f59e0b','#fbbf24','#fcd34d','#d97706','#b45309','#fde68a'],
-            rose:    ['#f43f5e','#fb7185','#fda4af','#e11d48','#be123c','#fecdd3'],
-            dept:    ['#0284c7','#f59e0b','#10b981','#6366f1','#ec4899','#8b5cf6']
-        };
-
-        function donutCfg(labels, data, colors, height) {
-            height = height || 180;
+        // تابع مشترک رندر نمودارهای دونات
+        function donutCfg(series, labels, colors) {
             return {
-                chart: { type: 'donut', height: height, toolbar: { show: false }, foreColor: textColor, animations: { enabled: false } },
-                series: data,
+                chart: {
+                    type: 'donut',
+                    height: 200,
+                    sparkline: { enabled: false },
+                    animations: { enabled: true }
+                },
+                series: series,
                 labels: labels,
                 colors: colors,
-                stroke: { show: false },
+                stroke: { show: true, width: 2, colors: [isDark ? '#1e293b' : '#fff'] },
+                dataLabels: { enabled: true, style: { fontSize: '11px', fontFamily: 'monospace' } },
                 plotOptions: { pie: { donut: { size: '65%' } } },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function (val, opts) {
-                        return opts.w.globals.labels[opts.seriesIndex] + ': ' + Math.round(val) + '%';
-                    },
-                    style: { fontSize: '10px' },
-                    dropShadow: { enabled: false }
+                legend: {
+                    show: true,
+                    position: 'right',
+                    fontSize: '11px',
+                    fontFamily: 'Tahoma',
+                    labels: { colors: tc },
+                    markers: { width: 8, height: 8 }
                 },
-                legend: { show: false },
-                tooltip: { y: { formatter: function (v) { return v + ' خبر'; } } }
+                tooltip: { enabled: true }
             };
         }
 
-        // ۱. نمودار روند زمانی (دست نخورده)
-        var timelineLabels = <?php echo json_encode(array_keys($global_stats['timeline'])); ?>;
-            var timelineData = <?php echo json_encode(array_values($global_stats['timeline'])); ?>;
-            if (timelineLabels.length === 0) { timelineLabels = ['بدون داده']; timelineData = [0]; }
-            new ApexCharts(document.querySelector('#trendChart'), {
-                chart: { type: 'area', height: 260, toolbar: { show: false }, foreColor: textColor, animations: { enabled: false } },
-                series: [{ name: 'اسناد ثبت شده', data: timelineData }],
-                xaxis: { categories: timelineLabels },
-                colors: ['#10b981'],
-                stroke: { curve: 'straight', width: 2 }
-            }).render();
+        // ۱. نمودار نوع خبر 
+        var ntLabels = <?php echo json_encode(array_values($choices['news_type'])); ?>;
+        var ntData = <?php echo json_encode(array_values($global_stats['news_types'])); ?>;
+        if (ntData.reduce((a, b) => a + b, 0) > 0) {
+            new ApexCharts(document.querySelector('#newsTypeDonut'), donutCfg(ntData, ntLabels, ['#0284c7', '#3b82f6', '#6366f1', '#a855f7', '#ec4899'])).render();
+        }
 
-            // ۲. کارت کل اخبار — توزیع news_type
-            var ntLabels = <?php echo json_encode(array_values($choices['news_type'])); ?>;
-            var ntData = <?php echo json_encode(array_values($global_stats['news_types'])); ?>;
-            if (ntLabels.length) new ApexCharts(document.querySelector('#newsTypeDonut'), donutCfg(ntLabels, ntData, palettes.sky)).render();
+        // ۲. نمودار کیس‌های عملیاتی
+        var cLabels = <?php echo json_encode(array_column(array_values($global_stats['cases']), 'name')); ?>;
+        var cData = <?php echo json_encode(array_column(array_values($global_stats['cases']), 'count')); ?>;
+        if (cData.reduce((a, b) => a + b, 0) > 0) {
+            new ApexCharts(document.querySelector('#casesDonut'), donutCfg(cData, cLabels, ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#ec4899'])).render();
+        }
 
-            // ۳. کارت کیس‌ها — توزیع categories
-            var casesRaw = <?php echo json_encode(array_values($global_stats['cases'] ?? [])); ?>;
-            var caseLabels = casesRaw.map(function (c) { return c.name; });
-            var caseData = casesRaw.map(function (c) { return c.count; });
-            if (caseLabels.length) new ApexCharts(document.querySelector('#casesDonut'), donutCfg(caseLabels, caseData, palettes.emerald)).render();
+        // ۳. نمودار موضوعات رصدی (اصلاح پالت چندرنگ به درخواست تصویر شماره ۱)
+        var tLabels = <?php echo json_encode(array_values($choices['subject'])); ?>;
+        var tData = <?php echo json_encode(array_values($global_stats['subjects'])); ?>;
+        if (tData.reduce((a, b) => a + b, 0) > 0) {
+            new ApexCharts(document.querySelector('#topicDonut'), donutCfg(tData, tLabels, ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'])).render();
+        }
 
-            // ۴. کارت موضوعات — توزیع subjects
-            var topicLabels = <?php echo json_encode(array_values($choices['subject'])); ?>;
-            var topicData = <?php echo json_encode(array_values($global_stats['subjects'])); ?>;
-            if (topicLabels.length) new ApexCharts(document.querySelector('#topicDonut'), donutCfg(topicLabels, topicData, palettes.amber)).render();
+        // ۴. نمودار توزیع پرسنل حاضر در گزارش (رندر در تب دوم)
+        var sLabels = <?php echo json_encode(array_values(wp_list_pluck($analysts, 'name'))); ?>;
+        var sData = <?php echo json_encode(array_values(wp_list_pluck($analysts, 'news_count'))); ?>;
+        if (sData.reduce((a, b) => a + b, 0) > 0) {
+            new ApexCharts(document.querySelector('#staffDonut'), donutCfg(sData, sLabels, ['#e11d48', '#f43f5e', '#fda4af', '#ec4899', '#f472b6', '#c084fc'])).render();
+        }
 
-            // ۵. کارت پرسنل — تعداد خبر هر کارشناس
-            var staffRaw = <?php echo json_encode(array_values($analysts)); ?>;
-            var staffLabels = staffRaw.map(function (a) { return a.name; });
-            var staffData = staffRaw.map(function (a) { return a.news_count; });
-            if (staffLabels.length) new ApexCharts(document.querySelector('#staffDonut'), donutCfg(staffLabels, staffData, palettes.rose)).render();
+        // ۵. نمودار سنجش عملکرد ادارات (تصویر شماره ۴)
+        var deptLabels = <?php echo json_encode(array_values(wp_list_pluck($departments, 'name'))); ?>;
+        var deptData = <?php echo json_encode(array_values(wp_list_pluck($departments, 'total_news'))); ?>;
+        if (!deptLabels.length) { deptLabels = ['بدون داده']; deptData = [0]; }
+        new ApexCharts(document.querySelector('#deptDonutChart'), {
+            chart: { type: 'donut', height: 260, foreColor: tc },
+            series: deptData, labels: deptLabels,
+            stroke: { show: true, width: 2, colors: [isDark ? '#1e293b' : '#fff'] },
+            dataLabels: { enabled: true },
+            colors: ['#0284c7', '#f59e0b', '#10b981', '#6366f1', '#ec4899'],
+            legend: { position: 'bottom', fontFamily: 'Tahoma' },
+            plotOptions: { pie: { donut: { size: '65%' } } }
+        }).render();
 
-            // ۶. نمودار ادارات
-            var deptLabels = <?php echo json_encode(array_values(wp_list_pluck($departments, 'name'))); ?>;
-            var deptData = <?php echo json_encode(array_values(wp_list_pluck($departments, 'total_news'))); ?>;
-            if (!deptLabels.length) { deptLabels = ['بدون داده']; deptData = [0]; }
-            new ApexCharts(document.querySelector('#deptDonutChart'), donutCfg(deptLabels, deptData, palettes.dept, 240)).render();
-        });
+        // ۶. روند زمانی هوشمند اسناد (تغییر یافته به حالت منحنی یکنواخت / Smooth)
+        var tlLabels = <?php echo json_encode(array_keys($global_stats['timeline'])); ?>;
+        var tlData = <?php echo json_encode(array_values($global_stats['timeline'])); ?>;
+        if (!tlLabels.length) { tlLabels = ['بدون داده']; tlData = [0]; }
+        new ApexCharts(document.querySelector('#trendChart'), {
+            chart: { type: 'area', height: 280, toolbar: { show: false }, foreColor: tc },
+            series: [{ name: 'اخبار منتشر شده', data: tlData }],
+            xaxis: { categories: tlLabels },
+            colors: ['#10b981'],
+            stroke: { curve: 'smooth', width: 3 } // تبدیل وضعیت شکست خطوط به حالت روان و نرم نرم افزار
+        }).render();
+    });
 
+    function switchTab(evt, tabId) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("sahab-tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("sahab-tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
 </script>
 
 <?php
