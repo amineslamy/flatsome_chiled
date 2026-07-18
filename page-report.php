@@ -568,7 +568,7 @@ if (!empty($departments)) {
                 <!-- کارت ۲: کیس‌ها -->
                 <div class="sahab-stat-card">
                     <div class="sahab-stat-card__info">
-                        <div class="sahab-stat-card__label">کیس‌های عملیاتی</div>
+                        <div class="sahab-stat-card__label">کیس‌های عملیاتی (تعداد خبرهای ثبت شده در هر کیس)</div>
                         <div class="sahab-stat-card__badge-container">
                             <span class="sahab-stat-card__badge badge-emerald">
                                 <?php echo number_format_i18n($total_cases); ?>
@@ -593,68 +593,69 @@ if (!empty($departments)) {
                     </div>
                 </div>
 
-                <!-- کارت ۳: موضوعات رصدی (تغییر عنوان طبق تصویر شماره ۱) -->
-                <div class="sahab-stat-card">
-                    <div class="sahab-stat-card__info">
-                        <div class="sahab-stat-card__label">موضوعات رصدی</div>
-                        <div class="sahab-stat-card__badge-container">
-                            <span class="sahab-stat-card__badge badge-amber">
-                                <?php echo number_format_i18n($total_topics); ?>
-                            </span>
-                        </div>
-                        <ul class="sahab-stat-card__list">
-                            <?php foreach ($choices['subject'] as $k => $v):
-                                if (empty($global_stats['subjects'][$k]))
-                                    $global_stats['subjects'][$k] = 0; ?>
-                                <li class="sahab-stat-card__row"><span>
-                                        <?php echo esc_html($v); ?>
-                                    </span><strong>
-                                        <?php echo esc_html($global_stats['subjects'][$k]); ?>
-                                    </strong></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <div class="sahab-stat-card__chart">
-                        <div id="topicDonut"></div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- سنجش عملکرد ادارات (تصویر شماره ۴ - یکپارچه به همراه بج عددی) -->
-            <div class="sahab-report-box">
-                <div class="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 class="text-sm font-black text-slate-500 style=" margin:0;">سنجش عملکرد ادارات (در بازه انتخابی)
-                    </h3>
-                </div>
-                <div class="sahab-stat-card" style="border:none; padding:0; box-shadow:none;">
-                    <div class="sahab-stat-card__info" style="flex:2;">
-                        <div class="sahab-stat-card__badge-container">
-                            <span class="sahab-stat-card__badge badge-indigo">
-                                <?php echo number_format_i18n($total_dept_news); ?> خبر مانیتور شده
-                            </span>
-                        </div>
-                        <div class="space-y-2" style="max-height: 280px; overflow-y:auto; padding-left:10px;">
-                            <?php if (!empty($departments)):
-                                foreach ($departments as $m_id => $dept): ?>
-                                    <div class="sahab-report-box !p-3 !mb-2"
-                                        style="background-color: #f8fafc; border-right: 4px solid #0284c7; clear:none;">
-                                        <div class="text-xs font-black">
-                                            <?php echo esc_html($dept['name']); ?>
-                                        </div>
-                                        <div class="text-xs font-bold text-sky-600 mt-1">
-                                            <?php echo esc_html($dept['total_news']); ?> خبر مانیتور شده
-                                        </div>
-                                    </div>
-                                <?php endforeach; endif; ?>
-                        </div>
-                    </div>
-                    <div class="sahab-stat-card__chart" style="flex:3;">
-                        <div id="deptDonutChart"></div>
-                    </div>
-                </div>
-            </div>
+<!-- کارت ۳: موضوعات رصدی (تغییر عنوان طبق تصویر شماره ۱) -->
+<div class="sahab-stat-card">
+    <div class="sahab-stat-card__info">
+        <div class="sahab-stat-card__label">موضوعات رصدی (تعداد اخبار ثبت شده در هر موضوع)</div>
+        <div class="sahab-stat-card__badge-container">
+            <span class="sahab-stat-card__badge badge-amber">
+                <?php echo number_format_i18n($total_topics); ?>
+            </span>
         </div>
+        <ul class="sahab-stat-card__list">
+            <?php foreach ($choices['subject'] as $k => $v):
+                if (empty($global_stats['subjects'][$k]))
+                    $global_stats['subjects'][$k] = 0; ?>
+                <li class="sahab-stat-card__row">
+                    <span>
+                        <?php echo esc_html($v); ?>
+                    </span>
+                    <strong>
+                        <?php echo esc_html($global_stats['subjects'][$k]); ?>
+                    </strong>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <div class="sahab-stat-card__chart">
+        <div id="topicDonut"></div>
+    </div>
+</div>
+
+</div>
+
+<!-- سنجش عملکرد ادارات (تغییر ساختار باکس‌ها به لیست متنی استاندارد دو ستونه کاملاً شبیه به موضوعات رصدی) -->
+<div class="sahab-report-box">
+    <div class="sahab-stat-card" style="border:none; padding:0; box-shadow:none;">
+        <div class="sahab-stat-card__info" style="flex:2;">
+            <div class="sahab-stat-card__label">سنجش عملکرد ادارات (تعداد اخبار کارشناسان آن اداره)</div>
+            <div class="sahab-stat-card__badge-container">
+                <span class="sahab-stat-card__badge badge-indigo">
+                    <?php echo number_format_i18n($total_dept_news); ?>
+                </span>
+            </div>
+
+            <!-- تبدیل باکس‌های ضخیم قبلی به لیست خط‌کشی‌شده مینی‌مال دقیقاً مشابه کامپوننت بالایی -->
+            <ul class="sahab-stat-card__list">
+                <?php if (!empty($departments)):
+                    foreach ($departments as $m_id => $dept): ?>
+                        <li class="sahab-stat-card__row">
+                            <span>
+                                <?php echo esc_html($dept['name']); ?>
+                            </span>
+                            <strong>
+                                <?php echo esc_html($dept['total_news']); ?>
+                            </strong>
+                        </li>
+                    <?php endforeach;
+                endif; ?>
+            </ul>
+        </div>
+        <div class="sahab-stat-card__chart" style="flex:3;">
+            <div id="deptDonutChart"></div>
+        </div>
+    </div>
+</div>
 
         <!-- ===================== TAB 2: ANALYSTS ===================== -->
         <div id="bi-analysts" class="sahab-tab-content">
