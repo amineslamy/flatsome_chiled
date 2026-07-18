@@ -660,33 +660,19 @@ if (!empty($departments)) {
 </div> <!-- بستن تگ پایانی تب اول (bi-system) که در جایگذاری قبلی جا افتاده بود -->
 
 <!-- ===================== TAB 2: ANALYSTS ===================== -->
-<div id="bi-analysts" class="sahab-tab-content">
+        <div id="bi-analysts" class="sahab-tab-content">
 
-            <!-- تصویر شماره ۲: انتقال کامل کارت نمودار پرسنل حاضر در گزارش به این بخش -->
-            <div class="sahab-stat-cards" style="margin-bottom: 25px;">
-                <div class="sahab-stat-card">
-                    <div class="sahab-stat-card__info">
-                        <div class="sahab-stat-card__label">پرسنل حاضر در گزارش</div>
-                        <div class="sahab-stat-card__badge-container">
-                            <span class="sahab-stat-card__badge badge-rose">
-                                <?php echo number_format_i18n($total_staff); ?> نفر
-                            </span>
-                        </div>
-                        <ul class="sahab-stat-card__list">
-                            <?php foreach (array_slice($analysts, 0, 6) as $a): ?>
-                                <li class="sahab-stat-card__row"><span>
-                                        <?php echo esc_html($a['name']); ?>
-                                    </span><strong>
-                                        <?php echo esc_html($a['news_count']); ?>
-                                    </strong></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <div class="sahab-stat-card__chart">
-                        <div id="staffDonut"></div>
-                    </div>
-                </div>
-            </div>
+            <!-- کارت پرسنل مینی‌مال مجهز به نمودار میله‌ای رنگارنگ تمام‌عرض -->
+            <div class="sahab-report-box box-green" style="margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h4 class="text-sm font-bold text-slate-600" style="margin: 0;">پرسنل حاضر در گزارش</h4>
+                    <span class="sahab-stat-card__badge badge-rose" style="font-size: 24px; padding: 4px 14px;">
+                <?php echo number_format_i18n($total_staff); ?> نفر
+            </span>
+        </div>
+        <!-- باکس نمودار میله‌ای به صورت تمام‌عرض -->
+        <div id="staffBarChart" style="width: 100%; min-height: 250px;"></div>
+    </div>
 
             <!-- جدول کارنامه مقایسه‌ای کارشناسان -->
             <div class="sahab-report-box">
@@ -699,7 +685,7 @@ if (!empty($departments)) {
                                 <th>نام کارشناس</th>
                                 <th class="text-center">تعداد اخبار</th>
                                 <th>توزیع موضوعی کارشناس</th>
-                                <th>وضعیت فیلدهای ارزیابی (ACF)</th>
+                                <th>ارزیابی</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -814,11 +800,46 @@ if (!empty($departments)) {
             new ApexCharts(document.querySelector('#topicDonut'), donutCfg(tData, tLabels, ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'])).render();
         }
 
-        // ۴. نمودار توزیع پرسنل حاضر در گزارش (رندر در تب دوم)
+// ۴. نمودار ستونی/میله‌ای رنگارنگ توزیع عملکرد پرسنل حاضر در گزارش
         var sLabels = <?php echo json_encode(array_values(wp_list_pluck($analysts, 'name'))); ?>;
         var sData = <?php echo json_encode(array_values(wp_list_pluck($analysts, 'news_count'))); ?>;
+
         if (sData.reduce((a, b) => a + b, 0) > 0) {
-            new ApexCharts(document.querySelector('#staffDonut'), donutCfg(sData, sLabels, ['#e11d48', '#f43f5e', '#fda4af', '#ec4899', '#f472b6', '#c084fc'])).render();
+            new ApexCharts(document.querySelector('#staffBarChart'), {
+                chart: {
+                    type: 'bar',
+                    height: 280,
+                    toolbar: { show: false }
+                },
+                series: [{
+                    name: 'تعداد اخبار',
+                    data: sData
+                }],
+                plotOptions: {
+                    bar: {
+                        columnWidth: '45%',
+                        distributed: true, // فعال‌سازی قابلیت رنگ مجزا و رنگارنگ برای هر ستون
+                        borderRadius: 4,
+                        dataLabels: { position: 'top' }
+                    }
+                },
+                colors: ['#0284c7', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#e11d48', '#06b6d4', '#8b5cf6'], // پالت رنگی داینامیک و جذاب برای ستون‌ها
+                dataLabels: {
+                enabled: true,
+                formatter: function (val) { return val; },
+                offsetY: -20,
+                style: { fontSize: '12px', colors: [tc], fontFamily: 'monospace' }
+            },
+                legend: { show: false }, // حذف لژندهای تکراری به دلیل وجود جدول زیرین
+                xaxis: {
+                categories: sLabels,
+                labels: { style: { colors: tc, fontSize: '11px', fontFamily: 'Tahoma' } }
+            },
+                yaxis: {
+                labels: { style: { colors: tc, fontFamily: 'monospace' } }
+            },
+                tooltip: { theme: isDark ? 'dark' : 'light' }
+            }).render();
         }
 
         // ۵. نمودار سنجش عملکرد ادارات (تصویر شماره ۴)
