@@ -593,73 +593,73 @@ if (!empty($departments)) {
                     </div>
                 </div>
 
-<!-- کارت ۳: موضوعات رصدی (تغییر عنوان طبق تصویر شماره ۱) -->
-<div class="sahab-stat-card">
-    <div class="sahab-stat-card__info">
-        <div class="sahab-stat-card__label">موضوعات رصدی (تعداد اخبار ثبت شده در هر موضوع)</div>
-        <div class="sahab-stat-card__badge-container">
-            <span class="sahab-stat-card__badge badge-amber">
-                <?php echo number_format_i18n($total_topics); ?>
-            </span>
-        </div>
-        <ul class="sahab-stat-card__list">
-            <?php foreach ($choices['subject'] as $k => $v):
-                if (empty($global_stats['subjects'][$k]))
-                    $global_stats['subjects'][$k] = 0; ?>
-                <li class="sahab-stat-card__row">
-                    <span>
-                        <?php echo esc_html($v); ?>
-                    </span>
-                    <strong>
-                        <?php echo esc_html($global_stats['subjects'][$k]); ?>
-                    </strong>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-    <div class="sahab-stat-card__chart">
-        <div id="topicDonut"></div>
-    </div>
-</div>
+                <!-- کارت ۳: موضوعات رصدی (تغییر عنوان طبق تصویر شماره ۱) -->
+                <div class="sahab-stat-card">
+                    <div class="sahab-stat-card__info">
+                        <div class="sahab-stat-card__label">موضوعات رصدی (تعداد اخبار ثبت شده در هر موضوع)</div>
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-amber">
+                                <?php echo number_format_i18n($total_topics); ?>
+                            </span>
+                        </div>
+                        <ul class="sahab-stat-card__list">
+                            <?php foreach ($choices['subject'] as $k => $v):
+                                if (empty($global_stats['subjects'][$k]))
+                                    $global_stats['subjects'][$k] = 0; ?>
+                                <li class="sahab-stat-card__row">
+                                    <span>
+                                        <?php echo esc_html($v); ?>
+                                    </span>
+                                    <strong>
+                                        <?php echo esc_html($global_stats['subjects'][$k]); ?>
+                                    </strong>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <div class="sahab-stat-card__chart">
+                        <div id="topicDonut"></div>
+                    </div>
+                </div>
 
-</div>
-
-<!-- سنجش عملکرد ادارات (تغییر ساختار باکس‌ها به لیست متنی استاندارد دو ستونه کاملاً شبیه به موضوعات رصدی) -->
-<div class="sahab-report-box">
-    <div class="sahab-stat-card" style="border:none; padding:0; box-shadow:none;">
-        <div class="sahab-stat-card__info" style="flex:2;">
-            <div class="sahab-stat-card__label">سنجش عملکرد ادارات (تعداد اخبار کارشناسان آن اداره)</div>
-            <div class="sahab-stat-card__badge-container">
-                <span class="sahab-stat-card__badge badge-indigo">
-                    <?php echo number_format_i18n($total_dept_news); ?>
-                </span>
             </div>
 
-            <!-- تبدیل باکس‌های ضخیم قبلی به لیست خط‌کشی‌شده مینی‌مال دقیقاً مشابه کامپوننت بالایی -->
-            <ul class="sahab-stat-card__list">
-                <?php if (!empty($departments)):
-                    foreach ($departments as $m_id => $dept): ?>
-                        <li class="sahab-stat-card__row">
-                            <span>
-                                <?php echo esc_html($dept['name']); ?>
+            <!-- سنجش عملکرد ادارات (تغییر ساختار باکس‌ها به لیست متنی استاندارد دو ستونه کاملاً شبیه به موضوعات رصدی) -->
+            <div class="sahab-report-box">
+                <div class="sahab-stat-card" style="border:none; padding:0; box-shadow:none;">
+                    <div class="sahab-stat-card__info" style="flex:2;">
+                        <div class="sahab-stat-card__label">سنجش عملکرد ادارات (تعداد اخبار کارشناسان آن اداره)</div>
+                        <div class="sahab-stat-card__badge-container">
+                            <span class="sahab-stat-card__badge badge-indigo">
+                                <?php echo number_format_i18n($total_dept_news); ?>
                             </span>
-                            <strong>
-                                <?php echo esc_html($dept['total_news']); ?>
-                            </strong>
-                        </li>
-                    <?php endforeach;
-                endif; ?>
-            </ul>
-        </div>
-        <div class="sahab-stat-card__chart" style="flex:3;">
-            <div id="deptDonutChart"></div>
-        </div>
-    </div>
-</div>
+                        </div>
 
-</div> <!-- بستن تگ پایانی تب اول (bi-system) که در جایگذاری قبلی جا افتاده بود -->
+                        <!-- تبدیل باکس‌های ضخیم قبلی به لیست خط‌کشی‌شده مینی‌مال دقیقاً مشابه کامپوننت بالایی -->
+                        <ul class="sahab-stat-card__list">
+                            <?php if (!empty($departments)):
+                                foreach ($departments as $m_id => $dept): ?>
+                                    <li class="sahab-stat-card__row">
+                                        <span>
+                                            <?php echo esc_html($dept['name']); ?>
+                                        </span>
+                                        <strong>
+                                            <?php echo esc_html($dept['total_news']); ?>
+                                        </strong>
+                                    </li>
+                                <?php endforeach;
+                            endif; ?>
+                        </ul>
+                    </div>
+                    <div class="sahab-stat-card__chart" style="flex:3;">
+                        <div id="deptDonutChart"></div>
+                    </div>
+                </div>
+            </div>
 
-<!-- ===================== TAB 2: ANALYSTS ===================== -->
+        </div> <!-- بستن تگ پایانی تب اول (bi-system) که در جایگذاری قبلی جا افتاده بود -->
+
+        <!-- ===================== TAB 2: ANALYSTS ===================== -->
         <div id="bi-analysts" class="sahab-tab-content">
 
             <!-- کارت پرسنل مینی‌مال مجهز به نمودار میله‌ای رنگارنگ تمام‌عرض -->
@@ -667,12 +667,12 @@ if (!empty($departments)) {
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h4 class="text-sm font-bold text-slate-600" style="margin: 0;">پرسنل حاضر در گزارش</h4>
                     <span class="sahab-stat-card__badge badge-rose" style="font-size: 24px; padding: 4px 14px;">
-                <?php echo number_format_i18n($total_staff); ?> نفر
-            </span>
-        </div>
-        <!-- باکس نمودار میله‌ای به صورت تمام‌عرض -->
-        <div id="staffBarChart" style="width: 100%; min-height: 250px;"></div>
-    </div>
+                        <?php echo number_format_i18n($total_staff); ?> نفر
+                    </span>
+                </div>
+                <!-- باکس نمودار میله‌ای به صورت تمام‌عرض -->
+                <div id="staffBarChart" style="width: 100%; min-height: 250px;"></div>
+            </div>
 
             <!-- جدول کارنامه مقایسه‌ای کارشناسان -->
             <div class="sahab-report-box">
@@ -697,10 +697,31 @@ if (!empty($departments)) {
                                             <?php echo esc_html($i++); ?>
                                         </td>
                                         <td class="font-bold">
-                                            <?php echo esc_html($analyst['name']); ?>
+                                            <?php
+                                            // ۱. آدرس پایه برگه پروفایل تحلیلی کارشناس در وردپرس
+                                            $profile_url = home_url('/analyst-profile/');
+
+                                            // ۲. جمع‌آوری پارامترهای فیلتر فعلی برای ارسال به صفحه جدید
+                                            $query_args = array(
+                                                'id' => esc_attr($a_id), // شناسه منحصربه‌فرد کارشناس
+                                                'from_date' => isset($_GET['from_date']) ? sanitize_text_field($_GET['from_date']) : '',
+                                                'to_date' => isset($_GET['to_date']) ? sanitize_text_field($_GET['to_date']) : ''
+                                            );
+
+                                            // ۳. ترکیب آدرس با پارامترها
+                                            $final_url = add_query_arg($query_args, $profile_url);
+                                            ?>
+
+                                            <!-- ۴. رندر تگ لینک برای باز شدن در تب جدید بدون آسیب به فیلترهای جاری -->
+                                            <a href="<?php echo esc_url($final_url); ?>" target="_blank"
+                                                class="sahab-analyst-link"
+                                                style="color: #0284c7; text-decoration: none; border-bottom: 1px dashed #0284c7; padding-bottom: 2px; transition: color 0.2s;"
+                                                onmouseover="this.style.color='#0369a1'"
+                                                onmouseout="this.style.color='#0284c7'">
+                                                <?php echo esc_html($analyst['name']); ?>
+                                            </a>
                                         </td>
-                                        <td class="font-mono font-bold text-emerald-600 text-center">
-                                            <?php echo esc_html($analyst['news_count']); ?>
+                                        <?php echo esc_html($analyst['news_count']); ?>
                                         </td>
                                         <td>
                                             <div class="flex flex-wrap gap-1">
@@ -800,7 +821,7 @@ if (!empty($departments)) {
             new ApexCharts(document.querySelector('#topicDonut'), donutCfg(tData, tLabels, ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'])).render();
         }
 
-// ۴. نمودار ستونی/میله‌ای رنگارنگ توزیع عملکرد پرسنل حاضر در گزارش
+        // ۴. نمودار ستونی/میله‌ای رنگارنگ توزیع عملکرد پرسنل حاضر در گزارش
         var sLabels = <?php echo json_encode(array_values(wp_list_pluck($analysts, 'name'))); ?>;
         var sData = <?php echo json_encode(array_values(wp_list_pluck($analysts, 'news_count'))); ?>;
 
@@ -825,19 +846,19 @@ if (!empty($departments)) {
                 },
                 colors: ['#0284c7', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#e11d48', '#06b6d4', '#8b5cf6'], // پالت رنگی داینامیک و جذاب برای ستون‌ها
                 dataLabels: {
-                enabled: true,
-                formatter: function (val) { return val; },
-                offsetY: -20,
-                style: { fontSize: '12px', colors: [tc], fontFamily: 'monospace' }
-            },
+                    enabled: true,
+                    formatter: function (val) { return val; },
+                    offsetY: -20,
+                    style: { fontSize: '12px', colors: [tc], fontFamily: 'monospace' }
+                },
                 legend: { show: false }, // حذف لژندهای تکراری به دلیل وجود جدول زیرین
                 xaxis: {
-                categories: sLabels,
-                labels: { style: { colors: tc, fontSize: '11px', fontFamily: 'Tahoma' } }
-            },
+                    categories: sLabels,
+                    labels: { style: { colors: tc, fontSize: '11px', fontFamily: 'Tahoma' } }
+                },
                 yaxis: {
-                labels: { style: { colors: tc, fontFamily: 'monospace' } }
-            },
+                    labels: { style: { colors: tc, fontFamily: 'monospace' } }
+                },
                 tooltip: { theme: isDark ? 'dark' : 'light' }
             }).render();
         }
