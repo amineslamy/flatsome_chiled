@@ -4,7 +4,7 @@ This is a specialized WordPress Child Theme built on top of the **Flatsome** the
 
 این یک پوسته فرزند (Child Theme) اختصاصی وردپرس است که بر پایه قالب **Flatsome** توسعه یافته است. این پلتفرم با هدف گزارش‌دهی، دسته‌بندی و مدیریت داده‌های پژوهشی طراحی شده است.
 
----
+----
 
 ## 🌐 English Description
 
