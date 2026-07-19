@@ -536,6 +536,7 @@ if (!function_exists('flatsome_child_get_dashboard_data')) {
 					);
 				}
 
+				global $post;
 				$display_reg_date = '---';
 				$reg_date_link = '---';
 				if (!empty($reg_shamsi)) {
