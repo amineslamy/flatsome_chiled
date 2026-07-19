@@ -5,18 +5,18 @@
 
 get_header(); ?>
 
-<div id="content" class="content-area page-wrapper" style="padding: 30px 0; background-color: #fcfcfc;">
+<div id="content" class="content-area page-wrapper" style="padding: 15px 0; background-color: #fcfcfc;">
     <div class="row">
         <div class="large-12 col">
 
-            <!-- ۱. هدر جدید، شکیل، جمع‌و‌جور و رنگی با تم سازمانی سحاب -->
+            <!-- ۱. هدر شکیل و جمع‌و‌جور با تم سازمانی سحاب -->
             <header class="entry-header text-center"
-                style="margin-bottom: 25px; background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); padding: 25px 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                style="margin-bottom: 15px; background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
                 <h1 class="entry-title"
-                    style="color: #ffffff; font-weight: 800; font-size: 24px; margin-bottom: 8px; letter-spacing: -0.5px;">
+                    style="color: #ffffff; font-weight: 800; font-size: 22px; margin-bottom: 5px; letter-spacing: -0.5px;">
                     <span style="vertical-align: middle; margin-left: 8px;">⚙️</span>موتور جامع جستجوی پیشرفته سحاب
                 </h1>
-                <p style="color: #93c5fd; font-size: 13px; margin-bottom: 0; font-weight: 300;">فیلترهای پیشرفته و
+                <p style="color: #93c5fd; font-size: 12px; margin-bottom: 0; font-weight: 300;">فیلترهای پیشرفته و
                     هوشمند برای استخراج دقیق اطلاعات و گزارش‌ها</p>
             </header>
 
@@ -24,113 +24,148 @@ get_header(); ?>
                 <form method="get" action="" class="sahab-adv-search-form"
                     style="direction: rtl; text-align: right; margin: 0;">
                     <div
-                        style="background: #ffffff; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px;">
+                        style="background: #ffffff; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px;">
                         <input type="hidden" name="load_all" id="sahab-load-all"
                             value="<?php echo isset($_GET['load_all']) ? esc_attr($_GET['load_all']) : '0'; ?>">
 
                         <!-- ردیف اول: کلمه کلیدی جستجو و شناسه خودکار -->
                         <div class="row">
-                            <div class="large-9 col" style="margin-bottom: 15px;">
+                            <div class="large-9 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">🔎
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">🔎
                                     کلمه کلیدی جستجو (شامل متن، عنوان و کامنت‌ها):</label>
                                 <input type="text" name="as_s"
                                     value="<?php echo isset($_GET['as_s']) ? esc_attr($_GET['as_s']) : ''; ?>"
                                     placeholder="عبارت مورد نظر را وارد کنید..."
-                                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;">
+                                    style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 38px; font-size: 13px;">
                             </div>
-                            <div class="large-3 col" style="margin-bottom: 15px;">
+                            <div class="large-3 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">🆔
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">🆔
                                     شناسه خودکار:</label>
                                 <input type="text" name="as_f_id"
                                     value="<?php echo isset($_GET['as_f_id']) ? esc_attr($_GET['as_f_id']) : ''; ?>"
-                                    placeholder="مثال: 1245"
-                                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;">
+                                    placeholder="مثال: 1234567"
+                                    style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 38px; font-size: 13px;">
                             </div>
                         </div>
 
-                        <!-- ردیف دوم: فیلترهای کشویی اختصاصی داشبورد (موضوع، نوع خبر، ارزیابی) -->
+                        <!-- ردیف دوم: بازه تاریخ‌ها -->
                         <div class="row">
-                            <div class="large-4 col" style="margin-bottom: 15px;">
+                            <div class="large-6 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">📌
-                                    موضوع:</label>
-                                <input type="text" name="as_f_subject"
-                                    value="<?php echo isset($_GET['as_f_subject']) ? esc_attr($_GET['as_f_subject']) : ''; ?>"
-                                    placeholder="موضوع خبر..."
-                                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;">
-                            </div>
-                            <div class="large-4 col" style="margin-bottom: 15px;">
-                                <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">📰
-                                    نوع خبر:</label>
-                                <input type="text" name="as_f_type"
-                                    value="<?php echo isset($_GET['as_f_type']) ? esc_attr($_GET['as_f_type']) : ''; ?>"
-                                    placeholder="نوع خبر..."
-                                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;">
-                            </div>
-                            <div class="large-4 col" style="margin-bottom: 15px;">
-                                <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">📊
-                                    ارزیابی:</label>
-                                <input type="text" name="as_f_case"
-                                    value="<?php echo isset($_GET['as_f_case']) ? esc_attr($_GET['as_f_case']) : ''; ?>"
-                                    placeholder="ارزیابی..."
-                                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;">
-                            </div>
-                        </div>
-
-                        <!-- ردیف سوم: فیلترهای تاریخ کامل (ثبت و وقوع) -->
-                        <div class="row">
-                            <div class="large-6 col" style="margin-bottom: 15px;">
-                                <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">📅
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">📅
                                     بازه تاریخ ثبت (انتشار در سایت):</label>
                                 <div style="display: flex; gap: 10px;">
                                     <input type="text" name="start_reg" class="sahab-pdate" data-jdp
                                         value="<?php echo isset($_GET['start_reg']) ? esc_attr($_GET['start_reg']) : ''; ?>"
                                         placeholder="از تاریخ"
-                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;"
+                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 38px; font-size: 13px;"
                                         autocomplete="off">
                                     <input type="text" name="end_reg" class="sahab-pdate" data-jdp
                                         value="<?php echo isset($_GET['end_reg']) ? esc_attr($_GET['end_reg']) : ''; ?>"
                                         placeholder="تا تاریخ"
-                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;"
+                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 38px; font-size: 13px;"
                                         autocomplete="off">
                                 </div>
                             </div>
 
-                            <div class="large-6 col" style="margin-bottom: 15px;">
+                            <div class="large-6 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">⏱️
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">⏱️
                                     بازه تاریخ وقوع رویداد:</label>
                                 <div style="display: flex; gap: 10px;">
                                     <input type="text" name="start_event" class="sahab-pdate" data-jdp
                                         value="<?php echo isset($_GET['start_event']) ? esc_attr($_GET['start_event']) : ''; ?>"
                                         placeholder="از تاریخ"
-                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;"
+                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 38px; font-size: 13px;"
                                         autocomplete="off">
                                     <input type="text" name="end_event" class="sahab-pdate" data-jdp
                                         value="<?php echo isset($_GET['end_event']) ? esc_attr($_GET['end_event']) : ''; ?>"
                                         placeholder="تا تاریخ"
-                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 42px;"
+                                        style="width: 50%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; height: 38px; font-size: 13px;"
                                         autocomplete="off">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ردیف چهارم: کیس، برچسب، کارشناس و ثبت‌کننده (همگی مجهز به باکس جستجوی سریع متنی) -->
+                        <!-- ردیف سوم: فیلترهای انتخابی داینامیک از ACF با عناوین فارسی -->
                         <div class="row">
-                            <!-- ۱. کیس (دسته‌بندی‌ها) -->
-                            <div class="large-3 col" style="margin-bottom: 15px;">
+                            <!-- موضوع (subject) -->
+                            <div class="large-4 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">📁
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">📌
+                                    موضوع:</label>
+                                <input type="text" id="subject-search" placeholder="🔍 جستجوی سریع موضوعات..."
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
+                                <div class="sahab-subject-box"
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    <?php
+                                    $selected_subjects = isset($_GET['as_subjects']) ? (array) $_GET['as_subjects'] : array();
+                                    $field_subject = function_exists('acf_get_field') ? acf_get_field('subject') : false;
+                                    if ($field_subject && !empty($field_subject['choices'])) {
+                                        foreach ($field_subject['choices'] as $value => $label) {
+                                            echo '<label style="display:block; font-weight:normal; margin-bottom:4px; font-size:12px;"><input type="checkbox" name="as_subjects[]" value="' . esc_attr($value) . '" ' . checked(in_array($value, $selected_subjects), true, false) . '> ' . esc_html($label) . '</label>';
+                                        }
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+
+                            <!-- نوع خبر (news_type) -->
+                            <div class="large-4 col" style="margin-bottom: 8px;">
+                                <label
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">📰
+                                    نوع خبر:</label>
+                                <input type="text" id="type-search" placeholder="🔍 جستجوی سریع انواع خبر..."
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
+                                <div class="sahab-type-box"
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    <?php
+                                    $selected_types = isset($_GET['as_types']) ? (array) $_GET['as_types'] : array();
+                                    $field_type = function_exists('acf_get_field') ? acf_get_field('news_type') : false;
+                                    if ($field_type && !empty($field_type['choices'])) {
+                                        foreach ($field_type['choices'] as $value => $label) {
+                                            echo '<label style="display:block; font-weight:normal; margin-bottom:4px; font-size:12px;"><input type="checkbox" name="as_types[]" value="' . esc_attr($value) . '" ' . checked(in_array($value, $selected_types), true, false) . '> ' . esc_html($label) . '</label>';
+                                        }
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+
+                            <!-- ارزیابی (evaluation) -->
+                            <div class="large-4 col" style="margin-bottom: 8px;">
+                                <label
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">📊
+                                    ارزیابی:</label>
+                                <input type="text" id="evaluation-search" placeholder="🔍 جستجوی سریع ارزیابی‌ها..."
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
+                                <div class="sahab-evaluation-box"
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    <?php
+                                    $selected_evaluations = isset($_GET['as_evaluations']) ? (array) $_GET['as_evaluations'] : array();
+                                    $field_eval = function_exists('acf_get_field') ? acf_get_field('evaluation') : false;
+                                    if ($field_eval && !empty($field_eval['choices'])) {
+                                        foreach ($field_eval['choices'] as $value => $label) {
+                                            echo '<label style="display:block; font-weight:normal; margin-bottom:4px; font-size:12px;"><input type="checkbox" name="as_evaluations[]" value="' . esc_attr($value) . '" ' . checked(in_array($value, $selected_evaluations), true, false) . '> ' . esc_html($label) . '</label>';
+                                        }
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ردیف چهارم: کیس، برچسب، کارشناس و ثبت‌کننده -->
+                        <div class="row">
+                            <!-- کیس -->
+                            <div class="large-3 col" style="margin-bottom: 8px;">
+                                <label
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">📁
                                     کیس:</label>
                                 <input type="text" id="cat-search" placeholder="🔍 جستجوی سریع کیس‌ها..."
-                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 6px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px;">
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
                                 <div class="sahab-cat-box"
-                                    style="max-height: 140px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
                                     <?php
                                     $categories = get_categories(array('hide_empty' => 0));
                                     $selected_cats = isset($_GET['as_cats']) ? (array) $_GET['as_cats'] : array();
@@ -141,15 +176,15 @@ get_header(); ?>
                                 </div>
                             </div>
 
-                            <!-- ۲. برچسب (هشتگ) -->
-                            <div class="large-3 col" style="margin-bottom: 15px;">
+                            <!-- برچسب -->
+                            <div class="large-3 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">🏷️
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">🏷️
                                     برچسب (هشتگ):</label>
                                 <input type="text" id="tag-search" placeholder="🔍 جستجوی سریع برچسب‌ها..."
-                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 6px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px;">
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
                                 <div class="sahab-tag-box"
-                                    style="max-height: 140px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
                                     <?php
                                     $tags = get_tags(array('hide_empty' => 0));
                                     $selected_tags = isset($_GET['as_tags']) ? (array) $_GET['as_tags'] : array();
@@ -160,15 +195,15 @@ get_header(); ?>
                                 </div>
                             </div>
 
-                            <!-- ۳. کارشناس -->
-                            <div class="large-3 col" style="margin-bottom: 15px;">
+                            <!-- کارشناس -->
+                            <div class="large-3 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">👤
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">👤
                                     کارشناس:</label>
                                 <input type="text" id="expert-search" placeholder="🔍 جستجوی سریع کارشناسان..."
-                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 6px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px;">
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
                                 <div class="sahab-expert-box"
-                                    style="max-height: 140px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
                                     <?php
                                     $users = get_users(array('fields' => array('ID', 'display_name')));
                                     $selected_experts = isset($_GET['as_experts']) ? (array) $_GET['as_experts'] : array();
@@ -179,15 +214,15 @@ get_header(); ?>
                                 </div>
                             </div>
 
-                            <!-- ۴. ثبت کننده -->
-                            <div class="large-3 col" style="margin-bottom: 15px;">
+                            <!-- ثبت کننده -->
+                            <div class="large-3 col" style="margin-bottom: 8px;">
                                 <label
-                                    style="font-weight: bold; display: block; margin-bottom: 6px; color: #334155; font-size: 13px;">✍️
+                                    style="font-weight: bold; display: block; margin-bottom: 4px; color: #334155; font-size: 12px;">✍️
                                     ثبت کننده:</label>
                                 <input type="text" id="author-search" placeholder="🔍 جستجوی سریع ثبت کنندگان..."
-                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 6px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px;">
+                                    style="width: 100%; padding: 5px 10px; font-size: 12px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; height: 32px;">
                                 <div class="sahab-author-box"
-                                    style="max-height: 140px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    style="max-height: 120px; overflow-y: auto; background: #fff; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
                                     <?php
                                     $selected_authors = isset($_GET['as_authors']) ? (array) $_GET['as_authors'] : array();
                                     foreach ($users as $user) {
@@ -199,23 +234,21 @@ get_header(); ?>
                         </div>
 
                         <!-- دکمه‌های فرم عملیات -->
-                        <div style="text-align: left; margin-top: 15px;">
+                        <div style="text-align: left; margin-top: 10px;">
                             <button type="submit" class="button primary"
-                                style="font-weight: bold; padding: 10px 30px; border-radius: 6px; background-color: #1e3a8a; border: none; margin: 0; height: 42px;">🎯
+                                style="font-weight: bold; padding: 5px 25px; border-radius: 6px; background-color: #1e3a8a; border: none; margin: 0; height: 38px; font-size: 13px;">🎯
                                 شروع فیلتر و جستجو</button>
                             <a href="<?php echo home_url('/advanced-search/'); ?>" class="button secondary text-dark"
-                                style="padding: 10px 20px; border-radius: 6px; margin-right: 10px; margin: 0; height: 42px; line-height: 22px; background-color: #e2e8f0; border: none;">🔄
+                                style="padding: 5px 15px; border-radius: 6px; margin-right: 10px; margin: 0; height: 38px; line-height: 26px; background-color: #e2e8f0; border: none; font-size: 13px;">🔄
                                 پاکسازی فرم</a>
                         </div>
                     </div>
 
                     <?php
-                    // فعال‌سازی متغیر سراسری وردپرس برای برطرف کردن کلیه اخطارها و خطاهای قرمز رنگ ادیتور
                     global $post;
-
                     $should_load_all = (isset($_GET['load_all']) && $_GET['load_all'] === '1');
 
-                    if ($should_load_all || !empty($_GET['as_s']) || !empty($_GET['as_f_id']) || !empty($_GET['as_f_subject']) || !empty($_GET['as_f_type']) || !empty($_GET['as_f_case']) || !empty($_GET['start_reg']) || !empty($_GET['end_reg']) || !empty($_GET['start_event']) || !empty($_GET['end_event']) || !empty($_GET['as_cats']) || !empty($_GET['as_tags']) || !empty($_GET['as_experts']) || !empty($_GET['as_authors'])) {
+                    if ($should_load_all || !empty($_GET['as_s']) || !empty($_GET['as_f_id']) || !empty($_GET['as_subjects']) || !empty($_GET['as_types']) || !empty($_GET['as_evaluations']) || !empty($_GET['start_reg']) || !empty($_GET['end_reg']) || !empty($_GET['start_event']) || !empty($_GET['end_event']) || !empty($_GET['as_cats']) || !empty($_GET['as_tags']) || !empty($_GET['as_experts']) || !empty($_GET['as_authors'])) {
 
                         $posts_per_page = isset($_GET['as_per_page']) ? intval($_GET['as_per_page']) : 12;
                         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
@@ -226,10 +259,8 @@ get_header(); ?>
                         );
 
                         if (!$should_load_all) {
-                            // مدیریت فیلترهای آرایه‌ای ثبت‌کننده و کارشناس
-                            if (!empty($_GET['as_authors'])) {
+                            if (!empty($_GET['as_authors']))
                                 $args['author__in'] = array_map('intval', $_GET['as_authors']);
-                            }
                             if (!empty($_GET['as_cats']))
                                 $args['category__in'] = array_map('intval', $_GET['as_cats']);
                             if (!empty($_GET['as_tags']))
@@ -237,42 +268,49 @@ get_header(); ?>
 
                             $args['meta_query'] = array('relation' => 'AND');
 
-                            // فیلتر کارشناسان (از طریق متادیتا)
                             if (!empty($_GET['as_experts'])) {
-                                $args['meta_query'][] = array(
-                                    'key' => 'expert',
-                                    'value' => array_map('intval', $_GET['as_experts']),
-                                    'compare' => 'IN'
-                                );
+                                $args['meta_query'][] = array('key' => 'expert', 'value' => array_map('intval', $_GET['as_experts']), 'compare' => 'IN');
                             }
-
-                            // فیلتر فیلدهای استخراج شده داشبورد
                             if (!empty($_GET['as_f_id'])) {
                                 $args['meta_query'][] = array('key' => 'automation_id', 'value' => sanitize_text_field($_GET['as_f_id']), 'compare' => '=');
                             }
-                            if (!empty($_GET['as_f_subject'])) {
-                                $args['meta_query'][] = array('key' => 'subject', 'value' => sanitize_text_field($_GET['as_f_subject']), 'compare' => 'LIKE');
-                            }
-                            if (!empty($_GET['as_f_type'])) {
-                                $args['meta_query'][] = array('key' => 'news_type', 'value' => sanitize_text_field($_GET['as_f_type']), 'compare' => 'LIKE');
-                            }
-                            if (!empty($_GET['as_f_case'])) {
-                                $args['meta_query'][] = array('key' => 'case', 'value' => sanitize_text_field($_GET['as_f_case']), 'compare' => 'LIKE');
+
+                            // جستجوی هوشمند فیلدهای چک‌باکس ACF (پوشش همزمان حالت متنی ساده و سریالایز شده LIKE)
+                            if (!empty($_GET['as_subjects'])) {
+                                $sub_queries = array('relation' => 'OR');
+                                foreach ($_GET['as_subjects'] as $sub_val) {
+                                    $sub_queries[] = array('key' => 'subject', 'value' => '"' . sanitize_text_field($sub_val) . '"', 'compare' => 'LIKE');
+                                    $sub_queries[] = array('key' => 'subject', 'value' => sanitize_text_field($sub_val), 'compare' => '=');
+                                }
+                                $args['meta_query'][] = $sub_queries;
                             }
 
-                            // فیلترهای زمانی
-                            if (!empty($_GET['start_reg'])) {
+                            if (!empty($_GET['as_types'])) {
+                                $type_queries = array('relation' => 'OR');
+                                foreach ($_GET['as_types'] as $type_val) {
+                                    $type_queries[] = array('key' => 'news_type', 'value' => '"' . sanitize_text_field($type_val) . '"', 'compare' => 'LIKE');
+                                    $type_queries[] = array('key' => 'news_type', 'value' => sanitize_text_field($type_val), 'compare' => '=');
+                                }
+                                $args['meta_query'][] = $type_queries;
+                            }
+
+                            if (!empty($_GET['as_evaluations'])) {
+                                $eval_queries = array('relation' => 'OR');
+                                foreach ($_GET['as_evaluations'] as $eval_val) {
+                                    $eval_queries[] = array('key' => 'evaluation', 'value' => '"' . sanitize_text_field($eval_val) . '"', 'compare' => 'LIKE');
+                                    $eval_queries[] = array('key' => 'evaluation', 'value' => sanitize_text_field($eval_val), 'compare' => '=');
+                                }
+                                $args['meta_query'][] = $eval_queries;
+                            }
+
+                            if (!empty($_GET['start_reg']))
                                 $args['meta_query'][] = array('key' => 'sahab_reg_date_shamsi', 'value' => sanitize_text_field($_GET['start_reg']), 'compare' => '>=');
-                            }
-                            if (!empty($_GET['end_reg'])) {
+                            if (!empty($_GET['end_reg']))
                                 $args['meta_query'][] = array('key' => 'sahab_reg_date_shamsi', 'value' => sanitize_text_field($_GET['end_reg']), 'compare' => '<=');
-                            }
-                            if (!empty($_GET['start_event'])) {
+                            if (!empty($_GET['start_event']))
                                 $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['start_event']), 'compare' => '>=');
-                            }
-                            if (!empty($_GET['end_event'])) {
+                            if (!empty($_GET['end_event']))
                                 $args['meta_query'][] = array('key' => 'event_date', 'value' => sanitize_text_field($_GET['end_event']), 'compare' => '<=');
-                            }
                         }
 
                         $order_param = isset($_GET['as_order']) ? $_GET['as_order'] : 'date_desc';
@@ -340,9 +378,9 @@ get_header(); ?>
                             $current_url = $_SERVER['REQUEST_URI'];
                             $export_url = add_query_arg('export_xml', '1', $current_url);
 
-                            echo '<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; flex-wrap: wrap; gap: 15px; direction: rtl;">';
+                            echo '<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; gap: 15px; direction: rtl;">';
                             echo '<div style="flex: 1; min-width: 200px; text-align: right;">';
-                            echo '<h3 style="margin: 0; color: #1e293b; font-size: 17px; font-weight: bold;">📚 نتایج فیلتر پیشرفته (' . $total_found . ' گزارش):</h3>';
+                            echo '<h3 style="margin: 0; color: #1e293b; font-size: 16px; font-weight: bold;">📚 نتایج فیلتر پیشرفته (' . $total_found . ' گزارش):</h3>';
                             echo '</div>';
 
                             echo '<div style="display: flex; gap: 10px; align-items: flex-end; justify-content: center;">';
@@ -387,14 +425,14 @@ get_header(); ?>
                             echo '<table id="sahabResultTable" style="width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e2e8f0; font-size: 13px;">';
                             echo '<thead style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">';
                             echo '<tr>';
-                            echo '<th style="padding: 12px; text-align: center; width: 40px;"><input type="checkbox" id="selectAllPosts" style="margin:0;"></th>';
-                            echo '<th style="padding: 12px;">📝 عنوان گزارش</th>';
-                            echo '<th style="padding: 12px; text-align: center; width: 120px;">✍️ ثبت‌کننده</th>';
-                            echo '<th style="padding: 12px; text-align: center; width: 130px;">📁 کیس</th>';
-                            echo '<th style="padding: 12px; text-align: center; width: 120px;">🏷️ برچسب‌ها</th>';
-                            echo '<th style="padding: 12px; text-align: center; width: 110px;">📅 ثبت</th>';
-                            echo '<th style="padding: 12px; text-align: center; width: 110px;">⏱️ وقوع</th>';
-                            echo '<th style="padding: 12px; text-align: center; width: 70px;">عملیات</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 40px;"><input type="checkbox" id="selectAllPosts" style="margin:0;"></th>';
+                            echo '<th style="padding: 10px;">📝 عنوان گزارش</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 120px;">✍️ ثبت‌کننده</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 130px;">📁 کیس</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 120px;">🏷️ برچسب‌ها</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 110px;">📅 ثبت</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 110px;">⏱️ وقوع</th>';
+                            echo '<th style="padding: 10px; text-align: center; width: 70px;">عملیات</th>';
                             echo '</tr>';
                             echo '</thead>';
                             echo '<tbody>';
@@ -415,23 +453,23 @@ get_header(); ?>
                                 $highlighted_excerpt = sahab_highlight_keyword(wp_trim_words(get_the_excerpt(), 15, '...'), $search_keyword);
 
                                 echo '<tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.15s;" onmouseover="this.style.backgroundColor=\'#f8fafc\'" onmouseout="this.style.backgroundColor=\'#fff\'">';
-                                echo '<td style="padding: 12px; text-align: center;"><input type="checkbox" class="post-bulletin-select" value="' . $post_id . '" style="margin:0;"></td>';
-                                echo '<td style="padding: 12px;">';
+                                echo '<td style="padding: 10px; text-align: center;"><input type="checkbox" class="post-bulletin-select" value="' . $post_id . '" style="margin:0;"></td>';
+                                echo '<td style="padding: 10px;">';
                                 echo '<a href="' . get_permalink() . '" style="font-weight: bold; color: #1e293b; text-decoration: none; display: block; margin-bottom: 4px;">' . $highlighted_title . '</a>';
                                 echo '<div style="font-size: 11px; color: #64748b; line-height: 1.4;">' . $highlighted_excerpt . '</div>';
                                 echo '</td>';
-                                echo '<td style="padding: 12px; text-align: center; color: #334155;">' . esc_html($author_name) . '</td>';
-                                echo '<td style="padding: 12px; text-align: center; color: #2563eb; font-size:12px;">' . esc_html($cats_str) . '</td>';
-                                echo '<td style="padding: 12px; text-align: center; color: #475569; font-size:12px;">' . esc_html($tags_str) . '</td>';
+                                echo '<td style="padding: 10px; text-align: center; color: #334155;">' . esc_html($author_name) . '</td>';
+                                echo '<td style="padding: 10px; text-align: center; color: #2563eb; font-size:12px;">' . esc_html($cats_str) . '</td>';
+                                echo '<td style="padding: 10px; text-align: center; color: #475569; font-size:12px;">' . esc_html($tags_str) . '</td>';
 
                                 $display_reg_shamsi = get_post_meta($post_id, 'sahab_reg_date_shamsi', true);
                                 if (empty($display_reg_shamsi)) {
                                     $display_reg_shamsi = get_the_date('Y/m/d');
                                 }
 
-                                echo '<td style="padding: 12px; text-align: center; color: #334155;">' . esc_html($display_reg_shamsi) . '</td>';
-                                echo '<td style="padding: 12px; text-align: center; color: #dc2626; font-weight: bold;">' . (!empty($event_date) ? esc_html($event_date) : '---') . '</td>';
-                                echo '<td style="padding: 12px; text-align: center;"><a href="' . get_permalink() . '" target="_blank" style="font-size: 12px; color: #1d4ed8; font-weight: bold;">مشاهده ←</a></td>';
+                                echo '<td style="padding: 10px; text-align: center; color: #334155;">' . esc_html($display_reg_shamsi) . '</td>';
+                                echo '<td style="padding: 10px; text-align: center; color: #dc2626; font-weight: bold;">' . (!empty($event_date) ? esc_html($event_date) : '---') . '</td>';
+                                echo '<td style="padding: 10px; text-align: center;"><a href="' . get_permalink() . '" target="_blank" style="font-size: 12px; color: #1d4ed8; font-weight: bold;">مشاهده ←</a></td>';
                                 echo '</tr>';
                             }
                             wp_reset_postdata();
@@ -440,7 +478,6 @@ get_header(); ?>
                             echo '</table>';
                             echo '</div>';
 
-                            // پجینیشن
                             $paginated_links = paginate_links(array(
                                 'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
                                 'format' => '?paged=%#%',
@@ -452,7 +489,7 @@ get_header(); ?>
                             ));
 
                             if (is_array($paginated_links)) {
-                                echo '<div class="text-center" style="margin-top:30px;">';
+                                echo '<div class="text-center" style="margin-top:20px;">';
                                 echo '<ul class="page-numbers nav-pagination links" style="display:inline-flex; list-style:none; gap:5px; padding:0;">';
                                 foreach ($paginated_links as $link) {
                                     echo '<li>' . $link . '</li>';
@@ -471,7 +508,7 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- اسکریپت‌های مدیریت جستجوی آنی در فیلدها -->
+<!-- مدیریت اسکریپت سرچ آنی هفت باکس مجزا -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         function initQuickSearch(inputId, boxClass) {
@@ -490,7 +527,10 @@ get_header(); ?>
                 });
             });
         }
-        // راه‌اندازی فیلترهای آنی متنی با آدرس‌دهی دقیق المان‌ها
+        // اعمال سرچ روی هر ۷ باکس انتخابی فرم
+        initQuickSearch('subject-search', 'sahab-subject-box');
+        initQuickSearch('type-search', 'sahab-type-box');
+        initQuickSearch('evaluation-search', 'sahab-evaluation-box');
         initQuickSearch('cat-search', 'sahab-cat-box');
         initQuickSearch('tag-search', 'sahab-tag-box');
         initQuickSearch('expert-search', 'sahab-expert-box');
