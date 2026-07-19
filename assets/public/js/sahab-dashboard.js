@@ -72,7 +72,8 @@ jQuery(document).ready(function ($) {
                 { "data": "actions", "orderable": false }
             ],
             "order": [[0, "desc"]],
-            "pageLength": 10,
+            "pageLength": 30,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "همه"]],
             "language": {
                 "processing": "در حال پردازش...",
                 "lengthMenu": "_MENU_",
