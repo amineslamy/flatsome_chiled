@@ -10,7 +10,8 @@
  */
 function flatsome_child_search_excerpt($excerpt, $post = null)
 {
-	if (!is_search()) {
+	// شرط را بازتر می‌کنیم تا علاوه بر صفحه جستجو، در صفحات فیلتر پیشرفته یا اگر کوئری حاوی پارامتر جستجو بود نیز عمل کند
+	if (!is_search() && !isset($_GET['s']) && !isset($_GET['reg_date'])) {
 		return $excerpt;
 	}
 

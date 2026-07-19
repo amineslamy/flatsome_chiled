@@ -483,9 +483,14 @@ if (!function_exists('flatsome_child_get_dashboard_data')) {
 				if (empty($subject_val) && function_exists('get_field')) {
 					$subject_val = get_field('subject', $post_id);
 				}
-				$subject_label = sahab_dashboard_translate_value($subject_val, 'subject', $post_id);
+
+				// خارج کردن ایمن داده از حالت سریالایز وردپرس
+				$subject_val = maybe_unserialize($subject_val);
+
 				$subject_links = array();
-				if (is_array($subject_val)) {
+
+				// اگر خروجی یک آرایه معتبر است، آیتم‌ها را تک‌تک پردازش کن
+				if (is_array($subject_val) && !empty($subject_val)) {
 					foreach ($subject_val as $subject_item) {
 						$subject_item_raw = (string) $subject_item;
 						$subject_item_label = sahab_dashboard_translate_value($subject_item_raw, 'subject', $post_id);
@@ -495,7 +500,9 @@ if (!function_exists('flatsome_child_get_dashboard_data')) {
 							esc_html($subject_item_label)
 						);
 					}
-				} elseif (!empty($subject_val)) {
+				}
+				// اگر خروجی آرایه نیست اما مقدار متنی ساده دارد
+				elseif (!empty($subject_val)) {
 					$subject_item_raw = (string) $subject_val;
 					$subject_item_label = sahab_dashboard_translate_value($subject_item_raw, 'subject', $post_id);
 					$subject_links[] = sprintf(
@@ -504,7 +511,8 @@ if (!function_exists('flatsome_child_get_dashboard_data')) {
 						esc_html($subject_item_label)
 					);
 				}
-				$subject_label = !empty($subject_links) ? implode(' | ', $subject_links) : $subject_label;
+
+				$subject_label = !empty($subject_links) ? implode(' | ', $subject_links) : '---';
 
 				$type_val = get_post_meta($post_id, 'news_type', true);
 				if (empty($type_val) && function_exists('get_field')) {
