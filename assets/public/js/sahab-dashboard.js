@@ -1,14 +1,23 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
     var selectedDeleteId = null;
 
     $.fn.dataTable.ext.errMode = 'none';
+
+    // ۱. فعال‌سازی و راه‌اندازی تقویم شمسی بر روی فیلدهای جدید بازه تاریخ
+    if (typeof jalaliDatepicker !== 'undefined') {
+        jalaliDatepicker.startWatch({
+            autoReadOnlyInput: true,
+            useDropDownYears: true,
+            separatorChar: '/'
+        });
+    }
 
     if ($('#sahab-main-dashboard').length) {
         var dashboardTable = $('#sahab-main-dashboard').DataTable({
             "ajax": {
                 "url": sahab_dashboard_vars.ajax_url,
                 "type": "POST",
-                "data": function(d) {
+                "data": function (d) {
                     return $.extend({}, d, {
                         action: 'sahab_get_dashboard_data',
                         f_id: $('#filter_id').val(),
@@ -17,24 +26,26 @@ jQuery(document).ready(function($) {
                         f_subject: $('#filter_subject').val(),
                         f_expert: $('#filter_expert').val(),
                         f_author: $('#filter_author').val(),
-                        f_notes: $('#filter_notes').val()
+                        f_notes: $('#filter_notes').val(),
+                        // اضافه شدن فیلترهای تاریخ ثبت به انوع داده ارسالی به موتورخانه AJAX
+                        f_reg_from: $('#filter_reg_from').val(),
+                        f_reg_to: $('#filter_reg_to').val()
                     });
                 }
             },
             "columns": [
                 { "data": "automation_id" },
-                { 
+                {
                     "data": "title",
-                    "render": function(data, type, row) {
+                    "render": function (data, type, row) {
                         return '<a href="' + row.permalink + '" target="_blank" style="font-weight:bold; color:#0f172a; text-decoration:none;">' + data + '</a>';
                     }
                 },
                 { "data": "case" },
                 { "data": "subject" },
-                { 
+                {
                     "data": "news_type",
-                    "render": function(data, type, row) {
-                        // Allow rendering of the HTML link tags returned by the server
+                    "render": function (data, type, row) {
                         return data;
                     }
                 },
@@ -43,18 +54,18 @@ jQuery(document).ready(function($) {
                 { "data": "creator" },
                 { "data": "event_date" },
                 { "data": "publish_date" },
-                { 
+                {
                     "data": "comments_count_summary",
-                    "render": function(data, type, row) {
+                    "render": function (data, type, row) {
                         if (!data) return '---';
-                        
+
                         var commentUrl = row.permalink + '#comments';
-                        
+
                         var noteHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge note" title="ملاحظات: ' + data.note + ' عدد">' + data.note + '</span></a>';
                         var theoryHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge theory" title="نظریه‌ها: ' + data.theory + ' عدد">' + data.theory + '</span></a>';
                         var rewriteHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge rewrite" title="بازنویسی‌ها: ' + data.rewrite + ' عدد">' + data.rewrite + '</span></a>';
                         var miscHtml = '<a href="' + commentUrl + '" target="_blank" class="sahab-comment-link-badge"><span class="sahab-comment-badge misc" title="سایر پی‌نوشت‌ها: ' + data.misc + ' عدد">' + data.misc + '</span></a>';
-                        
+
                         return '<div class="sahab-comment-grid-wrapper">' + noteHtml + theoryHtml + rewriteHtml + miscHtml + '</div>';
                     }
                 },
@@ -77,7 +88,7 @@ jQuery(document).ready(function($) {
                     "last": "انتها"
                 }
             },
-            "initComplete": function(settings, json) {
+            "initComplete": function (settings, json) {
                 var api = this.api();
                 var lengthSelect = $('#sahab-main-dashboard_length select').appendTo('#sahab_custom_length');
                 var searchInput = $('#sahab-main-dashboard_filter input').appendTo('#sahab_custom_search');
@@ -95,7 +106,7 @@ jQuery(document).ready(function($) {
                     'padding': '4px'
                 });
 
-                // Enforce tight spacing and widths for a clean single-row filter bar
+                // تنظیم پدینگ و انعطاف نوار فیلتر با توجه به اضافه شدن فیلدهای تاریخ در ابتدا
                 $('#sahab-dashboard-filters').css({
                     'flex-wrap': 'nowrap',
                     'justify-content': 'space-between'
@@ -104,33 +115,38 @@ jQuery(document).ready(function($) {
                 $('#sahab-dashboard-filters #sahab_custom_search input').css('width', '100px');
                 $('#sahab-dashboard-filters select, #sahab-dashboard-filters input').css('height', '30px');
 
-                $('#clear_all_filters').on('click', function(e) {
+                $('#clear_all_filters').on('click', function (e) {
                     e.preventDefault();
                     var cleanUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
                     window.location.href = cleanUrl;
                 });
             }
         });
+
+        // ۲. بازخوانی هوشمند جدول بلافاصله پس از انتخاب یا تغییر بازه زمانی تاریخ ثبت
+        $('#filter_reg_from, #filter_reg_to').on('change jdp:change', function () {
+            dashboardTable.ajax.reload();
+        });
     }
 
-    $('#sahab-main-dashboard').on('click', '.sahab-btn-delete', function() {
+    $('#sahab-main-dashboard').on('click', '.sahab-btn-delete', function () {
         selectedDeleteId = $(this).data('id');
         $('#sahab-delete-confirm-input').val('').trigger('input');
         $('#sahab-delete-modal-error').hide().text('');
         $('#sahab-delete-modal').fadeIn(200);
     });
 
-    $('#sahab-modal-cancel-btn').on('click', function() {
+    $('#sahab-modal-cancel-btn').on('click', function () {
         $('#sahab-delete-modal').fadeOut(200);
     });
 
-    $('#sahab-delete-confirm-input').on('input', function() {
+    $('#sahab-delete-confirm-input').on('input', function () {
         var value = $(this).val();
         $('#sahab-delete-modal-error').hide().text('');
         $('#sahab-modal-confirm-btn').prop('disabled', value !== 'delete');
     });
 
-    $('#sahab-modal-confirm-btn').on('click', function() {
+    $('#sahab-modal-confirm-btn').on('click', function () {
         if (!selectedDeleteId) {
             return;
         }
@@ -142,7 +158,7 @@ jQuery(document).ready(function($) {
                 action: 'sahab_delete_dashboard_post',
                 post_id: selectedDeleteId
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     $('#sahab-delete-modal').fadeOut(200);
                     $('#sahab-main-dashboard').DataTable().ajax.reload(null, false);
@@ -150,7 +166,7 @@ jQuery(document).ready(function($) {
                     $('#sahab-delete-modal-error').text(response.data.message).fadeIn(200);
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 if (xhr.status === 403 && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                     $('#sahab-delete-modal-error').text(xhr.responseJSON.data.message).fadeIn(200);
                 } else {
