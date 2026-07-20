@@ -217,7 +217,9 @@ endif; // ends check for flatsome_comment()
 
 if ( ! function_exists( 'flatsome_posted_on' ) ) :
 
-	// Prints HTML with meta information for the current post-date/time and author.
+	/**
+	 * Prints HTML with meta information for the current post-date/time, last modified date, and author.
+	 */
 	function flatsome_posted_on() {
 		$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 		if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
@@ -231,17 +233,42 @@ if ( ! function_exists( 'flatsome_posted_on' ) ) :
 			esc_html( get_the_modified_date() )
 		);
 
+		// ۱. واکشی تاریخ وقوع حادثه از متادیتا
 		$date_event = get_post_meta( get_the_ID(), 'event_date', true );
 		$event_html = '';
 		if ( ! empty( $date_event ) ) {
 			$event_html = ' <span style="margin: 0 6px; color: #ccc;">|</span> <span class="sahab-event-meta" style="color: #d9534f; font-weight: bold;">⏱️ وقوع: ' . esc_html( $date_event ) . '</span>';
 		}
 
+		// ۲. واکشی تاریخ آخرین به‌روزرسانی (ست شده توسط ایمپورتر سحاب)
+		$last_modified = get_post_meta( get_the_ID(), 'last_modified', true );
+		$modified_html = '';
+		if ( ! empty( $last_modified ) ) {
+			// اگر افزونه پارسر تاریخ جلالی فعال باشد، آن را تبدیل به شمسی شکیل می‌کنیم در غیر این صورت خود دیتای خام نمایش داده می‌شود
+			$display_modified = $last_modified;
+			if ( function_exists( 'jalali_to_gregorian' ) || function_exists( 'jdate' ) ) {
+				// در صورتی که ساختار تاریخ دیتابیس Y-m-d H:i:s باشد
+				$timestamp = strtotime( $last_modified );
+				if ( $timestamp ) {
+					$display_modified = jdate( 'Y/m/d ساعت H:i', $timestamp );
+				}
+			}
+			$modified_html = ' <span style="margin: 0 6px; color: #ccc;">|</span> <span class="sahab-modified-meta" style="color: #0891a1; font-weight: bold;">🔄 به‌روزرسانی: ' . esc_html( $display_modified ) . '</span>';
+		}
+
+		// ۳. خروجی نهایی ساختار متا به همراه دکمه ویرایش سریع نوشته برای مدیران
 		echo sprintf(
 			/* translators: %1$s: post date, %2$s: post author */
 			wp_kses_post( _x( '<span class="posted-on">انتشار در %1$s</span> <span class="byline">توسط %2$s</span>', 'post date by post author', 'flatsome' ) ),
-			'<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . $time_string . '</a>' . $event_html, // phpcs:ignore WordPress.Security.EscapeOutput
+			'<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . $time_string . '</a>' . $event_html . $modified_html, // phpcs:ignore WordPress.Security.EscapeOutput
 			'<span class="meta-author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
+		);
+
+		// افزودن لینک ویرایش مستقیم نوشته در قالب استایل‌دهی شده فلتسام
+		edit_post_link(
+			__( 'ویرایش نوشته', 'flatsome' ),
+			'<span class="edit-link" style="margin-right: 10px; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 11px;"><i class="icon-edit"></i> ',
+			'</span>'
 		);
 	}
 endif;

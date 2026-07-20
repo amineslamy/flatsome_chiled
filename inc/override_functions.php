@@ -116,3 +116,64 @@ function sahab_enqueue_datepicker_in_frontend() {
         wp_enqueue_script('jalali-datepicker-js', get_stylesheet_directory_uri() . '/assets/admin/js/jalali-datepicker.min.js', array(), null, true);
     }
 }
+
+/**
+ * بازنویسی متای پست‌ها برای سیستم سحاب
+ * نمایش تاریخ وقوع حادثه، تاریخ آخرین به‌روزرسانی شمسی و دکمه ویرایش سریع
+ */
+function flatsome_posted_on()
+{
+    $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+    if (get_the_time('U') !== get_the_modified_time('U')) {
+        $time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+    }
+
+    $time_string = sprintf(
+        $time_string,
+        esc_attr(get_the_date('c')),
+        esc_html(get_the_date()),
+        esc_attr(get_the_modified_date('c')),
+        esc_html(get_the_modified_date())
+    );
+
+    // ۱. واکشی تاریخ وقوع حادثه از متادیتا
+    $date_event = get_post_meta(get_the_ID(), 'event_date', true);
+    $event_html = '';
+    if (!empty($date_event)) {
+        $event_html = ' <span style="margin: 0 6px; color: #ccc;">|</span> <span class="sahab-event-meta" style="color: #d9534f; font-weight: bold;">⏱️ وقوع: ' . esc_html($date_event) . '</span>';
+    }
+
+    // ۲. واکشی یا تولید تاریخ آخرین به‌روزرسانی
+    $last_modified = get_post_meta(get_the_ID(), 'last_modified', true);
+    $display_modified = '';
+
+    if (!empty($last_modified)) {
+        // اگر فیلد متای سیستم سینک پر بود
+        $display_modified = $last_modified;
+        if (function_exists('jdate')) {
+            $timestamp = strtotime($last_modified);
+            if ($timestamp) {
+                $display_modified = jdate('Y/m/d ساعت H:i', $timestamp);
+            }
+        }
+    } else {
+        // بلاک جایگزین اصلاح شده با اصلاح اختلاف ساعت تهران (تایم‌زون وردپرس)
+        $display_modified = get_the_modified_date('Y/m/d') . ' ساعت ' . get_post_modified_time('H:i', false, get_the_ID(), true);
+    }
+
+    $modified_html = ' <span style="margin: 0 6px; color: #ccc;">|</span> <span class="sahab-modified-meta" style="color: #08a12e; font-weight: bold;">🔄 به‌روزرسانی: ' . esc_html($display_modified) . '</span> <span style="margin: 0 6px; color: #ccc;">|</span>';
+    // ۳. خروجی نهایی متای فلتسام
+    echo sprintf(
+        /* translators: %1$s: post date, %2$s: post author */
+        wp_kses_post(_x('<span class="posted-on">انتشار در %1$s</span> <span class="byline">کارشناس: %2$s</span>', 'post date by post author', 'flatsome')),
+        '<a href="' . esc_url(get_permalink()) . '" rel="bookmark">' . $time_string . '</a>' . $event_html . $modified_html,
+        '<span class="meta-author vcard"><a class="url fn n" href="' . esc_url(get_author_posts_url(get_the_author_meta('ID'))) . '">' . esc_html(get_the_author()) . '</a></span>'
+    );
+
+    // ۴. افزودن لینک ویرایش مستقیم نوشته برای مدیران و کارشناسان دسترسی‌دار
+    edit_post_link(
+        __('ویرایش', 'flatsome'),
+        '<span class="edit-link" style="margin-right: 10px; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 11px;"><i class="icon-edit"></i> ',
+        '</span>'
+    );
+}
